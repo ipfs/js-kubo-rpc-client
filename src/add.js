@@ -1,29 +1,27 @@
 'use strict'
 
 const CID = require('cids')
-const merge = require('merge-options')
-const { toFormData } = require('./form-data')
-const toCamel = require('../lib/object-to-camel')
-const configure = require('../lib/configure')
+const toCamel = require('./lib/object-to-camel')
+const configure = require('./lib/configure')
+const multipartRequest = require('./lib/multipart-request')
+const toUrlSearchParams = require('./lib/to-url-search-params')
 
 module.exports = configure((api) => {
   return async function * add (input, options = {}) {
     const progressFn = options.progress
-    options = merge(
-      options,
-      {
-        'stream-channels': true,
-        progress: Boolean(progressFn),
-        hash: options.hashAlg // TODO fix this either is hash or hashAlg
-      }
-    )
 
     const res = await api.ndjson('add', {
       method: 'POST',
-      searchParams: options,
-      body: await toFormData(input),
+      searchParams: toUrlSearchParams(null, {
+        ...options,
+        'stream-channels': true,
+        progress: Boolean(progressFn)
+      }),
       timeout: options.timeout,
-      signal: options.signal
+      signal: options.signal,
+      ...(
+        await multipartRequest(input)
+      )
     })
 
     for await (let file of res) {
