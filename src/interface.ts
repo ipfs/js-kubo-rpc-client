@@ -1,5 +1,5 @@
 // This file contains some utility types that either can't be expressed in
-// JSDoc syntax or that result in a different behavior when typed in JSDoc.
+// JSDoc syntax or that result in a different behaviour when typed in JSDoc.
 
 /**
  * Utility type that takes IPFS Core API function type (with 0 to 4 arguments
@@ -51,7 +51,7 @@ type WithExtendedOptions<Params, Ext> = Params extends [...End]
   ? [a1?: A1, a2?: A2, a3?: A3, options?: Options & Ext]
   : never
 
-export type APIMethadWithExtraOptions <
+export type APIMethodWithExtraOptions <
   API,
   Key extends keyof API,
   Extra
