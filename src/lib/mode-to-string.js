@@ -1,9 +1,8 @@
-'use strict'
 
 /**
  * @param {number | string | undefined} mode
  */
-module.exports = (mode) => {
+export function modeToString (mode) {
   if (mode == null) {
     return undefined
   }
