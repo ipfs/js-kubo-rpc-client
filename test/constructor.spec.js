@@ -8,7 +8,7 @@ import { isBrowser } from 'ipfs-utils/src/env.js'
 
 const f = factory()
 
-describe('ipfs-http-client constructor tests', () => {
+describe('js-kubo-rpc-client constructor tests', () => {
   describe('parameter permuations', () => {
     it('none', () => {
       const ipfs = ipfsClient()

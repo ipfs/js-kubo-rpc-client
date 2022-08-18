@@ -1,4 +1,4 @@
-# ipfs-http-client <!-- omit in toc -->
+# js-kubo-rpc-client <!-- omit in toc -->
 
 [![ipfs.io](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io)
 [![IRC](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
@@ -43,7 +43,7 @@
 ## Install
 
 ```console
-$ npm i ipfs-http-client
+$ npm i js-kubo-rpc-client
 ```
 
 <h1 align="center">
@@ -80,7 +80,7 @@ $ npm i ipfs-http-client
 We've come a long way, but this project is still in Alpha, lots of development is happening, APIs might change, beware of 🐉..
 
 ```bash
-npm install --save ipfs-http-client
+npm install --save js-kubo-rpc-client
 ```
 
 Both the Current and Active LTS versions of Node.js are supported. Please see [nodejs.org](https://nodejs.org/) for what these currently are.
