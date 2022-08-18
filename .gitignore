@@ -1,0 +1,4 @@
+.envrc
+.tool-versions
+package-lock.json
+node_modules
