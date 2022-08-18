@@ -49,10 +49,16 @@
     }
   },
   "eslintConfig": {
-    "extends": "ipfs",
+    "extends": [
+      "ipfs",
+      "plugin:jsdoc/recommended"
+    ],
     "parserOptions": {
       "sourceType": "module"
-    }
+    },
+    "plugins": [
+      "jsdoc"
+    ]
   },
   "scripts": {
     "build": "aegir build",
@@ -76,7 +82,6 @@
     "any-signal": "^3.0.0",
     "dag-jose": "^2.0.1",
     "err-code": "^3.0.1",
-    "ipfs-core-types": "^0.11.0",
     "ipfs-core-utils": "^0.15.0",
     "ipfs-utils": "^9.0.6",
     "it-first": "^1.0.6",
@@ -88,9 +93,14 @@
     "uint8arrays": "^3.0.0"
   },
   "devDependencies": {
+    "@libp2p/interface-peer-info": "^1.0.2",
+    "@libp2p/interface-pubsub": "^2.0.1",
+    "@libp2p/interfaces": "^3.0.3",
     "aegir": "^37.0.11",
     "delay": "^5.0.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
     "go-ipfs": "^0.12.1",
+    "ipfs-core-types": "^0.11.1",
     "ipfsd-ctl": "^12.0.0",
     "it-all": "^1.0.4",
     "it-first": "^1.0.4",

@@ -2,7 +2,6 @@
 /**
  * @typedef {import('@libp2p/interface-pubsub').Message} Message
  * @typedef {import('@libp2p/interfaces/events').EventHandler<Message>} MessageHandlerFn
- *
  * @typedef {object} Subscription
  * @property {MessageHandlerFn} handler
  * @property {AbortController} controller
@@ -18,6 +17,7 @@ export class SubscriptionTracker {
    * @param {string} topic
    * @param {MessageHandlerFn} handler
    * @param {AbortSignal} [signal]
+   * @returns {AbortSignal}
    */
   subscribe (topic, handler, signal) {
     const topicSubs = this._subs.get(topic) || []

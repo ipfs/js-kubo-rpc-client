@@ -8,13 +8,5 @@
     "src",
     "test/utils/factory.js",
     "test/pubsub.spec.js"
-  ],
-  "references": [
-    {
-      "path": "../ipfs-core-types"
-    },
-    {
-      "path": "../ipfs-core-utils"
-    }
   ]
 }
