@@ -1,6 +1,6 @@
 {
   "name": "js-kubo-rpc-client",
-  "version": "57.0.3",
+  "version": "1.0.0",
   "description": "A client library for the IPFS HTTP API",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-kubo-rpc-client#readme",
