@@ -1,27 +1,43 @@
-# https://github.com/TypeStrong/typedoc-action
+# Simple workflow for deploying static content to GitHub Pages
 name: Publish Typedoc to Github Pages
 on:
   push:
     branches:
       - main
       - master
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   publish-typedoc:
+    environment:
+      name: github-pages
+      url: ${{ steps.publish-typedoc.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
       - uses: ipfs/aegir/actions/cache-node-modules@master
       - name: Run typedoc
         run: npm run docs
-      - name: Scheduled deployment
-        uses: s0/git-publish-subdir-action@399aab378450f99b7de6767f62b0d1dbfcb58b53
-        env:
-          REPO: self
-          BRANCH: gh-pages
-          FOLDER: docs
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SQUASH_HISTORY: false
-          MESSAGE: "Update documentation with changes from {sha} with message:\n{msg}"
-          SKIP_EMPTY_COMMITS: false
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'docs'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
