@@ -1,18 +1,23 @@
 {
-  "name": "ipfs-http-client",
+  "name": "js-kubo-rpc-client",
   "version": "57.0.3",
   "description": "A client library for the IPFS HTTP API",
   "license": "Apache-2.0 OR MIT",
-  "homepage": "https://github.com/ipfs/js-ipfs/tree/master/packages/ipfs-http-client#readme",
+  "homepage": "https://github.com/ipfs/js-kubo-rpc-client",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ipfs/js-ipfs.git"
+    "url": "git+https://github.com/ipfs/js-kubo-rpc-client.git"
   },
   "bugs": {
-    "url": "https://github.com/ipfs/js-ipfs/issues"
+    "url": "https://github.com/ipfs/js-kubo-rpc-client/issues"
   },
   "keywords": [
-    "ipfs"
+    "ipfs",
+    "kubo",
+    "rpc",
+    "rpc-client",
+    "http",
+    "http-client"
   ],
   "engines": {
     "node": ">=16.0.0",
