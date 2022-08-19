@@ -3,8 +3,8 @@
 [![ipfs.io](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io)
 [![IRC](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 [![Discord](https://img.shields.io/discord/806902334369824788?style=flat-square)](https://discord.gg/ipfs)
-[![codecov](https://img.shields.io/codecov/c/github/ipfs/js-ipfs.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-ipfs)
-[![CI](https://img.shields.io/github/workflow/status/ipfs/js-ipfs/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-ipfs/actions/workflows/js-test-and-release.yml)
+[![codecov](https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-kubo-rpc-client)
+[![CI](https://img.shields.io/github/workflow/status/ipfs/js-kubo-rpc-client/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml)
 
 > A client library for the IPFS HTTP API
 
@@ -60,18 +60,18 @@ $ npm i js-kubo-rpc-client
 </p>
 
 <p align="center">
-  <a href="https://app.fossa.io/projects/git%2Bgithub.com%2Fipfs%2Fjs-ipfs?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fipfs%2Fjs-ipfs.svg?type=shield"/></a>
-  <a href="https://travis-ci.com/ipfs/js-ipfs"><img src="https://flat.badgen.net/travis/ipfs/js-ipfs" /></a>
-  <a href="https://codecov.io/gh/ipfs/js-ipfs-http-client"><img src="https://img.shields.io/codecov/c/github/ipfs/js-ipfs-http-client/master.svg?style=flat-square"></a>
-   <a href="https://bundlephobia.com/result?p=ipfs-http-client"><img src="https://flat.badgen.net/bundlephobia/minzip/ipfs-http-client"></a>
+  <a href="https://app.fossa.io/projects/git%2Bgithub.com%2Fipfs%2Fjs-kubo-rpc-client?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fipfs%2Fjs-kubo-rpc-client.svg?type=shield"/></a>
+  <a href="https://travis-ci.com/ipfs/js-kubo-rpc-client"><img src="https://flat.badgen.net/travis/ipfs/js-kubo-rpc-client" /></a>
+  <a href="https://codecov.io/gh/ipfs/js-kubo-rpc-client"><img src="https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client/master.svg?style=flat-square"></a>
+   <a href="https://bundlephobia.com/result?p=js-kubo-rpc-client"><img src="https://flat.badgen.net/bundlephobia/minzip/js-kubo-rpc-client"></a>
   <br>
-  <a href="https://david-dm.org/ipfs/js-ipfs?path=packages/ipfs-http-client"><img src="https://david-dm.org/ipfs/js-ipfs.svg?style=flat-square&path=packages/ipfs-http-client" /></a>
+  <a href="https://david-dm.org/ipfs/js-kubo-rpc-client"><img src="https://david-dm.org/ipfs/js-kubo-rpc-client.svg?style=flat-square" /></a>
   <a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"></a>
   <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square" /></a>
   <a href=""><img src="https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square" /></a>
   <a href=""><img src="https://img.shields.io/badge/Node.js-%3E%3D10.0.0-orange.svg?style=flat-square" /></a>
-  <a href="https://www.npmjs.com/package/ipfs-http-client"><img src="https://img.shields.io/npm/dm/ipfs-http-client.svg" /></a>
-  <a href="https://www.jsdelivr.com/package/npm/ipfs-http-client"><img src="https://data.jsdelivr.com/v1/package/npm/ipfs-http-client/badge"/></a>
+  <a href="https://www.npmjs.com/package/js-kubo-rpc-client"><img src="https://img.shields.io/npm/dm/js-kubo-rpc-client.svg" /></a>
+  <a href="https://www.jsdelivr.com/package/npm/js-kubo-rpc-client"><img src="https://data.jsdelivr.com/v1/package/npm/js-kubo-rpc-client/badge"/></a>
   <br>
 </p>
 
@@ -87,7 +87,7 @@ Both the Current and Active LTS versions of Node.js are supported. Please see [n
 
 ### Next Steps
 
-- Read the [docs](https://github.com/ipfs/js-ipfs/tree/master/docs)
+- Read the [docs](https://ipfs.github.io/js-kubo-rpc-client)
 - Look into the [examples](https://github.com/ipfs-examples/js-ipfs-examples) to learn how to spawn an IPFS node in Node.js and in the Browser
 - Consult the [Core API docs](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api) to see what you can do with an IPFS node
 - Visit <https://dweb-primer.ipfs.io> to learn about IPFS and the concepts that underpin it
@@ -130,7 +130,7 @@ Alternatively it can be an object which may have the following keys:
 #### Example
 
 ```JavaScript
-import { create } from 'ipfs-http-client'
+import { create } from 'js-kubo-rpc-client'
 
 // connect to the default API address http://localhost:5001
 const client = create()
@@ -147,9 +147,7 @@ const { cid } = await client.add('Hello world!')
 
 ### API
 
-[![IPFS Core API Compatible](https://cdn.rawgit.com/ipfs/interface-ipfs-core/master/img/badge.svg)](https://github.com/ipfs/js-ipfs/tree/master/packages/interface-ipfs-core)
-
-> `js-ipfs-http-client` implements the [IPFS Core API](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api) - please follow the previous link to see the methods available.
+`js-kubo-rpc-client` will not implement the [IPFS Core API](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api). Please see https://github.com/ipfs/kubo/issues/9125 for more information.
 
 ### Additional Options
 
@@ -166,7 +164,7 @@ Call this on your client instance to return an object containing the `host`, `po
 
 ### Static Types and Utils
 
-Aside from the default export, `ipfs-http-client` exports various types and utilities that are included in the bundle:
+Aside from the default export, `js-kubo-rpc-client` exports various types and utilities that are included in the bundle:
 
 - [`multiaddr`](https://www.npmjs.com/package/multiaddr)
 - [`multibase`](https://www.npmjs.com/package/multibase)
@@ -179,9 +177,9 @@ Aside from the default export, `ipfs-http-client` exports various types and util
 These can be accessed like this, for example:
 
 ```js
-const { CID } = require('ipfs-http-client')
+const { CID } = require('js-kubo-rpc-client')
 // ...or from an es-module:
-import { CID } from 'ipfs-http-client'
+import { CID } from 'js-kubo-rpc-client'
 ```
 
 #### Glob source
@@ -235,7 +233,7 @@ Returns an async iterable that yields `{ path, content }` objects suitable for p
 ##### Example
 
 ```js
-import { create, urlSource } from 'ipfs-http-client'
+import { create, urlSource } from 'js-kubo-rpc-client'
 const ipfs = create()
 
 const file = await ipfs.add(urlSource('https://ipfs.io/images/ipfs-logo.svg'))
@@ -269,7 +267,7 @@ To interact with the API, you need to have a local daemon running. It needs to b
 ### Importing the module and usage
 
 ```javascript
-import { create } from 'ipfs-http-client'
+import { create } from 'js-kubo-rpc-client'
 
 // connect to ipfs daemon API server
 const ipfs = create('http://localhost:5001') // (the default in Node.js)
@@ -294,7 +292,7 @@ See the example in the [examples folder](https://github.com/ipfs-examples/js-ipf
 
 **through webpack**
 
-See the example in the [examples folder](https://github.com/ipfs-examples/js-ipfs-examples/tree/master/examples/http-client-bundle-webpack) to get an idea on how to use `js-ipfs-http-client` with webpack.
+See the example in the [examples folder](https://github.com/ipfs-examples/js-ipfs-examples/tree/master/examples/http-client-bundle-webpack) to get an idea on how to use `js-kubo-rpc-client` with webpack.
 
 **from CDN**
 
@@ -304,7 +302,7 @@ To always request the latest version, use one of the following examples:
 
 ```html
 <!-- loading the minified version using jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-kubo-rpc-client/dist/index.min.js"></script>
 ```
 
 For maximum security you may also decide to:
@@ -317,7 +315,7 @@ Example:
 
 ```html
 <script
-  src="https://www.jsdelivr.com/package/npm/ipfs-http-client"
+  src="https://www.jsdelivr.com/package/npm/js-kubo-rpc-client"
   integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB"
   crossorigin="anonymous"
 ></script>
@@ -381,7 +379,7 @@ Licensed under either of
 
 ## Contribute
 
-Contributions welcome! Please check out [the issues](https://github.com/ipfs/js-ipfs/issues).
+Contributions welcome! Please check out [the issues](https://github.com/ipfs/js-kubo-rpc-client/issues).
 
 Also see our [contributing document](https://github.com/ipfs/community/blob/master/CONTRIBUTING_JS.md) for more information on how we work, and about contributing in general.
 

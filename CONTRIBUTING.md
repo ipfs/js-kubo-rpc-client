@@ -28,6 +28,8 @@ $ npm run test:browser
 
 ### Writing a new core interface test
 
+NOTE: The below instructions are out of date and will be updated eventually. Please follow https://github.com/ipfs/kubo/issues/9125 for more information.
+
 The core interface tests are kept in a separate repo, because they are used by multiple other projects. To add a core interface test, follow this guide:
 
 1. Clone this project repo and the interface core tests repo:
