@@ -76,7 +76,7 @@
     "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
     "lint": "aegir lint",
     "clean": "aegir clean",
-    "dep-check": "aegir dep-check -i ipfs-core -i ipfs-core-types"
+    "dep-check": "aegir dep-check"
   },
   "dependencies": {
     "@ipld/dag-cbor": "^7.0.2",
