@@ -76,7 +76,8 @@
     "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
     "lint": "aegir lint",
     "clean": "aegir clean",
-    "dep-check": "aegir dep-check"
+    "dep-check": "aegir dep-check",
+    "release": "aegir release"
   },
   "dependencies": {
     "@ipld/dag-cbor": "^7.0.2",
