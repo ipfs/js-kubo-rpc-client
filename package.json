@@ -63,6 +63,7 @@
   "scripts": {
     "build": "aegir build",
     "test": "aegir test",
+    "docs": "typedoc src/index.js",
     "test:node": "aegir test -t node --cov",
     "test:chrome": "aegir test -t browser --cov",
     "test:chrome-webworker": "aegir test -t webworker",
@@ -106,7 +107,8 @@
     "it-first": "^1.0.7",
     "jsdoc": "^3.6.11",
     "nock": "^13.2.9",
-    "p-defer": "^4.0.0"
+    "p-defer": "^4.0.0",
+    "typedoc": "^0.23.10"
   },
   "browser": {
     "ipfs-utils/src/files/glob-source": false,

@@ -1,0 +1,27 @@
+# https://github.com/TypeStrong/typedoc-action
+name: Publish Typedoc to Github Pages
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  publish-typedoc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ipfs/aegir/actions/cache-node-modules@master
+      - name: Run typedoc
+        run: npm run docs
+      - name: Scheduled deployment
+        uses: s0/git-publish-subdir-action@399aab378450f99b7de6767f62b0d1dbfcb58b53
+        env:
+          REPO: self
+          BRANCH: gh-pages
+          FOLDER: docs
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SQUASH_HISTORY: false
+          MESSAGE: "Update documentation with changes from {sha} with message:\n{msg}"
+          SKIP_EMPTY_COMMITS: false
