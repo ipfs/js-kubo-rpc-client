@@ -42,7 +42,7 @@
 
 ## Install
 
-```console
+```shell
 $ npm i js-kubo-rpc-client
 ```
 
