@@ -1,4 +1,4 @@
-# js-kubo-rpc-client <!-- omit in toc -->
+# kubo-rpc-client <!-- omit in toc -->
 
 [![ipfs.io](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io)
 [![IRC](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
@@ -6,7 +6,7 @@
 [![codecov](https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-kubo-rpc-client)
 [![CI](https://img.shields.io/github/workflow/status/ipfs/js-kubo-rpc-client/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml)
 
-> A client library for the IPFS HTTP API
+> A client library for the Kubo RPC API
 
 ## Table of contents <!-- omit in toc -->
 
@@ -42,8 +42,8 @@
 
 ## Install
 
-```shell
-$ npm i js-kubo-rpc-client
+```console
+$ npm i kubo-rpc-client
 ```
 
 <h1 align="center">
@@ -147,7 +147,7 @@ const { cid } = await client.add('Hello world!')
 
 ### API
 
-`js-kubo-rpc-client` will not implement the [IPFS Core API](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api). Please see https://github.com/ipfs/kubo/issues/9125 for more information.
+`js-kubo-rpc-client` will not implement the [IPFS Core API](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api). Please see <https://github.com/ipfs/kubo/issues/9125> for more information.
 
 ### Additional Options
 
@@ -379,12 +379,8 @@ Licensed under either of
 
 ## Contribute
 
-Contributions welcome! Please check out [the issues](https://github.com/ipfs/js-kubo-rpc-client/issues).
+Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-kubo-rpc-client/issues)!
 
-Also see our [contributing document](https://github.com/ipfs/community/blob/master/CONTRIBUTING_JS.md) for more information on how we work, and about contributing in general.
-
-Please be aware that all interactions related to this repo are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
-
-Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
+This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
 [![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/CONTRIBUTING.md)
