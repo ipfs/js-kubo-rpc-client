@@ -6,12 +6,7 @@ import errCode from 'err-code'
 import { createGet as createBlockGet } from '../block/get.js'
 
 /**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/dag').API<HTTPClientExtraOptions>} DAGAPI
- */
-
-/**
- * @param {import('ipfs-core-utils/multicodecs').Multicodecs} codecs
+ * @param {import('../types').Multicodecs} codecs
  * @param {import('../types').Options} options
  */
 export const createGet = (codecs, options) => {
@@ -19,14 +14,14 @@ export const createGet = (codecs, options) => {
     const getBlock = createBlockGet(opts)
 
     /**
-     * @type {DAGAPI["get"]}
+     * @type {import('../types').DAGAPI["get"]}
      */
     const get = async (cid, options = {}) => {
       if (options.path) {
         const entry = options.localResolve
           ? await first(resolve(cid, options.path, codecs, getBlock, options))
           : await last(resolve(cid, options.path, codecs, getBlock, options))
-        /** @type {import('ipfs-core-types/src/dag').GetResult | undefined} - first and last will return undefined when empty */
+        /** @type {import('../types').GetResult | undefined} - first and last will return undefined when empty */
         const result = (entry)
 
         if (!result) {

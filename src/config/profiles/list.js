@@ -2,14 +2,9 @@ import { objectToCamel } from '../../lib/object-to-camel.js'
 import { configure } from '../../lib/configure.js'
 import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/config/profiles').API<HTTPClientExtraOptions>} ConfigProfilesAPI
- */
-
 export const createList = configure(api => {
   /**
-   * @type {ConfigProfilesAPI["list"]}
+   * @type {import('../../types.js').ConfigProfilesAPI["list"]}
    */
   async function list (options = {}) {
     const res = await api.post('config/profile/list', {

@@ -2,7 +2,8 @@ import { CID } from 'multiformats/cid'
 import errCode from 'err-code'
 
 /**
- * @typedef {import('ipfs-core-types/src/utils').AbortOptions} AbortOptions
+
+export type AbortOptions = import('ipfs-core-types/src/utils').AbortOptions
  */
 
 /**
@@ -10,9 +11,9 @@ import errCode from 'err-code'
  *
  * @param {CID} cid - the CID where the resolving starts
  * @param {string} path - the path that should be resolved
- * @param {import('ipfs-core-utils/multicodecs').Multicodecs} codecs
- * @param {(cid: CID, options?: AbortOptions) => Promise<Uint8Array>} getBlock
- * @param {AbortOptions} [options]
+ * @param {import('../types').Multicodecs} codecs
+ * @param {(cid: CID, options?: import('../types').AbortOptions) => Promise<Uint8Array>} getBlock
+ * @param {import('../types').AbortOptions} [options]
  */
 export async function * resolve (cid, path, codecs, getBlock, options) {
   /**

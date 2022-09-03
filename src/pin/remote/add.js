@@ -1,16 +1,11 @@
 import { encodeAddParams, decodePin } from './utils.js'
 
 /**
- * @typedef {import('../../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pin/remote').API<HTTPClientExtraOptions>} RemotePiningAPI
- */
-
-/**
  * @param {import('../../lib/core').Client} client
  */
 export function createAdd (client) {
   /**
-   * @type {RemotePiningAPI["add"]}
+   * @type {import('../../types').RemotePiningAPI["add"]}
    */
   async function add (cid, { timeout, signal, headers, ...query }) {
     const response = await client.post('pin/remote/add', {

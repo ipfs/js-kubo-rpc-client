@@ -2,14 +2,9 @@ import { objectToCamel } from '../lib/object-to-camel.js'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/log').API<HTTPClientExtraOptions>} LogAPI
- */
-
 export const createLevel = configure(api => {
   /**
-   * @type {LogAPI["level"]}
+   * @type {import('../types').LogAPI["level"]}
    */
   async function level (subsystem, level, options = {}) {
     const res = await api.post('log/level', {

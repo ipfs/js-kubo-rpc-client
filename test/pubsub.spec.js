@@ -10,7 +10,7 @@ const f = factory()
 describe('.pubsub', function () {
   this.timeout(20 * 1000)
   describe('.subscribe', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
+    /** @type {import('../src/types.js').IPFS} */
     let ipfs
     /** @type {any} */
     let ctl

@@ -2,14 +2,9 @@ import { CID } from 'multiformats/cid'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/bitswap').API<HTTPClientExtraOptions>} BitswapAPI
- */
-
 export const createWantlistForPeer = configure(api => {
   /**
-   * @type {BitswapAPI["wantlistForPeer"]}
+   * @type {import('../types').BitswapAPI["wantlistForPeer"]}
    */
   async function wantlistForPeer (peerId, options = {}) {
     const res = await (await api.post('bitswap/wantlist', {

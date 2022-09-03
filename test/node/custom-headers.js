@@ -6,6 +6,10 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { create as httpClient } from '../../src/index.js'
 import http from 'http'
 
+/**
+ *
+ * @param fn
+ */
 function startServer (fn) {
   let headersResolve
   const headers = new Promise((resolve) => {

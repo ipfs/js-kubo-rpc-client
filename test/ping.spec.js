@@ -7,6 +7,10 @@ import { factory } from './utils/factory.js'
 const f = factory()
 
 // Determine if a ping response object is a pong, or something else, like a status message
+/**
+ *
+ * @param pingResponse
+ */
 function isPong (pingResponse) {
   return Boolean(pingResponse && pingResponse.success && !pingResponse.text)
 }

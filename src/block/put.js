@@ -4,14 +4,9 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { abortSignal } from '../lib/abort-signal.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/block').API<HTTPClientExtraOptions>} BlockAPI
- */
-
 export const createPut = configure(api => {
   /**
-   * @type {BlockAPI["put"]}
+   * @type {import('../types').BlockAPI["put"]}
    */
   async function put (data, options = {}) {
     // allow aborting requests on body errors

@@ -2,14 +2,9 @@ import { CID } from 'multiformats/cid'
 import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
 
-/**
- * @typedef {import('./types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/root').API<HTTPClientExtraOptions>} RootAPI
- */
-
 export const createGet = configure(api => {
   /**
-   * @type {RootAPI["get"]}
+   * @type {import('./types').RootAPI["get"]}
    */
   async function * get (path, options = {}) {
     /** @type {Record<string, any>} */

@@ -1,14 +1,9 @@
 import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
 
-/**
- * @typedef {import('./types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/root').API<HTTPClientExtraOptions>} RootAPI
- */
-
 export const createStop = configure(api => {
   /**
-   * @type {RootAPI["stop"]}
+   * @type {import('./types').RootAPI["stop"]}
    */
   async function stop (options = {}) {
     const res = await api.post('shutdown', {

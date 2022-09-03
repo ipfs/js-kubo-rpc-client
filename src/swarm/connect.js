@@ -1,14 +1,9 @@
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/swarm').API<HTTPClientExtraOptions>} SwarmAPI
- */
-
 export const createConnect = configure(api => {
   /**
-   * @type {SwarmAPI["connect"]}
+   * @type {import('../types').SwarmAPI["connect"]}
    */
   async function connect (addr, options = {}) {
     const res = await api.post('swarm/connect', {

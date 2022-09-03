@@ -6,6 +6,7 @@ import { createPeers } from './peers.js'
 
 /**
  * @param {import('../types').Options} config
+ * @returns {import('../types').IPFS<import('../types').HTTPClientExtraOptions>['swarm']}
  */
 export function createSwarm (config) {
   return {

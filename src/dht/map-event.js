@@ -13,12 +13,14 @@ import { Multiaddr } from '@multiformats/multiaddr'
 import { peerIdFromString } from '@libp2p/peer-id'
 
 /**
- * @typedef {import('@libp2p/interface-peer-id').PeerId} PeerId
+
+export type PeerId = import('@libp2p/interface-peer-id').PeerId
+export type PeerId = import('@libp2p/interface-peer-id').PeerId
  */
 
 /**
- * @param {{Type: number, ID: string, Extra: string, Responses: {ID: string, Addrs: string[]}[]}} event
- * @returns {import('ipfs-core-types/src/dht').QueryEvent}
+ * @param {import('../types').MapEvent} event
+ * @returns {import('../types').QueryEvent}
  */
 export const mapEvent = (event) => {
   if (event.Type === SendingQuery) {
@@ -46,7 +48,7 @@ export const mapEvent = (event) => {
 
   if (event.Type === FinalPeer) {
     // dht.query ends with a FinalPeer event with no Responses
-    /** @type {import('@libp2p/interface-peer-info').PeerInfo} */
+    /** @type {import('../types.js').PeerInfo} */
     let peer = {
       // @ts-expect-error go-ipfs does not return this
       id: event.ID ?? peerIdFromString(event.ID),

@@ -3,17 +3,12 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
 /**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pin').API<HTTPClientExtraOptions>} PinAPI
- */
-
-/**
  * @param {string} type
  * @param {string} cid
  * @param {Record<string, string>} metadata
  */
 function toPin (type, cid, metadata) {
-  /** @type {import('ipfs-core-types/src/pin').LsResult} */
+  /** @type {import('../types').LsResult} */
   const pin = {
     type,
     cid: CID.parse(cid)
@@ -28,7 +23,7 @@ function toPin (type, cid, metadata) {
 
 export const createLs = configure(api => {
   /**
-   * @type {PinAPI["ls"]}
+   * @type {import('../types').PinAPI["ls"]}
    */
   async function * ls (options = {}) {
     /** @type {any[]} */

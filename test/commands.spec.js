@@ -7,7 +7,7 @@ const f = factory()
 describe('.commands', function () {
   this.timeout(60 * 1000)
 
-  /** @type {import('ipfs-core-types').IPFS} */
+  /** @type {import('../src/types').IPFS} */
   let ipfs
 
   before(async () => {

@@ -6,9 +6,8 @@ import { create as httpClient } from '../../src/index.js'
 import http, { Agent } from 'http'
 
 /**
- * @typedef {import('http').IncomingMessage} IncomingMessage
  *
- * @param {(message: IncomingMessage) => Promise<any>} handler
+ * @param {(message: import('http').IncomingMessage) => Promise<any>} handler
  */
 function startServer (handler) {
   return new Promise((resolve) => {
@@ -36,7 +35,7 @@ function startServer (handler) {
 }
 
 describe('agent', function () {
-  /** @type {import('http').Agent} */
+  /** @type {Agent} */
   let agent
 
   before(() => {

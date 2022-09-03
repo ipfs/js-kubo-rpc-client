@@ -2,14 +2,9 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { mapEvent } from './map-event.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/dht').API<HTTPClientExtraOptions>} DHTAPI
- */
-
 export const createQuery = configure(api => {
   /**
-   * @type {DHTAPI["query"]}
+   * @type {import('../types.js').DHTAPI["query"]}
    */
   async function * query (peerId, options = {}) {
     const res = await api.post('dht/query', {

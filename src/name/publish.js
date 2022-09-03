@@ -3,13 +3,12 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
 /**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/name').API<HTTPClientExtraOptions>} NameAPI
+ * @param {import('../types').Options} config
+ * @returns {import('../types').IPFS<import('../types').HTTPClientExtraOptions>['publish']}
  */
-
 export const createPublish = configure(api => {
   /**
-   * @type {NameAPI["publish"]}
+   * @type {import('../types.js').NameAPI["publish"]}
    */
   async function publish (path, options = {}) {
     const res = await api.post('name/publish', {

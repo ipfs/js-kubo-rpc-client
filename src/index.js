@@ -46,9 +46,7 @@ import { createVersion } from './version.js'
 import globSourceImport from 'ipfs-utils/src/files/glob-source.js'
 
 /**
- * @typedef {import('multiformats/codecs/interface').BlockCodec<any, any>} BlockCodec
- * @typedef {import('multiformats/hashes/interface').MultihashHasher} MultihashHasher
- * @typedef {import('multiformats/bases/interface').MultibaseCodec<any>} MultibaseCodec
+ *
  * @typedef {import('./types').Options} Options
  * @typedef {import('./types').LoadBaseFn} LoadBaseFn
  * @typedef {import('./types').LoadCodecFn} LoadCodecFn
@@ -64,7 +62,7 @@ import globSourceImport from 'ipfs-utils/src/files/glob-source.js'
  */
 export function create (options = {}) {
   /**
-   * @type {BlockCodec}
+   * @type {import('./types').BlockCodec}
    */
   const id = {
     name: identity.name,
@@ -73,7 +71,7 @@ export function create (options = {}) {
     decode: (id) => id
   }
 
-  /** @type {MultibaseCodec[]} */
+  /** @type {import('./types').MultibaseCodec[]} */
   const multibaseCodecs = Object.values(bases);
 
   (options.ipld && options.ipld.bases ? options.ipld.bases : []).forEach(base => multibaseCodecs.push(base))
@@ -83,7 +81,7 @@ export function create (options = {}) {
     loadBase: options.ipld && options.ipld.loadBase
   })
 
-  /** @type {BlockCodec[]} */
+  /** @type {import('./types').BlockCodec[]} */
   const blockCodecs = Object.values(codecs);
 
   [dagPB, dagCBOR, dagJSON, dagJOSE, id].concat((options.ipld && options.ipld.codecs) || []).forEach(codec => blockCodecs.push(codec))
@@ -93,7 +91,7 @@ export function create (options = {}) {
     loadCodec: options.ipld && options.ipld.loadCodec
   })
 
-  /** @type {MultihashHasher[]} */
+  /** @type {import('./types').MultihashHasher[]} */
   const multihashHashers = Object.values(hashes);
 
   (options.ipld && options.ipld.hashers ? options.ipld.hashers : []).forEach(hasher => multihashHashers.push(hasher))
@@ -122,13 +120,13 @@ export function create (options = {}) {
     getEndpointConfig: createGetEndpointConfig(options),
     id: createId(options),
     isOnline: createIsOnline(options),
-    key: createKey(options),
+    key: /** @type {import('./types').IPFS<HTTPClientExtraOptions>['key']} */(createKey(options)),
     log: createLog(options),
     ls: createLs(options),
     mount: createMount(options),
-    name: createName(options),
+    name: /** @type {import('./types').IPFS<HTTPClientExtraOptions>['name']} */(createName(options)),
     object: createObject(multicodecs, options),
-    pin: createPin(options),
+    pin: /** @type {import('./types').IPFS<HTTPClientExtraOptions>['pin']} */(createPin(options)),
     ping: createPing(options),
     pubsub: createPubsub(options),
     refs: createRefs(options),
@@ -137,8 +135,8 @@ export function create (options = {}) {
     start: createStart(options),
     stats: createStats(options),
     stop: createStop(options),
-    swarm: createSwarm(options),
-    version: createVersion(options),
+    swarm: /** @type {import('./types').IPFS<HTTPClientExtraOptions>['swarm']} */(createSwarm(options)),
+    version: /** @type {import('./types').IPFS<HTTPClientExtraOptions>['version']} */(createVersion(options)),
     bases: multibases,
     codecs: multicodecs,
     hashers: multihashes

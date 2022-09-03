@@ -3,14 +3,9 @@ import { configure } from '../lib/configure.js'
 import { normaliseInput } from 'ipfs-core-utils/pins/normalise-input'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pin').API<HTTPClientExtraOptions>} PinAPI
- */
-
 export const createRmAll = configure(api => {
   /**
-   * @type {PinAPI["rmAll"]}
+   * @type {import('../types').PinAPI["rmAll"]}
    */
   async function * rmAll (source, options = {}) {
     for await (const { path, recursive } of normaliseInput(source)) {

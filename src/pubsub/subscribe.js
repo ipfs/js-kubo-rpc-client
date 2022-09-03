@@ -6,21 +6,13 @@ import { peerIdFromString } from '@libp2p/peer-id'
 const log = logger('ipfs-http-client:pubsub:subscribe')
 
 /**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('@libp2p/interface-pubsub').Message} Message
- * @typedef {(err: Error, fatal: boolean, msg?: Message) => void} ErrorHandlerFn
- * @typedef {import('ipfs-core-types/src/pubsub').API<HTTPClientExtraOptions & { onError?: ErrorHandlerFn }>} PubsubAPI
- * @typedef {import('../types').Options} Options
- */
-
-/**
- * @param {Options} options
+ * @param {import('../types').Options} options
  * @param {import('./subscription-tracker').SubscriptionTracker} subsTracker
  */
 export const createSubscribe = (options, subsTracker) => {
   return configure((api) => {
     /**
-     * @type {PubsubAPI["subscribe"]}
+     * @type {import('../types').PubsubAPI["subscribe"]}
      */
     async function subscribe (topic, handler, options = {}) { // eslint-disable-line require-await
       options.signal = subsTracker.subscribe(topic, handler, options.signal)
@@ -91,11 +83,11 @@ export const createSubscribe = (options, subsTracker) => {
 }
 
 /**
- * @param {import('ipfs-utils/src/types').ExtendedResponse} response
+ * @param {import('../types').ExtendedResponse} response
  * @param {object} options
- * @param {(message: Message) => void} options.onMessage
+ * @param {(message: import('../types').Message) => void} options.onMessage
  * @param {() => void} options.onEnd
- * @param {ErrorHandlerFn} [options.onError]
+ * @param {import('../types').PubsubApiErrorHandlerFn} [options.onError]
  */
 async function readMessages (response, { onMessage, onEnd, onError }) {
   onError = onError || log

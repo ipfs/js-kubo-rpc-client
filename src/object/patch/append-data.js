@@ -4,14 +4,9 @@ import { configure } from '../../lib/configure.js'
 import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
 import { abortSignal } from '../../lib/abort-signal.js'
 
-/**
- * @typedef {import('../../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/object/patch').API<HTTPClientExtraOptions>} ObjectPatchAPI
- */
-
 export const createAppendData = configure(api => {
   /**
-   * @type {ObjectPatchAPI["appendData"]}
+   * @type {import('../../types').ObjectPatchAPI["appendData"]}
    */
   async function appendData (cid, data, options = {}) {
     // allow aborting requests on body errors

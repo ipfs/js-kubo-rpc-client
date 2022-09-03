@@ -3,14 +3,9 @@ import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
 import { createStat } from './files/stat.js'
 
-/**
- * @typedef {import('./types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/root').API<HTTPClientExtraOptions>} RootAPI
- */
-
 export const createLs = configure((api, opts) => {
   /**
-   * @type {RootAPI["ls"]}
+   * @type {import('./types').RootAPI["ls"]}
    */
   async function * ls (path, options = {}) {
     const pathStr = `${path instanceof Uint8Array ? CID.decode(path) : path}`
@@ -31,7 +26,7 @@ export const createLs = configure((api, opts) => {
         hash = CID.parse(hash)
       }
 
-      /** @type {import('ipfs-core-types/src/root').IPFSEntry} */
+      /** @type {import('./types').IPFSEntry} */
       const entry = {
         name: link.Name,
         path: pathStr + (link.Name ? `/${link.Name}` : ''),

@@ -3,14 +3,9 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/swarm').API<HTTPClientExtraOptions>} SwarmAPI
- */
-
 export const createPeers = configure(api => {
   /**
-   * @type {SwarmAPI["peers"]}
+   * @type {import('../types').SwarmAPI["peers"]}
    */
   async function peers (options = {}) {
     const res = await api.post('swarm/peers', {

@@ -2,14 +2,9 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { Multiaddr } from '@multiformats/multiaddr'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/bootstrap').API<HTTPClientExtraOptions>} BootstrapAPI
- */
-
 export const createList = configure(api => {
   /**
-   * @type {BootstrapAPI["list"]}
+   * @type {import('../types').BootstrapAPI["list"]}
    */
   async function list (options = {}) {
     const res = await api.post('bootstrap/list', {
