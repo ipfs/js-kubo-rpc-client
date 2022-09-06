@@ -1,14 +1,9 @@
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/name').API<HTTPClientExtraOptions>} NameAPI
- */
-
 export const createResolve = configure(api => {
   /**
-   * @type {NameAPI["resolve"]}
+   * @type {import('../types').NameAPI["resolve"]}
    */
   async function * resolve (path, options = {}) {
     const res = await api.post('name/resolve', {

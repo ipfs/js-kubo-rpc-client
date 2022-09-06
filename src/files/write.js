@@ -5,14 +5,9 @@ import { multipartRequest } from 'ipfs-core-utils/multipart-request'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { abortSignal } from '../lib/abort-signal.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/files').API<HTTPClientExtraOptions>} FilesAPI
- */
-
 export const createWrite = configure(api => {
   /**
-   * @type {FilesAPI["write"]}
+   * @type {import('../types').FilesAPI["write"]}
    */
   async function write (path, input, options = {}) {
     // allow aborting requests on body errors

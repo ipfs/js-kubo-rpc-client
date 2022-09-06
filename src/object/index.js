@@ -7,7 +7,7 @@ import { createStat } from './stat.js'
 import { createPatch } from './patch/index.js'
 
 /**
- * @param {import('ipfs-core-utils/multicodecs').Multicodecs} codecs
+ * @param {import('../types').Multicodecs} codecs
  * @param {import('../types').Options} config
  */
 export function createObject (codecs, config) {

@@ -1,6 +1,3 @@
-/**
- * @typedef {import('ipfs-core-types/src/pin/remote/service').RemotePinServiceWithStat} RemotePinServiceWithStat
- */
 
 /**
  * @param {URL} url
@@ -17,7 +14,7 @@ export function encodeEndpoint (url) {
 
 /**
  * @param {any} json
- * @returns {RemotePinServiceWithStat}
+ * @returns {import('../../../types').RemotePinServiceWithStat}
  */
 export function decodeRemoteService (json) {
   return {
@@ -29,7 +26,7 @@ export function decodeRemoteService (json) {
 
 /**
  * @param {any} json
- * @returns {import('ipfs-core-types/src/pin/remote/service').Stat}
+ * @returns {import('../../../types').Stat}
  */
 export function decodeStat (json) {
   switch (json.Status) {

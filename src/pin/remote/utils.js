@@ -2,19 +2,11 @@ import { CID } from 'multiformats/cid'
 import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
 
 /**
- * @typedef {import('ipfs-core-types/src/utils').AbortOptions} AbortOptions
- * @typedef {import('ipfs-core-types/src/pin/remote').Pin} Pin
- * @typedef {import('ipfs-core-types/src/pin/remote').AddOptions} AddOptions
- * @typedef {import('ipfs-core-types/src/pin/remote').Query} Query
- * @typedef {import('ipfs-core-types/src/pin/remote').Status} Status
- */
-
-/**
  * @param {object} json
  * @param {string} json.Name
  * @param {string} json.Cid
- * @param {Status} json.Status
- * @returns {Pin}
+ * @param {import('../../types.js').Status} json.Status
+ * @returns {import('../../types.js').Pin}
  */
 export const decodePin = ({ Name: name, Status: status, Cid: cid }) => {
   return {
@@ -49,7 +41,7 @@ export const encodeCID = (cid) => {
 }
 
 /**
- * @param {Query & { all?: boolean }} query
+ * @param {import('../../types.js').Query & { all?: boolean }} query
  * @returns {URLSearchParams}
  */
 export const encodeQuery = ({ service, cid, name, status, all }) => {
@@ -75,7 +67,7 @@ export const encodeQuery = ({ service, cid, name, status, all }) => {
 }
 
 /**
- * @param {AddOptions & {cid:CID}} options
+ * @param {import('../../types.js').AddOptions & {cid:CID}} options
  * @returns {URLSearchParams}
  */
 export const encodeAddParams = ({ cid, service, background, name, origins }) => {

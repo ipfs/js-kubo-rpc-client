@@ -3,13 +3,9 @@ import { objectToCamelWithMetadata } from '../lib/object-to-camel-with-metadata.
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/files').API<HTTPClientExtraOptions>} FilesAPI
- */
 export const createLs = configure(api => {
   /**
-   * @type {FilesAPI["ls"]}
+   * @type {import('../types').FilesAPI["ls"]}
    */
   async function * ls (path, options = {}) {
     if (!path) {

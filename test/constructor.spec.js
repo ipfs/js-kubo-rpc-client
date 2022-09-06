@@ -182,6 +182,10 @@ describe('js-kubo-rpc-client constructor tests', () => {
   })
 })
 
+/**
+ *
+ * @param {import("../src/types.js").IPFSHTTPClient} client
+ */
 async function clientWorks (client) {
   const id = await client.id()
 
@@ -189,6 +193,11 @@ async function clientWorks (client) {
   expect(id).to.have.a.property('publicKey')
 }
 
+/**
+ *
+ * @param {import("../src/types.js").IPFSHTTPClient} ipfs
+ * @param {{host: string, port: string, protocol: string, apiPath: string}} param1
+ */
 function expectConfig (ipfs, { host, port, protocol, apiPath }) {
   const conf = ipfs.getEndpointConfig()
   if (protocol) {

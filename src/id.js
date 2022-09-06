@@ -4,14 +4,9 @@ import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 
-/**
- * @typedef {import('./types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/root').API<HTTPClientExtraOptions>} RootAPI
- */
-
 export const createId = configure(api => {
   /**
-   * @type {RootAPI["id"]}
+   * @type {import('./types').RootAPI["id"]}
    */
   async function id (options = {}) {
     const res = await api.post('id', {

@@ -2,15 +2,9 @@ import { CID } from 'multiformats/cid'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/block').API<HTTPClientExtraOptions>} BlockAPI
- * @typedef {import('ipfs-core-types/src/block').RmResult} RmResult
- */
-
 export const createRm = configure(api => {
   /**
-   * @type {BlockAPI["rm"]}
+   * @type {import('../types').BlockAPI["rm"]}
    */
   async function * rm (cid, options = {}) {
     if (!Array.isArray(cid)) {
@@ -39,7 +33,7 @@ export const createRm = configure(api => {
  * @param {*} removed
  */
 function toCoreInterface (removed) {
-  /** @type {RmResult} */
+  /** @type {import('../types').RmResult} */
   const out = {
     cid: CID.parse(removed.Hash)
   }

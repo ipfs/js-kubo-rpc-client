@@ -18,7 +18,6 @@ const DEFAULT_HOST = isBrowser || isWebWorker ? location.hostname : 'localhost'
 const DEFAULT_PORT = isBrowser || isWebWorker ? location.port : '5001'
 
 /**
- * @typedef {import('ipfs-utils/src/types').HTTPOptions} HTTPOptions
  * @typedef {import('../types').Options} Options
  */
 
@@ -194,7 +193,7 @@ export class Client extends HTTP {
 
     /**
      * @param {string | Request} resource
-     * @param {HTTPOptions} options
+     * @param {import('../types').HTTPOptions} options
      */
     this.fetch = (resource, options = {}) => {
       if (typeof resource === 'string' && !resource.startsWith('/')) {

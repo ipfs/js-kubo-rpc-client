@@ -5,17 +5,9 @@ import { multipartRequest } from 'ipfs-core-utils/multipart-request'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
 import { abortSignal } from './lib/abort-signal.js'
 
-/**
- * @typedef {import('ipfs-utils/src/types').ProgressFn} IPFSUtilsHttpUploadProgressFn
- * @typedef {import('ipfs-core-types/src/root').AddProgressFn} IPFSCoreAddProgressFn
- * @typedef {import('./types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/root').API<HTTPClientExtraOptions>} RootAPI
- * @typedef {import('ipfs-core-types/src/root').AddResult} AddResult
- */
-
 export const createAddAll = configure((api) => {
   /**
-   * @type {RootAPI["addAll"]}
+   * @type {import('./types.js').RootAPI["addAll"]}
    */
   async function * addAll (source, options = {}) {
     // allow aborting requests on body errors
@@ -64,8 +56,8 @@ export const createAddAll = configure((api) => {
  *
  * @param {number} total
  * @param {{name:string, start:number, end:number}[]|null} parts
- * @param {IPFSCoreAddProgressFn} progress
- * @returns {[IPFSCoreAddProgressFn|undefined, IPFSUtilsHttpUploadProgressFn|undefined]}
+ * @param {import('./types.js').IPFSCoreAddProgressFn} progress
+ * @returns {[import('./types.js').IPFSCoreAddProgressFn|undefined, import('./types.js').IPFSUtilsHttpUploadProgressFn|undefined]}
  */
 const createProgressHandler = (total, parts, progress) =>
   parts ? [undefined, createOnUploadProgress(total, parts, progress)] : [progress, undefined]
@@ -76,8 +68,8 @@ const createProgressHandler = (total, parts, progress) =>
  *
  * @param {number} size - actual content size
  * @param {{name:string, start:number, end:number}[]} parts
- * @param {IPFSCoreAddProgressFn} progress
- * @returns {IPFSUtilsHttpUploadProgressFn}
+ * @param {import('./types.js').IPFSCoreAddProgressFn} progress
+ * @returns {import('./types.js').IPFSUtilsHttpUploadProgressFn}
  */
 const createOnUploadProgress = (size, parts, progress) => {
   let index = 0
@@ -111,7 +103,7 @@ const createOnUploadProgress = (size, parts, progress) => {
  * @param {number} [input.mtimeNsecs]
  */
 function toCoreInterface ({ name, hash, size, mode, mtime, mtimeNsecs }) {
-  /** @type {AddResult} */
+  /** @type {import('./types.js').AddResult} */
   const output = {
     path: name,
     cid: CID.parse(hash),

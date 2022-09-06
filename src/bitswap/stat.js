@@ -3,14 +3,9 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/bitswap').API<HTTPClientExtraOptions>} BitswapAPI
- */
-
 export const createStat = configure(api => {
   /**
-   * @type {BitswapAPI["stat"]}
+   * @type {import('../types').BitswapAPI["stat"]}
    */
   async function stat (options = {}) {
     const res = await api.post('bitswap/stat', {

@@ -3,14 +3,9 @@ import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { mapEvent } from './map-event.js'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/dht').API<HTTPClientExtraOptions>} DHTAPI
- */
-
 export const createGet = configure(api => {
   /**
-   * @type {DHTAPI["get"]}
+   * @type {import('../types').DHTAPI["get"]}
    */
   async function * get (key, options = {}) {
     const res = await api.post('dht/get', {

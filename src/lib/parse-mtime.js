@@ -41,7 +41,7 @@ export function parseMtime (input) {
     const secs = Math.floor(ms / 1000)
 
     mtime = {
-      secs: secs,
+      secs,
       nsecs: (ms - (secs * 1000)) * 1000
     }
   }

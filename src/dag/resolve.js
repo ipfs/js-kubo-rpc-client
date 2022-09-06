@@ -2,14 +2,9 @@ import { CID } from 'multiformats/cid'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/dag').API<HTTPClientExtraOptions>} DAGAPI
- */
-
 export const createResolve = configure(api => {
   /**
-   * @type {DAGAPI["resolve"]}
+   * @type {import('../types.js').DAGAPI["resolve"]}
    */
   const resolve = async (ipfsPath, options = {}) => {
     const res = await api.post('dag/resolve', {

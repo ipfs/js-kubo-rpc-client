@@ -4,6 +4,7 @@ import { createSubs } from './subs.js'
 
 /**
  * @param {import('../../types').Options} config
+ * @returns {import('../../types').NamePubsubAPI}
  */
 export function createPubsub (config) {
   return {

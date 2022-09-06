@@ -3,14 +3,9 @@ import { configure } from '../lib/configure.js'
 import { normaliseInput } from 'ipfs-core-utils/pins/normalise-input'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pin').API<HTTPClientExtraOptions>} PinAPI
- */
-
 export const createAddAll = configure(api => {
   /**
-   * @type {PinAPI["addAll"]}
+   * @type {import('../types').PinAPI["addAll"]}
    */
   async function * addAll (source, options = {}) {
     for await (const { path, recursive, metadata } of normaliseInput(source)) {
@@ -31,6 +26,7 @@ export const createAddAll = configure(api => {
           for (const cid of pin.Pins) {
             yield CID.parse(cid)
           }
+          // eslint-disable-next-line no-continue
           continue
         }
 

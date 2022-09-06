@@ -1,4 +1,8 @@
 
+/**
+ *
+ * @param {Promise<unknown> | () => Promise<unknown>} fnOrPromise
+ */
 export async function throwsAsync (fnOrPromise) {
   try {
     await (fnOrPromise.then ? fnOrPromise : fnOrPromise())

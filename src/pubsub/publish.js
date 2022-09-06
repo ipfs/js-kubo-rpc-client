@@ -4,14 +4,9 @@ import { multipartRequest } from 'ipfs-core-utils/multipart-request'
 import { abortSignal } from '../lib/abort-signal.js'
 import { textToUrlSafeRpc } from '../lib/http-rpc-wire-format.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pubsub').API<HTTPClientExtraOptions>} PubsubAPI
- */
-
 export const createPublish = configure(api => {
   /**
-   * @type {PubsubAPI["publish"]}
+   * @type {import('../types').PubsubAPI["publish"]}
    */
   async function publish (topic, data, options = {}) {
     const searchParams = toUrlSearchParams({

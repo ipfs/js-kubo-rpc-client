@@ -2,14 +2,9 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { Multiaddr } from '@multiformats/multiaddr'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/bootstrap').API<HTTPClientExtraOptions>} BootstrapAPI
- */
-
 export const createReset = configure(api => {
   /**
-   * @type {BootstrapAPI["reset"]}
+   * @type {import('../types.js').BootstrapAPI["reset"]}
    */
   async function reset (options = {}) {
     const res = await api.post('bootstrap/add', {

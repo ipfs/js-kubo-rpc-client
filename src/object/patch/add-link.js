@@ -2,14 +2,9 @@ import { CID } from 'multiformats/cid'
 import { configure } from '../../lib/configure.js'
 import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/object/patch').API<HTTPClientExtraOptions>} ObjectPatchAPI
- */
-
 export const createAddLink = configure(api => {
   /**
-   * @type {ObjectPatchAPI["addLink"]}
+   * @type {import('../../types').ObjectPatchAPI["addLink"]}
    */
   async function addLink (cid, dLink, options = {}) {
     const res = await api.post('object/patch/add-link', {

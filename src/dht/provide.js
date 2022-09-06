@@ -2,18 +2,12 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { mapEvent } from './map-event.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/dht').API<HTTPClientExtraOptions>} DHTAPI
- * @typedef {import('multiformats/cid').CID} CID
- */
-
 export const createProvide = configure(api => {
   /**
-   * @type {DHTAPI["provide"]}
+   * @type {import('../types').DHTAPI["provide"]}
    */
   async function * provide (cids, options = { recursive: false }) {
-    /** @type {CID[]} */
+    /** @type {import('../types').CID[]} */
     const cidArr = Array.isArray(cids) ? cids : [cids]
 
     const res = await api.post('dht/provide', {

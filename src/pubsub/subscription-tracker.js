@@ -1,21 +1,19 @@
 
 /**
- * @typedef {import('@libp2p/interface-pubsub').Message} Message
- * @typedef {import('@libp2p/interfaces/events').EventHandler<Message>} MessageHandlerFn
- * @typedef {object} Subscription
- * @property {MessageHandlerFn} handler
+ *
+ * @property {import('../types').MessageHandlerFn} handler
  * @property {AbortController} controller
  */
 
 export class SubscriptionTracker {
   constructor () {
-    /** @type {Map<string, Subscription[]>} */
+    /** @type {Map<string, import('../types').PubsubSubscription[]>} */
     this._subs = new Map()
   }
 
   /**
    * @param {string} topic
-   * @param {MessageHandlerFn} handler
+   * @param {import('../types').MessageHandlerFn} handler
    * @param {AbortSignal} [signal]
    * @returns {AbortSignal}
    */
@@ -41,7 +39,7 @@ export class SubscriptionTracker {
 
   /**
    * @param {string} topic
-   * @param {MessageHandlerFn} [handler]
+   * @param {import('../types').MessageHandlerFn} [handler]
    */
   unsubscribe (topic, handler) {
     const subs = this._subs.get(topic) || []

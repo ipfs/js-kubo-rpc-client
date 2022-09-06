@@ -4,6 +4,7 @@ import { createPubsub } from './pubsub/index.js'
 
 /**
  * @param {import('../types').Options} config
+ * @returns {import('../types').IPFS<import('../types').HTTPClientExtraOptions>['name']}
  */
 export function createName (config) {
   return {

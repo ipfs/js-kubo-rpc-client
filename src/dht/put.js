@@ -5,14 +5,9 @@ import { abortSignal } from '../lib/abort-signal.js'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { mapEvent } from './map-event.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/dht').API<HTTPClientExtraOptions>} DHTAPI
- */
-
 export const createPut = configure(api => {
   /**
-   * @type {DHTAPI["put"]}
+   * @type {import('../types.js').DHTAPI["put"]}
    */
   async function * put (key, value, options = {}) {
     // allow aborting requests on body errors

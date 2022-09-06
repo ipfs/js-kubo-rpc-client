@@ -1,16 +1,11 @@
 import { encodeQuery } from './utils.js'
 
 /**
- * @typedef {import('../../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pin/remote').API<HTTPClientExtraOptions>} RemotePiningAPI
- */
-
-/**
  * @param {import('../../lib/core').Client} client
  */
 export function createRmAll (client) {
   /**
-   * @type {RemotePiningAPI["rmAll"]}
+   * @type {import('../../types').RemotePiningAPI["rmAll"]}
    */
   async function rmAll ({ timeout, signal, headers, ...query }) {
     await client.post('pin/remote/rm', {

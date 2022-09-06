@@ -3,11 +3,6 @@ import last from 'it-last'
 import { configure } from '../lib/configure.js'
 
 /**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/pin').API<HTTPClientExtraOptions>} PinAPI
- */
-
-/**
  * @param {import('../types').Options} config
  */
 export function createAdd (config) {
@@ -15,7 +10,7 @@ export function createAdd (config) {
 
   return configure(() => {
     /**
-     * @type {PinAPI["add"]}
+     * @type {import('../types').PinAPI["add"]}
      */
     async function add (path, options = {}) {
       // @ts-expect-error last can return undefined

@@ -1,0 +1,19 @@
+
+{
+  "extends": [
+    "ipfs"
+  ],
+  "env": {
+    "es2021": true,
+    "node": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "no-return-await": "off",
+    "no-undef-init": "off",
+    "no-warning-comments": "off"
+  }
+}

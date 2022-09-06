@@ -1,27 +1,12 @@
-
 /* eslint-env browser */
-
 import { Client } from './core.js'
 
-// Set default configuration and call create function with them
 /**
- * @typedef { import("../types").Options } Options
- */
-
-/**
+ * Set default configuration and call create function with them
+ *
  * @template T
- * @typedef {(client: Client, clientOptions: Options) => T} Fn
- */
-
-/**
- * @template T
- * @typedef {(clientOptions: Options) => T} Factory
- */
-
-/**
- * @template T
- * @param {Fn<T>} fn
- * @returns {Factory<T>}
+ * @param {import('../types').ConfigureFn<T>} fn
+ * @returns {import('../types').ConfigureFactory<T>}
  */
 export const configure = (fn) => {
   return (options) => {

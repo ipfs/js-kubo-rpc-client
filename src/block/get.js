@@ -1,14 +1,9 @@
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/block').API<HTTPClientExtraOptions>} BlockAPI
- */
-
 export const createGet = configure(api => {
   /**
-   * @type {BlockAPI["get"]}
+   * @type {import('../types').BlockAPI["get"]}
    */
   async function get (cid, options = {}) {
     const res = await api.post('block/get', {

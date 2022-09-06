@@ -2,14 +2,9 @@ import { CID } from 'multiformats/cid'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
- * @typedef {import('ipfs-core-types/src/object').API<HTTPClientExtraOptions>} ObjectAPI
- */
-
 export const createLinks = configure(api => {
   /**
-   * @type {ObjectAPI["links"]}
+   * @type {import('../types').ObjectAPI["links"]}
    */
   async function links (cid, options = {}) {
     const res = await api.post('object/links', {
