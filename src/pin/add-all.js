@@ -26,6 +26,7 @@ export const createAddAll = configure(api => {
           for (const cid of pin.Pins) {
             yield CID.parse(cid)
           }
+          // eslint-disable-next-line no-continue
           continue
         }
 

@@ -18,9 +18,6 @@ const DEFAULT_HOST = isBrowser || isWebWorker ? location.hostname : 'localhost'
 const DEFAULT_PORT = isBrowser || isWebWorker ? location.port : '5001'
 
 /**
- 
-export type HTTPOptions = import('ipfs-utils/src/types').HTTPOptions
- *
  * @typedef {import('../types').Options} Options
  */
 

@@ -1,10 +1,5 @@
 
 /**
-
-export type Message = import('@libp2p/interface-pubsub').Message
-
-export type MessageHandlerFn = import('@libp2p/interfaces/events').EventHandler<Message>
-export type MessageHandlerFn = import('@libp2p/interfaces/events').EventHandler<Message>
  *
  * @property {import('../types').MessageHandlerFn} handler
  * @property {AbortController} controller

@@ -27,6 +27,7 @@ export const createRmAll = configure(api => {
       for await (const pin of res.ndjson()) {
         if (pin.Pins) { // non-streaming response
           yield * pin.Pins.map((/** @type {string} */ cid) => CID.parse(cid))
+          // eslint-disable-next-line no-continue
           continue
         }
         yield CID.parse(pin)

@@ -9,7 +9,7 @@ const f = factory()
 // Determine if a ping response object is a pong, or something else, like a status message
 /**
  *
- * @param pingResponse
+ * @param {unknown} pingResponse
  */
 function isPong (pingResponse) {
   return Boolean(pingResponse && pingResponse.success && !pingResponse.text)

@@ -58,7 +58,7 @@ import globSourceImport from 'ipfs-utils/src/files/glob-source.js'
  */
 
 /**
- * @param {Options} options
+ * @param {import('./types').Options} options
  */
 export function create (options = {}) {
   /**

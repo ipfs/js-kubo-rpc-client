@@ -2,11 +2,6 @@ import { CID } from 'multiformats/cid'
 import errCode from 'err-code'
 
 /**
-
-export type AbortOptions = import('ipfs-core-types/src/utils').AbortOptions
- */
-
-/**
  * Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
  *
  * @param {CID} cid - the CID where the resolving starts

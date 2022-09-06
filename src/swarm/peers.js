@@ -24,6 +24,7 @@ export const createPeers = configure(api => {
         muxer: peer.Muxer,
         latency: peer.Latency,
         streams: peer.Streams,
+        // eslint-disable-next-line no-nested-ternary
         direction: peer.Direction == null ? undefined : peer.Direction === 0 ? 'inbound' : 'outbound'
       }
     })

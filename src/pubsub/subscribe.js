@@ -96,6 +96,7 @@ async function readMessages (response, { onMessage, onEnd, onError }) {
     for await (const msg of response.ndjson()) {
       try {
         if (!msg.from) {
+          // eslint-disable-next-line no-continue
           continue
         }
 

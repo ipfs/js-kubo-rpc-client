@@ -16,7 +16,7 @@ export const createPut = configure(api => {
     let res
     try {
       const response = await api.post('block/put', {
-        signal: signal,
+        signal,
         searchParams: toUrlSearchParams(options),
         ...(
           await multipartRequest([data], controller, options.headers)

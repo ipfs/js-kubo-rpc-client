@@ -2,13 +2,6 @@ import { CID } from 'multiformats/cid'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/**
- * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
-
-export type BitswapAPI = import('ipfs-core-types/src/bitswap').API<HTTPClientExtraOptions>
-export type BitswapAPI = import('ipfs-core-types/src/bitswap').API<HTTPClientExtraOptions>
- */
-
 export const createWantlist = configure(api => {
   /**
    * @type {import('../types').BitswapAPI["wantlist"]}

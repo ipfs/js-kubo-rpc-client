@@ -13,12 +13,6 @@ import { Multiaddr } from '@multiformats/multiaddr'
 import { peerIdFromString } from '@libp2p/peer-id'
 
 /**
-
-export type PeerId = import('@libp2p/interface-peer-id').PeerId
-export type PeerId = import('@libp2p/interface-peer-id').PeerId
- */
-
-/**
  * @param {import('../types').MapEvent} event
  * @returns {import('../types').QueryEvent}
  */

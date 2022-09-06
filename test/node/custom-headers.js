@@ -8,7 +8,7 @@ import http from 'http'
 
 /**
  *
- * @param fn
+ * @param {() => any} fn
  */
 function startServer (fn) {
   let headersResolve

@@ -1,7 +1,3 @@
-/**
-
-export type RemotePinServiceWithStat = import('ipfs-core-types/src/pin/remote/service').RemotePinServiceWithStat
- */
 
 /**
  * @param {URL} url

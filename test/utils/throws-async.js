@@ -1,7 +1,7 @@
 
 /**
  *
- * @param fnOrPromise
+ * @param {Promise<unknown> | () => Promise<unknown>} fnOrPromise
  */
 export async function throwsAsync (fnOrPromise) {
   try {

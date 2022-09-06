@@ -6,6 +6,7 @@ import type { Multiaddr } from '@multiformats/multiaddr'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 import type { IPFS } from 'ipfs-core-types'
 import type { Message } from '@libp2p/interface-pubsub'
+import type IpfsUtilsHttp from 'ipfs-utils/src/http.js'
 
 export interface Options {
   host?: string
@@ -14,7 +15,7 @@ export interface Options {
   headers?: Headers | Record<string, string>
   timeout?: number | string
   apiPath?: string
-  url?: URL|string|Multiaddr
+  url?: URL | string | Multiaddr
   ipld?: Partial<IPLDOptions>
   agent?: HttpAgent | HttpsAgent
 }
@@ -46,6 +47,10 @@ export interface EndpointConfig {
   'api-path': string
 }
 
+export interface IpfsUtilsHttpClient extends IpfsUtilsHttp {
+
+}
+
 export interface IPFSHTTPClient extends IPFS<HTTPClientExtraOptions> {
   getEndpointConfig: () => EndpointConfig
 }
@@ -66,6 +71,8 @@ export type PubsubSubscription = {
   handler: MessageHandlerFn
   controller: AbortController
 }
+export type ConfigureFn<T> = (client: IpfsUtilsHttpClient, clientOptions: Options) => T
+export type ConfigureFactory<T> = (clientOptions: Options) => T
 
 export type { PeerInfo } from '@libp2p/interface-peer-info'
 export type { IPFSEntry, AddResult, AddProgressFn as IPFSCoreAddProgressFn } from 'ipfs-core-types/src/root'
