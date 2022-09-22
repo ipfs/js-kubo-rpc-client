@@ -175,7 +175,7 @@
     "any-signal": "^3.0.1",
     "dag-jose": "^2.0.1",
     "err-code": "^3.0.1",
-    "ipfs-core-utils": "^0.15.1",
+    "ipfs-core-utils": "^0.16.1",
     "ipfs-utils": "^9.0.7",
     "it-first": "^1.0.6",
     "it-last": "^1.0.6",
