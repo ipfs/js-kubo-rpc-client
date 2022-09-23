@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.0...v1.0.1) (2022-09-23)
+
+
+### Dependencies
+
+* bump @multiformats/multiaddr from 10.3.3 to 11.0.0 ([#25](https://github.com/ipfs/js-kubo-rpc-client/issues/25)) ([32b1939](https://github.com/ipfs/js-kubo-rpc-client/commit/32b1939432349ddd49e0ca412d74980d6c0f992b))
+
 ## 1.0.0 (2022-09-06)
 
 
