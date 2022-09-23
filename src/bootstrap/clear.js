@@ -1,6 +1,6 @@
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { Multiaddr } from '@multiformats/multiaddr'
+import { multiaddr } from '@multiformats/multiaddr'
 
 export const createClear = configure(api => {
   /**
@@ -18,7 +18,7 @@ export const createClear = configure(api => {
 
     const { Peers } = await res.json()
 
-    return { Peers: Peers.map((/** @type {string} */ ma) => new Multiaddr(ma)) }
+    return { Peers: Peers.map((/** @type {string} */ ma) => multiaddr(ma)) }
   }
 
   return clear
