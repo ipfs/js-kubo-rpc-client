@@ -7,14 +7,17 @@ export default {
     bundlesizeMax: '66KB'
   },
   test: {
+    bail: false,
     async before (options) {
+      // const { PinningService } = await import('aegir/test/utils/mock-pinning-service.js')
+      // const pinningService = await PinningService.start()
       const port = await getPort()
       const server = createServer({
         host: '127.0.0.1',
         port: port
       }, {
         type: 'go',
-        ipfsHttpModule: await import('./src/index.js'),
+        kuboRpcModule: await import('./src/index.js'),
         ipfsBin: (await import('go-ipfs')).default.path()
       })
 
@@ -22,7 +25,9 @@ export default {
       return {
         server,
         env: {
-          IPFSD_SERVER: `http://${server.host}:${server.port}`
+          IPFSD_SERVER: `http://${server.host}:${server.port}`,
+          // PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
+          PINNING_SERVICE_ENDPOINT: 'http://127.0.0.1:5001'
         }
       }
     },
