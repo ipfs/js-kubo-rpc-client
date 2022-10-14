@@ -6,10 +6,10 @@ import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { UnixFS } from 'ipfs-unixfs'
 import isoRandomStream from 'iso-random-stream'
-const { randomBytes } = isoRandomStream
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
+const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

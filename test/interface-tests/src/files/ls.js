@@ -8,7 +8,7 @@ import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import all from 'it-all'
 import isoRandomStream from 'iso-random-stream'
 import * as raw from 'multiformats/codecs/raw'
-const { randomBytes } = isoRandomStream
+const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

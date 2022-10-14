@@ -9,9 +9,9 @@ import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { CID } from 'multiformats/cid'
 import { identity } from 'multiformats/hashes/identity'
 import isoRandomStream from 'iso-random-stream'
-const { randomBytes } = isoRandomStream
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import * as raw from 'multiformats/codecs/raw'
+const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

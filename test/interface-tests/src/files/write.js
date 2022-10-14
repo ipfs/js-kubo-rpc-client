@@ -15,7 +15,8 @@ import all from 'it-all'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import * as raw from 'multiformats/codecs/raw'
 import map from 'it-map'
-const { randomBytes, randomStream } = isoRandomStream
+const randomBytes = isoRandomStream
+const randomStream = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

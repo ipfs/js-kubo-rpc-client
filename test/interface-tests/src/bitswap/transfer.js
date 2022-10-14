@@ -9,7 +9,7 @@ import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import pmap from 'p-map'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
-const { randomBytes } = isoRandomStream
+const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

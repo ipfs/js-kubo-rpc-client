@@ -12,7 +12,7 @@ import { CID } from 'multiformats/cid'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import isoRandomStream from 'iso-random-stream'
-const { randomBytes } = isoRandomStream
+const randomBytes = isoRandomStream
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
  */

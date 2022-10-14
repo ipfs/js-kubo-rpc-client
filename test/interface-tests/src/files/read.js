@@ -7,8 +7,7 @@ import { fixtures } from '../utils/index.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import isoRandomStream from 'iso-random-stream'
-const { randomBytes } = isoRandomStream
+import randomBytes from 'iso-random-stream'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
