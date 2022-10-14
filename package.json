@@ -183,7 +183,7 @@
     "multiformats": "^9.7.1",
     "parse-duration": "^1.0.2",
     "stream-to-it": "^0.2.4",
-    "uint8arrays": "^3.1.0"
+    "uint8arrays": "^4.0.2"
   },
   "devDependencies": {
     "@ipld/car": "^4.1.6",
