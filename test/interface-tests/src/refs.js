@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from './utils/mocha.js'
-import loadFixture from 'aegir/utils/fixtures.js'
+import loadFixture from 'aegir/fixtures'
 import { CID } from 'multiformats/cid'
 import all from 'it-all'
 import drain from 'it-drain'
@@ -16,7 +16,7 @@ import { UnixFS } from 'ipfs-unixfs'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testRefs (factory, options) {
   const describe = getDescribe(options)
@@ -375,7 +375,7 @@ function loadDagContent (ipfs, node) {
    */
   const store = {
     putData: (data) => {
-      const inner = new UnixFS({ type: 'file', data: data })
+      const inner = new UnixFS({ type: 'file', data })
       const serialized = dagPB.encode({
         Data: inner.marshal(),
         Links: []

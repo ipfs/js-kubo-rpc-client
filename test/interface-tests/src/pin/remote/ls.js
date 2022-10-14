@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'

@@ -2,10 +2,11 @@
 
 import * as dagPB from '@ipld/dag-pb'
 import { nanoid } from 'nanoid'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { UnixFS } from 'ipfs-unixfs'
-import { randomBytes } from 'iso-random-stream'
+import isoRandomStream from 'iso-random-stream'
+const { randomBytes } = isoRandomStream
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
@@ -16,7 +17,7 @@ import { sha256 } from 'multiformats/hashes/sha2'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testGet (factory, options) {
   const describe = getDescribe(options)

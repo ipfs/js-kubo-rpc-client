@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import drain from 'it-drain'
 import testTimeout from '../utils/test-timeout.js'
@@ -12,7 +12,7 @@ import { ensureReachable } from './utils.js'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testQuery (factory, options) {
   const describe = getDescribe(options)

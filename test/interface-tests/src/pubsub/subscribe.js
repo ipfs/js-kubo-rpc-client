@@ -3,10 +3,10 @@
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { nanoid } from 'nanoid'
-import pushable from 'it-pushable'
+import { pushable } from 'it-pushable'
 import all from 'it-all'
 import { waitForPeers, getTopic } from './utils.js'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
 import { isWebWorker, isNode } from 'ipfs-utils/src/env.js'
@@ -20,7 +20,7 @@ import sinon from 'sinon'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testSubscribe (factory, options) {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()

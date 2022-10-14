@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { Multiaddr } from 'multiaddr'
 import { isWebWorker } from 'ipfs-utils/src/env.js'
@@ -12,7 +12,7 @@ import retry from 'p-retry'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testId (factory, options) {
   const describe = getDescribe(options)

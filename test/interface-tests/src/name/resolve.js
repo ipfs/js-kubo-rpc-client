@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
 import PeerId from 'peer-id'
@@ -15,7 +15,7 @@ import * as Digest from 'multiformats/hashes/digest'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testResolve (factory, options) {
   const describe = getDescribe(options)

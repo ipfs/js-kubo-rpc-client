@@ -5,7 +5,7 @@ import { Readable } from 'readable-stream'
 import { supportsFileReader } from 'ipfs-utils/src/supports.js'
 import urlSource from 'ipfs-utils/src/files/url-source.js'
 import { isNode } from 'ipfs-utils/src/env.js'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import last from 'it-last'
@@ -23,7 +23,7 @@ const redirectUrl = (/** @type {string} */ url) => `${process.env.ECHO_SERVER}/r
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testAdd (factory, options) {
   const describe = getDescribe(options)

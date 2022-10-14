@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import PeerId from 'peer-id'
 import { isNode } from 'ipfs-utils/src/env.js'
@@ -28,7 +28,7 @@ const daemonsOptions = {
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testPubsub (factory, options) {
   const describe = getDescribe(options)

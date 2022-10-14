@@ -3,18 +3,19 @@
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { nanoid } from 'nanoid'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { isNode } from 'ipfs-utils/src/env.js'
 import { sha512 } from 'multiformats/hashes/sha2'
 import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { createTwoShards } from '../utils/create-two-shards.js'
-import { randomBytes, randomStream } from 'iso-random-stream'
+import isoRandomStream from 'iso-random-stream'
 import all from 'it-all'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import * as raw from 'multiformats/codecs/raw'
 import map from 'it-map'
+const { randomBytes, randomStream } = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -22,7 +23,7 @@ import map from 'it-map'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testWrite (factory, options) {
   const describe = getDescribe(options)
@@ -364,7 +365,7 @@ export function testWrite (factory, options) {
         await expect(ipfs.files.stat(path)).to.eventually.have.property('size', contentSize + newContent.length - 1)
 
         const buffer = uint8ArrayConcat(await all(ipfs.files.read(path, {
-          offset: offset
+          offset
         })))
 
         expect(buffer).to.deep.equal(newContent)

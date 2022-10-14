@@ -5,21 +5,21 @@ import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { nanoid } from 'nanoid'
 import all from 'it-all'
 import { fixtures } from '../utils/index.js'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { identity } from 'multiformats/hashes/identity'
 import { CID } from 'multiformats/cid'
-import { randomBytes } from 'iso-random-stream'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import isShardAtPath from '../utils/is-shard-at-path.js'
-
+import isoRandomStream from 'iso-random-stream'
+const { randomBytes } = isoRandomStream
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
  */
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testCp (factory, options) {
   const describe = getDescribe(options)

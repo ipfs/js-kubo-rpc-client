@@ -2,7 +2,7 @@
 
 import PeerId from 'peer-id'
 import all from 'it-all'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 
 /**
@@ -11,7 +11,7 @@ import { getDescribe, getIt } from '../utils/mocha.js'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testCancel (factory, options) {
   const describe = getDescribe(options)

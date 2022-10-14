@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import isIpfs from 'is-ipfs'
+import { ipfsPath } from 'is-ipfs'
 import { nanoid } from 'nanoid'
 import { base64url } from 'multiformats/bases/base64'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
 import { isWebWorker } from 'ipfs-utils/src/env.js'
@@ -17,7 +17,7 @@ import merge from 'merge-options'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testResolve (factory, options) {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
@@ -100,7 +100,7 @@ export function testResolve (factory, options) {
       this.retries(3)
       const resolved = await ipfs.resolve('/ipns/ipfs.io')
 
-      expect(isIpfs.ipfsPath(resolved)).to.be.true()
+      expect(ipfsPath(resolved)).to.be.true()
     })
 
     it('should resolve IPNS link recursively by default', async function () {

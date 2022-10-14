@@ -9,7 +9,7 @@ import all from 'it-all'
 import drain from 'it-drain'
 import last from 'it-last'
 import map from 'it-map'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from './utils/mocha.js'
 import testTimeout from './utils/test-timeout.js'
 import { importer } from 'ipfs-unixfs-importer'
@@ -45,7 +45,7 @@ const emptyDir = (name) => ({ path: `test-folder/${name}` })
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testGet (factory, options) {
   const describe = getDescribe(options)

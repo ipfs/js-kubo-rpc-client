@@ -2,12 +2,13 @@
 
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import { randomBytes } from 'iso-random-stream'
+import isoRandomStream from 'iso-random-stream'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import all from 'it-all'
+const { randomBytes } = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -15,7 +16,7 @@ import all from 'it-all'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testMv (factory, options) {
   const describe = getDescribe(options)

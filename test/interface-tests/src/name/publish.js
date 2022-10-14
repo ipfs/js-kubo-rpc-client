@@ -3,7 +3,7 @@
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { fixture } from './utils.js'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import last from 'it-last'
 import PeerId from 'peer-id'
@@ -14,7 +14,7 @@ import PeerId from 'peer-id'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testPublish (factory, options) {
   const describe = getDescribe(options)

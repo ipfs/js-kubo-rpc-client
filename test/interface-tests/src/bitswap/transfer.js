@@ -1,14 +1,15 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { isWebWorker } from 'ipfs-utils/src/env.js'
-import { randomBytes } from 'iso-random-stream'
+import isoRandomStream from 'iso-random-stream'
 import concat from 'it-concat'
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import pmap from 'p-map'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+const { randomBytes } = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -17,7 +18,7 @@ import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testTransfer (factory, options) {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()

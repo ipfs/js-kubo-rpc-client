@@ -1,13 +1,13 @@
 /* eslint-env mocha */
 
 import all from 'it-all'
-import { expect } from 'aegir/utils/chai.js'
+import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { CarReader } from '@ipld/car'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import * as dagPB from '@ipld/dag-pb'
 import * as dagCBOR from '@ipld/dag-cbor'
-import loadFixture from 'aegir/utils/fixtures.js'
+import loadFixture from 'aegir/fixtures'
 import toBuffer from 'it-to-buffer'
 
 /**
@@ -16,7 +16,7 @@ import toBuffer from 'it-to-buffer'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testExport (factory, options) {
   const describe = getDescribe(options)
