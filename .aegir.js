@@ -7,6 +7,7 @@ export default {
     bundlesizeMax: '66KB'
   },
   test: {
+    bail: false,
     async before (options) {
       // const { PinningService } = await import('aegir/test/utils/mock-pinning-service.js')
       // const pinningService = await PinningService.start()

@@ -10,9 +10,9 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import last from 'it-last'
 import * as raw from 'multiformats/codecs/raw'
-// import * as dagPB from '@ipld/dag-pb'
+import * as dagPB from '@ipld/dag-pb'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { isFirefox } from '../../constants.js'
+import { brokenDuringKuboRpcClientMigration, isFirefox, notImplemented } from '../../constants.js'
 
 const echoUrl = (/** @type {string} */ text) => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
 const redirectUrl = (/** @type {string} */ url) => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
@@ -36,37 +36,37 @@ export function testAdd (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    // /**
-    //  * @param {string | number} mode
-    //  * @param {number} expectedMode
-    //  */
-    // async function testMode (mode, expectedMode) {
-    //   const content = String(Math.random() + Date.now())
-    //   const file = await ipfs.add({
-    //     content,
-    //     mode
-    //   })
-    //   expect(file).to.have.property('mode', expectedMode)
+    /**
+     * @param {string | number} mode
+     * @param {number} expectedMode
+     */
+    async function testMode (mode, expectedMode) {
+      const content = String(Math.random() + Date.now())
+      const file = await ipfs.add({
+        content,
+        mode
+      })
+      expect(file).to.have.property('mode', expectedMode)
 
-    //   const stats = await ipfs.files.stat(`/ipfs/${file.cid}`)
-    //   expect(stats).to.have.property('mode', expectedMode)
-    // }
+      const stats = await ipfs.files.stat(`/ipfs/${file.cid}`)
+      expect(stats).to.have.property('mode', expectedMode)
+    }
 
-    // /**
-    //  * @param {MtimeLike} mtime
-    //  * @param {MtimeLike} expectedMtime
-    //  */
-    // async function testMtime (mtime, expectedMtime) {
-    //   const content = String(Math.random() + Date.now())
-    //   const file = await ipfs.add({
-    //     content,
-    //     mtime
-    //   })
-    //   expect(file).to.have.deep.property('mtime', expectedMtime)
+    /**
+     * @param {MtimeLike} mtime
+     * @param {MtimeLike} expectedMtime
+     */
+    async function testMtime (mtime, expectedMtime) {
+      const content = String(Math.random() + Date.now())
+      const file = await ipfs.add({
+        content,
+        mtime
+      })
+      expect(file).to.have.deep.property('mtime', expectedMtime)
 
-    //   const stats = await ipfs.files.stat(`/ipfs/${file.cid}`)
-    //   expect(stats).to.have.deep.property('mtime', expectedMtime)
-    // }
+      const stats = await ipfs.files.stat(`/ipfs/${file.cid}`)
+      expect(stats).to.have.deep.property('mtime', expectedMtime)
+    }
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
@@ -218,6 +218,9 @@ export function testAdd (factory, options) {
     })
 
     it('should add readable stream', async function () {
+      if (brokenDuringKuboRpcClientMigration()) {
+        return this.skip('Skipping due to time constraints. See https://github.com/ipfs/js-kubo-rpc-client/issues/5')
+      }
       if (!isNode) {
         // @ts-ignore this is mocha
         this.skip()
@@ -298,61 +301,79 @@ export function testAdd (factory, options) {
       expect(file).to.have.nested.property('cid.multihash.code', sha512.code)
     })
 
-    // it('should add with mode as string', async function () {
-    //   // @ts-ignore this is mocha
-    //   this.slow(10 * 1000)
-    //   const mode = '0777'
-    //   await testMode(mode, parseInt(mode, 8))
-    // })
+    it('should add with mode as string', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      // @ts-ignore this is mocha
+      this.slow(10 * 1000)
+      const mode = '0777'
+      await testMode(mode, parseInt(mode, 8))
+    })
 
-    // it('should add with mode as number', async function () {
-    //   // @ts-ignore this is mocha
-    //   this.slow(10 * 1000)
-    //   const mode = parseInt('0777', 8)
-    //   await testMode(mode, mode)
-    // })
+    it('should add with mode as number', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      // @ts-ignore this is mocha
+      this.slow(10 * 1000)
+      const mode = parseInt('0777', 8)
+      await testMode(mode, mode)
+    })
 
-    // it('should add with mtime as Date', async function () {
-    //   // @ts-ignore this is mocha
-    //   this.slow(10 * 1000)
-    //   const mtime = new Date(5000)
-    //   await testMtime(mtime, {
-    //     secs: 5,
-    //     nsecs: 0
-    //   })
-    // })
+    it('should add with mtime as Date', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      // @ts-ignore this is mocha
+      this.slow(10 * 1000)
+      const mtime = new Date(5000)
+      await testMtime(mtime, {
+        secs: 5,
+        nsecs: 0
+      })
+    })
 
-    // it('should add with mtime as { nsecs, secs }', async function () {
-    //   // @ts-ignore this is mocha
-    //   this.slow(10 * 1000)
-    //   const mtime = {
-    //     secs: 5,
-    //     nsecs: 0
-    //   }
-    //   await testMtime(mtime, mtime)
-    // })
+    it('should add with mtime as { nsecs, secs }', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      // @ts-ignore this is mocha
+      this.slow(10 * 1000)
+      const mtime = {
+        secs: 5,
+        nsecs: 0
+      }
+      await testMtime(mtime, mtime)
+    })
 
-    // it('should add with mtime as timespec', async function () {
-    //   // @ts-ignore this is mocha
-    //   this.slow(10 * 1000)
-    //   await testMtime({
-    //     Seconds: 5,
-    //     FractionalNanoseconds: 0
-    //   }, {
-    //     secs: 5,
-    //     nsecs: 0
-    //   })
-    // })
+    it('should add with mtime as timespec', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      // @ts-ignore this is mocha
+      this.slow(10 * 1000)
+      await testMtime({
+        Seconds: 5,
+        FractionalNanoseconds: 0
+      }, {
+        secs: 5,
+        nsecs: 0
+      })
+    })
 
-    // it('should add with mtime as hrtime', async function () {
-    //   // @ts-ignore this is mocha
-    //   this.slow(10 * 1000)
-    //   const mtime = process.hrtime()
-    //   await testMtime(mtime, {
-    //     secs: mtime[0],
-    //     nsecs: mtime[1]
-    //   })
-    // })
+    it('should add with mtime as hrtime', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      // @ts-ignore this is mocha
+      this.slow(10 * 1000)
+      const mtime = process.hrtime()
+      await testMtime(mtime, {
+        secs: mtime[0],
+        nsecs: mtime[1]
+      })
+    })
 
     it('should add from a HTTP URL', async () => {
       const text = `TEST${Math.random()}`
@@ -431,23 +452,26 @@ export function testAdd (factory, options) {
       expect(file.size).to.equal(3)
     })
 
-    // it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
-    //   const file = await ipfs.add({
-    //     content: Uint8Array.from([0, 1, 2]),
-    //     mode: 0o123,
-    //     mtime: {
-    //       secs: 1000,
-    //       nsecs: 0
-    //     }
-    //   }, {
-    //     cidVersion: 1,
-    //     rawLeaves: true
-    //   })
+    it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+      const file = await ipfs.add({
+        content: Uint8Array.from([0, 1, 2]),
+        mode: 0o123,
+        mtime: {
+          secs: 1000,
+          nsecs: 0
+        }
+      }, {
+        cidVersion: 1,
+        rawLeaves: true
+      })
 
-    //   expect(file.cid.toString()).to.equal('bafybeifmayxiu375ftlgydntjtffy5cssptjvxqw6vyuvtymntm37mpvua')
-    //   expect(file.cid.code).to.equal(dagPB.code)
-    //   expect(file.size).to.equal(18)
-    // })
+      expect(file.cid.toString()).to.equal('bafybeifmayxiu375ftlgydntjtffy5cssptjvxqw6vyuvtymntm37mpvua')
+      expect(file.cid.code).to.equal(dagPB.code)
+      expect(file.size).to.equal(18)
+    })
 
     it('should add a file with a v1 CID', async () => {
       const file = await ipfs.add(Uint8Array.from([0, 1, 2]), {
