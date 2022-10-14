@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
+import { notImplemented } from '../../../constants.js'
 import { getDescribe, getIt } from '../utils/mocha.js'
 
 /**
@@ -22,12 +23,18 @@ export function testUnwant (factory, options) {
     let ipfs
 
     before(async () => {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
       ipfs = (await factory.spawn()).api
     })
 
     after(() => factory.clean())
 
     it('should throw error for invalid CID input', async () => {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
       // @ts-expect-error input is invalid
       await expect(ipfs.bitswap.unwant('INVALID CID')).to.eventually.be.rejected()
     })

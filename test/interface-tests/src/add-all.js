@@ -16,6 +16,7 @@ import * as raw from 'multiformats/codecs/raw'
 // import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
+import { isFirefox } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -600,6 +601,9 @@ export function testAddAll (factory, options) {
     // })
 
     it('should add big files', async function () {
+      if (isFirefox) {
+        return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
+      }
       const totalSize = 1024 * 1024 * 200
       const chunkSize = 1024 * 1024 * 99
 

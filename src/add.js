@@ -13,8 +13,11 @@ export function createAdd (options) {
      * @type {import('./types').RootAPI["add"]}
      */
     async function add (input, options = {}) {
+      const source = normaliseInput(input)
+      // @ts-expect-error - all may return undefined if source is empty
+      const addAllPromise = all(source, options)
       // @ts-expect-error - last may return undefined if source is empty
-      return await last(all(normaliseInput(input), options))
+      return await last(addAllPromise)
     }
     return add
   })(options)

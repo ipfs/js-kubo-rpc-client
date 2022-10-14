@@ -12,6 +12,7 @@ import last from 'it-last'
 import * as raw from 'multiformats/codecs/raw'
 // import * as dagPB from '@ipld/dag-pb'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
+import { isFirefox } from '../../constants.js'
 
 const echoUrl = (/** @type {string} */ text) => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
 const redirectUrl = (/** @type {string} */ url) => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
@@ -106,6 +107,9 @@ export function testAdd (factory, options) {
     })
 
     it('should add a BIG Uint8Array', async () => {
+      if (isFirefox) {
+        return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
+      }
       const file = await ipfs.add(fixtures.bigFile.data)
 
       expect(file.cid.toString()).to.equal(fixtures.bigFile.cid.toString())
@@ -115,6 +119,9 @@ export function testAdd (factory, options) {
     })
 
     it('should add a BIG Uint8Array with progress enabled', async () => {
+      if (isFirefox) {
+        return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
+      }
       let progCalled = false
       let accumProgress = 0
 

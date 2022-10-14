@@ -1,96 +1,25 @@
 /* eslint-env mocha */
 
+import { isWindows, isFirefox } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
-const isWindows = globalThis.process && globalThis.process.platform && globalThis.process.platform === 'win32'
-const isFirefox = globalThis.navigator?.userAgent?.toLowerCase().includes('firefox')
 
 /** @typedef {import("ipfsd-ctl").ControllerOptions} ControllerOptions */
 
-describe('interface-ipfs-core over kubo-rpc-client tests against go-ipfs', () => {
+describe('kubo-rpc-client tests against go-ipfs', () => {
   const commonFactory = factory({
     type: 'go'
   })
 
-  tests.root(commonFactory, {
-    skip: [
-      {
-        name: 'should add with mode as string',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should add with mode as number',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should add with mtime as Date',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should add with mtime as { nsecs, secs }',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should add with mtime as timespec',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should add with mtime as hrtime',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should export a chunk of a file',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should ls with metadata',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should ls single file with metadata',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should ls single file without containing directory with metadata',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should override raw leaves when file is smaller than one block and metadata is present',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should add directories with metadata',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      {
-        name: 'should support bidirectional streaming',
-        reason: 'Not supported by http'
-      },
-      {
-        name: 'should error during add-all stream',
-        reason: 'Not supported by http'
-      }
-    ].concat(isFirefox
-      ? [{
-          name: 'should add a BIG Uint8Array',
-          reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
-        }, {
-          name: 'should add a BIG Uint8Array with progress enabled',
-          reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
-        }, {
-          name: 'should add big files',
-          reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
-        }]
-      : [])
-  })
+  tests.root(commonFactory)
 
   tests.bitswap(commonFactory, {
-    skip: [
-      {
-        name: '.bitswap.unwant',
-        reason: 'TODO not implemented in go-ipfs yet'
-      }
-    ]
+    // skip: [
+    //   {
+    //     name: '.bitswap.unwant',
+    //     reason: 'TODO not implemented in go-ipfs yet'
+    //   }
+    // ]
   })
 
   tests.block(commonFactory)
