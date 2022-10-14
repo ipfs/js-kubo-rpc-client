@@ -13,7 +13,7 @@ import drain from 'it-drain'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testAdd (factory, options) {
   const describe = getDescribe(options)

@@ -13,7 +13,7 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import bufferStream from 'it-buffer-stream'
 import * as raw from 'multiformats/codecs/raw'
-import * as dagPB from '@ipld/dag-pb'
+// import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
 
@@ -36,39 +36,39 @@ export function testAddAll (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    /**
-     * @param {string | number} mode
-     * @param {number} expectedMode
-     */
-    async function testMode (mode, expectedMode) {
-      const content = String(Math.random() + Date.now())
-      const files = await all(ipfs.addAll([{
-        content: uint8ArrayFromString(content),
-        mode
-      }]))
-      expect(files).to.have.length(1)
-      expect(files).to.have.nested.property('[0].mode', expectedMode)
+    // /**
+    //  * @param {string | number} mode
+    //  * @param {number} expectedMode
+    //  */
+    // async function testMode (mode, expectedMode) {
+    //   const content = String(Math.random() + Date.now())
+    //   const files = await all(ipfs.addAll([{
+    //     content: uint8ArrayFromString(content),
+    //     mode
+    //   }]))
+    //   expect(files).to.have.length(1)
+    //   expect(files).to.have.nested.property('[0].mode', expectedMode)
 
-      const stats = await ipfs.files.stat(`/ipfs/${files[0].cid}`)
-      expect(stats).to.have.property('mode', expectedMode)
-    }
+    //   const stats = await ipfs.files.stat(`/ipfs/${files[0].cid}`)
+    //   expect(stats).to.have.property('mode', expectedMode)
+    // }
 
     /**
      * @param {MtimeLike} mtime
      * @param {MtimeLike} expectedMtime
      */
-    async function testMtime (mtime, expectedMtime) {
-      const content = String(Math.random() + Date.now())
-      const files = await all(ipfs.addAll([{
-        content: uint8ArrayFromString(content),
-        mtime
-      }]))
-      expect(files).to.have.length(1)
-      expect(files).to.have.deep.nested.property('[0].mtime', expectedMtime)
+    // async function testMtime (mtime, expectedMtime) {
+    //   const content = String(Math.random() + Date.now())
+    //   const files = await all(ipfs.addAll([{
+    //     content: uint8ArrayFromString(content),
+    //     mtime
+    //   }]))
+    //   expect(files).to.have.length(1)
+    //   expect(files).to.have.deep.nested.property('[0].mtime', expectedMtime)
 
-      const stats = await ipfs.files.stat(`/ipfs/${files[0].cid}`)
-      expect(stats).to.have.deep.property('mtime', expectedMtime)
-    }
+    //   const stats = await ipfs.files.stat(`/ipfs/${files[0].cid}`)
+    //   expect(stats).to.have.deep.property('mtime', expectedMtime)
+    // }
 
     before(async () => { ipfs = (await factory.spawn()).api })
 

@@ -12,7 +12,7 @@ import all from 'it-all'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testRmAll (factory, options) {
   const describe = getDescribe(options)

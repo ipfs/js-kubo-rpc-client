@@ -13,7 +13,7 @@ const validIp4 = new Multiaddr('/ip4/104.236.176.52/tcp/4001/p2p/QmSoLnSGccFuZQJ
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testAdd (factory, options) {
   const describe = getDescribe(options)

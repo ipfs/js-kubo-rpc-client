@@ -11,7 +11,7 @@ import all from 'it-all'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testRm (factory, options) {
   const describe = getDescribe(options)

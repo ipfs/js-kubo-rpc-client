@@ -11,7 +11,7 @@ import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testConnect (factory, options) {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()

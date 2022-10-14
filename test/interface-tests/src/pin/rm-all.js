@@ -12,7 +12,7 @@ import drain from 'it-drain'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testRmAll (factory, options) {
   const describe = getDescribe(options)

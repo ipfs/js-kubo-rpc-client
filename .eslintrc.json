@@ -15,5 +15,6 @@
     "no-return-await": "off",
     "no-undef-init": "off",
     "no-warning-comments": "off"
-  }
+  },
+  "ignorePatterns": [ "gists/", "vendor/", "test/fixtures/", "test/interface-tests/fixtures/"]
 }

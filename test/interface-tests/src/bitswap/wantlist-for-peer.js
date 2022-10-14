@@ -12,7 +12,7 @@ import { CID } from 'multiformats/cid'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testWantlistForPeer (factory, options) {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()

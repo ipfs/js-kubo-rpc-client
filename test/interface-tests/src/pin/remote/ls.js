@@ -12,7 +12,7 @@ import { CID } from 'multiformats/cid'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testLs (factory, options) {
   const describe = getDescribe(options)

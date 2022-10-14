@@ -11,7 +11,7 @@ import waitFor from '../utils/wait-for.js'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testUnsubscribe (factory, options) {
   const describe = getDescribe(options)

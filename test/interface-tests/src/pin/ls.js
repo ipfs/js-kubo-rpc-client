@@ -11,7 +11,7 @@ import all from 'it-all'
 
 /**
  * @param {Factory} factory
- * @param {Object} options
+ * @param {object} options
  */
 export function testLs (factory, options) {
   const describe = getDescribe(options)
@@ -221,7 +221,7 @@ export function testLs (factory, options) {
 
       expect(pinset).to.have.deep.members([{
         type: 'direct',
-        cid: cid,
+        cid,
         metadata
       }])
     })
