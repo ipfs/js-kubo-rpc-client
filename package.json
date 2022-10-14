@@ -180,7 +180,7 @@
     "it-first": "^1.0.6",
     "it-last": "^1.0.6",
     "merge-options": "^3.0.4",
-    "multiformats": "^9.7.1",
+    "multiformats": "^10.0.0",
     "parse-duration": "^1.0.2",
     "stream-to-it": "^0.2.4",
     "uint8arrays": "^3.1.0"
