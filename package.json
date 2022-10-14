@@ -188,7 +188,7 @@
   "devDependencies": {
     "@ipld/car": "^4.1.6",
     "@libp2p/interface-peer-info": "^1.0.2",
-    "@libp2p/interface-pubsub": "^2.0.1",
+    "@libp2p/interface-pubsub": "^3.0.0",
     "@libp2p/interfaces": "^3.0.3",
     "aegir": "^37.5.6",
     "blockstore-core": "^2.0.2",
