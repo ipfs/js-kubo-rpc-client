@@ -109,20 +109,20 @@ function getMockObjects () {
   return {
     animals: {
       land: {
-        'african.txt': loadFixture('test/fixtures/refs-test/animals/land/african.txt', 'interface-ipfs-core'),
-        'americas.txt': loadFixture('test/fixtures/refs-test/animals/land/americas.txt', 'interface-ipfs-core'),
-        'australian.txt': loadFixture('test/fixtures/refs-test/animals/land/australian.txt', 'interface-ipfs-core')
+        'african.txt': loadFixture('test/interface-tests/fixtures/refs-test/animals/land/african.txt'),
+        'americas.txt': loadFixture('test/interface-tests/fixtures/refs-test/animals/land/americas.txt'),
+        'australian.txt': loadFixture('test/interface-tests/fixtures/refs-test/animals/land/australian.txt')
       },
       sea: {
-        'atlantic.txt': loadFixture('test/fixtures/refs-test/animals/sea/atlantic.txt', 'interface-ipfs-core'),
-        'indian.txt': loadFixture('test/fixtures/refs-test/animals/sea/indian.txt', 'interface-ipfs-core')
+        'atlantic.txt': loadFixture('test/interface-tests/fixtures/refs-test/animals/sea/atlantic.txt'),
+        'indian.txt': loadFixture('test/interface-tests/fixtures/refs-test/animals/sea/indian.txt')
       }
     },
     fruits: {
-      'tropical.txt': loadFixture('test/fixtures/refs-test/fruits/tropical.txt', 'interface-ipfs-core')
+      'tropical.txt': loadFixture('test/interface-tests/fixtures/refs-test/fruits/tropical.txt')
     },
-    'atlantic-animals': loadFixture('test/fixtures/refs-test/atlantic-animals', 'interface-ipfs-core'),
-    'mushroom.txt': loadFixture('test/fixtures/refs-test/mushroom.txt', 'interface-ipfs-core')
+    'atlantic-animals': loadFixture('test/interface-tests/fixtures/refs-test/atlantic-animals'),
+    'mushroom.txt': loadFixture('test/interface-tests/fixtures/refs-test/mushroom.txt')
   }
 }
 

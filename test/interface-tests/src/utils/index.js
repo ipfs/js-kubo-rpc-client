@@ -9,12 +9,12 @@ export const fixtures = Object.freeze({
     cid: CID.parse('QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'),
     /** @type {Record<string, Buffer>} */
     files: Object.freeze({
-      'pp.txt': loadFixture('test/fixtures/test-folder/pp.txt', 'interface-ipfs-core'),
-      'holmes.txt': loadFixture('test/fixtures/test-folder/holmes.txt', 'interface-ipfs-core'),
-      'jungle.txt': loadFixture('test/fixtures/test-folder/jungle.txt', 'interface-ipfs-core'),
-      'alice.txt': loadFixture('test/fixtures/test-folder/alice.txt', 'interface-ipfs-core'),
-      'files/hello.txt': loadFixture('test/fixtures/test-folder/files/hello.txt', 'interface-ipfs-core'),
-      'files/ipfs.txt': loadFixture('test/fixtures/test-folder/files/ipfs.txt', 'interface-ipfs-core')
+      'pp.txt': loadFixture('test/interface-tests/fixtures/test-folder/pp.txt'),
+      'holmes.txt': loadFixture('test/interface-tests/fixtures/test-folder/holmes.txt'),
+      'jungle.txt': loadFixture('test/interface-tests/fixtures/test-folder/jungle.txt'),
+      'alice.txt': loadFixture('test/interface-tests/fixtures/test-folder/alice.txt'),
+      'files/hello.txt': loadFixture('test/interface-tests/fixtures/test-folder/files/hello.txt'),
+      'files/ipfs.txt': loadFixture('test/interface-tests/fixtures/test-folder/files/ipfs.txt')
     })
   }),
   smallFile: Object.freeze({

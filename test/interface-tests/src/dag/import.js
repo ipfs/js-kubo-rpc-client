@@ -120,7 +120,7 @@ export function testImport (factory, options) {
     })
 
     it('should import car with roots but no blocks', async () => {
-      const input = loadFixture('test/fixtures/car/combined_naked_roots_genesis_and_128.car', 'interface-ipfs-core')
+      const input = loadFixture('test/interface-tests/fixtures/car/combined_naked_roots_genesis_and_128.car')
       const reader = await CarReader.fromBytes(input)
       const cids = await reader.getRoots()
 
@@ -131,14 +131,14 @@ export function testImport (factory, options) {
       expect(result1).to.deep.include({ root: { cid: cids[0], pinErrorMsg: 'blockstore: block not found' } })
       expect(result1).to.deep.include({ root: { cid: cids[1], pinErrorMsg: 'blockstore: block not found' } })
 
-      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car', 'interface-ipfs-core') }()))
+      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
 
       // have some of the blocks now, should be able to pin one root
       const result2 = await all(ipfs.dag.import(async function * () { yield input }()))
       expect(result2).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
       expect(result2).to.deep.include({ root: { cid: cids[1], pinErrorMsg: 'blockstore: block not found' } })
 
-      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/fixtures/car/lotus_testnet_export_128.car', 'interface-ipfs-core') }()))
+      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
 
       // have all of the blocks now, should be able to pin both
       const result3 = await all(ipfs.dag.import(async function * () { yield input }()))
@@ -147,7 +147,7 @@ export function testImport (factory, options) {
     })
 
     it('should import lotus devnet genesis shuffled nulroot', async () => {
-      const input = loadFixture('test/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car', 'interface-ipfs-core')
+      const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car')
       const reader = await CarReader.fromBytes(input)
       const cids = await reader.getRoots()
 
