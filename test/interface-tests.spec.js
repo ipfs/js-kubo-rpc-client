@@ -389,20 +389,7 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
         : [])
   })
 
-  tests.key(commonFactory, {
-    skip: [
-      // key.export
-      {
-        name: 'export',
-        reason: 'TODO not implemented in go-ipfs yet'
-      },
-      // key.import
-      {
-        name: 'import',
-        reason: 'TODO not implemented in go-ipfs yet'
-      }
-    ]
-  })
+  tests.key(commonFactory)
 
   tests.miscellaneous(commonFactory, {
     skip: [

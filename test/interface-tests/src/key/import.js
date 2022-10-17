@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 import { keys } from 'libp2p-crypto'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
+import { notImplemented } from '../../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -22,6 +23,9 @@ export function testImport (factory, options) {
     let ipfs
 
     before(async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
       ipfs = (await factory.spawn()).api
     })
 
