@@ -34,7 +34,7 @@ export function testFindPeer (factory, options) {
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when finding a peer on the DHT', async function () {
       const nodeBId = await nodeB.id()

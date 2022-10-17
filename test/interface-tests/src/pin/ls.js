@@ -37,7 +37,7 @@ export function testLs (factory, options) {
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     // 1st, because ipfs.add pins automatically
     it('should list all recursive pins', async function () {

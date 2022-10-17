@@ -56,7 +56,7 @@ export function testMkdir (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('requires a directory', async function () {
       await expect(ipfs.files.mkdir('')).to.eventually.be.rejected()

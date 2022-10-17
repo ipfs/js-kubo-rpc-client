@@ -23,7 +23,7 @@ export function testVersion (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should get the repo version', async function () {
       const version = await ipfs.repo.version()

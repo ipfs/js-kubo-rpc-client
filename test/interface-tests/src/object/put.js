@@ -32,7 +32,7 @@ export function testPut (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should put an object', async function () {
       const obj = {

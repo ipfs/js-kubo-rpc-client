@@ -33,7 +33,7 @@ export function testQuery (factory, options) {
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when querying the DHT', async function () {
       const nodeBId = await nodeB.id()

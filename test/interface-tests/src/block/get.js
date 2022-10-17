@@ -31,7 +31,7 @@ export function testGet (factory, options) {
       cid = await ipfs.block.put(data)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when getting a block', () => {
       return testTimeout(() => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {

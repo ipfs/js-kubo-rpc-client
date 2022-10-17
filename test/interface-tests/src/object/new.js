@@ -25,7 +25,7 @@ export function testNew (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should create a new object with no template', async function () {
       const cid = await ipfs.object.new()

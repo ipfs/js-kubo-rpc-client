@@ -22,7 +22,7 @@ export function testGet (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should fail with error', async function () {
       // @ts-expect-error missing arg
@@ -56,7 +56,7 @@ export function testGet (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should retrieve the whole config', async function () {
       const config = await ipfs.config.getAll()

@@ -33,7 +33,7 @@ export function testMv (factory, options) {
       await ipfs.files.mkdir('/test/lv1/lv2', { parents: true })
       await ipfs.files.write('/test/a', uint8ArrayFromString('Hello, world!'), { create: true })
     })
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('refuses to move files without arguments', async function () {
       // @ts-expect-error invalid args

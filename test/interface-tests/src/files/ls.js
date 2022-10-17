@@ -31,7 +31,7 @@ export function testLs (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should require a path', () => {
       // @ts-expect-error invalid args

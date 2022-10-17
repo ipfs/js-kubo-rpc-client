@@ -32,7 +32,7 @@ export function testProvide (factory, options) {
       await ensureReachable(ipfs, nodeB)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should provide local CID', async function () {
       const res = await ipfs.add(uint8ArrayFromString('test'))

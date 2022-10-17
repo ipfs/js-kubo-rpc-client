@@ -43,7 +43,7 @@ export function testWantlist (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when getting bitswap wantlist', () => {
       return testTimeout(() => ipfsA.bitswap.wantlist({

@@ -39,7 +39,7 @@ export function testDisabled (factory, options) {
       await nodeA.swarm.connect(nodeBId.addresses[0])
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should error when DHT not available', async function () {
       const events = await all(nodeA.dht.get('/ipns/12D3KooWQMSMXmsBvs5YDEQ6tXsaFv9tjuzmDmEvusaiQSFdrJdN'))

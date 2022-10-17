@@ -38,7 +38,7 @@ export function testRefs (factory, options) {
       dagRootCid = await loadDagContent(ipfs, getMockObjects())
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     for (const [name, options] of Object.entries(getRefsTests())) {
       const { path, params, expected, expectError, expectTimeout } = options

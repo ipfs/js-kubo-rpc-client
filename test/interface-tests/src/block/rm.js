@@ -29,7 +29,7 @@ export function testRm (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when removing a block', () => {
       return testTimeout(() => drain(ipfs.block.rm(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {

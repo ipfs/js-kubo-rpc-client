@@ -25,7 +25,7 @@ export function testSet (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should set a new key', async function () {
       await ipfs.config.set('Fruit', 'banana')

@@ -109,7 +109,7 @@ export function testWrite (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('explodes if it cannot convert content to a source', async function () {
       // @ts-expect-error invalid arg

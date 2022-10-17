@@ -30,7 +30,7 @@ export function testStat (factory, options) {
       cid = await ipfs.block.put(data)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when statting a block', () => {
       return testTimeout(() => ipfs.block.stat(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {

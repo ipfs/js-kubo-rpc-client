@@ -68,7 +68,7 @@ export function testSubscribe (factory, options) {
       await delay(100)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     describe('single node', function () {
       it('should subscribe to one topic', async function () {

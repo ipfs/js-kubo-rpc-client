@@ -35,7 +35,7 @@ export function testDagSharnessT0053 (factory, options) {
       ipldObjectDagJson = new TextEncoder().encode('{"Data":{"/":{"bytes":"AAECAwQ"}},"Links":[]}')
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     /** @type {CID} */
     let hash1

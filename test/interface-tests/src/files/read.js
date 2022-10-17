@@ -30,7 +30,7 @@ export function testRead (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('reads a small file', async function () {
       const filePath = '/small-file.txt'

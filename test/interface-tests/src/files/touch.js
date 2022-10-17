@@ -50,7 +50,7 @@ export function testTouch (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should have default mtime', async function () {
       // @ts-ignore this is mocha

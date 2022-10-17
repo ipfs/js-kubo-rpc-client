@@ -35,7 +35,7 @@ export function testGet (factory, options) {
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when getting a value from the DHT', async function () {
       const data = await nodeA.add('should put a value to the DHT')

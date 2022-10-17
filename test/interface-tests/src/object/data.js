@@ -27,7 +27,7 @@ export function testData (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should get data by CID', async function () {
       const testObj = {

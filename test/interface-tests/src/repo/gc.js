@@ -53,7 +53,7 @@ export function testGc (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should run garbage collection', async function () {
       const res = await ipfs.add(uint8ArrayFromString('apples'))

@@ -29,7 +29,7 @@ export function testCancel (factory, options) {
       nodeId = peerInfo.id
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should return false when the name that is intended to cancel is not subscribed', async function () {
       // @ts-ignore this is mocha

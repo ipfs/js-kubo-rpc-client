@@ -40,7 +40,7 @@ export function testCat (factory, options) {
       ])
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when catting files', () => {
       return testTimeout(() => drain(ipfs.cat(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {

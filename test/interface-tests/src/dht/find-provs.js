@@ -54,7 +54,7 @@ export function testFindProvs (factory, options) {
       ])
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when finding providers on the DHT', () => {
       return testTimeout(() => drain(nodeA.dht.findProvs(providedCid, {

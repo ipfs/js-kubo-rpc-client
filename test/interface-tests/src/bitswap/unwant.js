@@ -22,14 +22,12 @@ export function testUnwant (factory, options) {
     let ipfs
 
     before(async function () {
-
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should throw error for invalid CID input', async function () {
-
       // @ts-expect-error input is invalid
       await expect(ipfs.bitswap.unwant('INVALID CID')).to.eventually.be.rejected()
     })

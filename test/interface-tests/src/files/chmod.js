@@ -49,7 +49,7 @@ export function testChmod (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should update the mode for a file', async function () {
       const path = `/foo-${Math.random()}`

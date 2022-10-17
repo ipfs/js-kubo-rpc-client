@@ -26,7 +26,7 @@ export function testBw (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should get bandwidth stats ', async function () {
       const res = await last(ipfs.stats.bw())

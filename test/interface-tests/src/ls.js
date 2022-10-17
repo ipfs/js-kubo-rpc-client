@@ -7,7 +7,6 @@ import all from 'it-all'
 import { CID } from 'multiformats/cid'
 import testTimeout from './utils/test-timeout.js'
 
-
 /**
  * @param {string} prefix
  */
@@ -35,7 +34,7 @@ export function testLs (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should respect timeout option when listing files', () => {
       return testTimeout(() => ipfs.ls(CID.parse('QmNonExistentCiD8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXg'), {

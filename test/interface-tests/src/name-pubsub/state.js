@@ -23,7 +23,7 @@ export function testState (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should get the current state of pubsub', async function () {
       // @ts-ignore this is mocha

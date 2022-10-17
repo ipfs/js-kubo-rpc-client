@@ -68,7 +68,7 @@ export function testImport (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should import a car file', async function () {
       const blocks = await createBlocks(5)

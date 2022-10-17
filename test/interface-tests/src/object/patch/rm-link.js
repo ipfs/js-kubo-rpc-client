@@ -29,7 +29,7 @@ export function testRmLink (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should remove a link from an existing node', async function () {
       const obj1 = {
