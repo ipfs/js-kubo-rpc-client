@@ -32,7 +32,7 @@ export function testPut (factory, options) {
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(function () { return factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should put a value to the DHT', async function () {
       const { cid } = await nodeA.add('should put a value to the DHT')
@@ -60,7 +60,7 @@ export function testPut (factory, options) {
 
       const nodeBId = await nodeB.id()
 
-      expect(peerResponse.from).to.be.equal(nodeBId.id)
+      expect(peerResponse.from.toString()).to.be.equal(nodeBId.id.toString())
     })
   })
 }
