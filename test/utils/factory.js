@@ -16,6 +16,7 @@ const commonOptions = {
 
 const commonOverrides = {
   go: {
+    kuboRpcModule,
     ipfsBin: isNode ? (process.env.IPFS_GO_EXEC || path()) : undefined
   }
 }
