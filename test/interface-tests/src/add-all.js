@@ -16,7 +16,6 @@ import * as raw from 'multiformats/codecs/raw'
 import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { isFirefox, notImplemented } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -34,7 +33,7 @@ export function testAddAll (factory, options) {
   describe('.addAll', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
+    /** @type {import('../../../src/index').IPFSHTTPClient} */
     let ipfs
 
     /**
@@ -359,9 +358,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mode as string', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       // @ts-ignore this is mocha
       this.slow(10 * 1000)
       const mode = '0777'
@@ -369,9 +365,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mode as number', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       // @ts-ignore this is mocha
       this.slow(10 * 1000)
       const mode = parseInt('0777', 8)
@@ -379,9 +372,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as Date', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       // @ts-ignore this is mocha
       this.slow(10 * 1000)
       const mtime = new Date(5000)
@@ -392,9 +382,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as { nsecs, secs }', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       // @ts-ignore this is mocha
       this.slow(10 * 1000)
       const mtime = {
@@ -405,9 +392,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as timespec', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       // @ts-ignore this is mocha
       this.slow(10 * 1000)
       await testMtime({
@@ -420,9 +404,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as hrtime', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       // @ts-ignore this is mocha
       this.slow(10 * 1000)
       const mtime = process.hrtime()
@@ -528,9 +509,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const files = await all(ipfs.addAll([{
         content: Uint8Array.from([0, 1, 2]),
         mode: 0o123,
@@ -550,9 +528,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add directories with metadata', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const files = await all(ipfs.addAll([{
         path: '/foo',
         mode: 0o123,
@@ -569,9 +544,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should support bidirectional streaming', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       let progressInvoked = false
 
       /**
@@ -609,9 +581,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should error during add-all stream', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const source = async function * () {
         yield {
           content: 'hello',

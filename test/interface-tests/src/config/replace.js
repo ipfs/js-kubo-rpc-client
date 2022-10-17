@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { notImplemented } from '../../../constants.js'
 import { getDescribe, getIt } from '../utils/mocha.js'
 
 /**
@@ -22,9 +21,7 @@ export function testReplace (factory, options) {
     let ipfs
 
     before(async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
+
 
       ipfs = (await factory.spawn()).api
     })

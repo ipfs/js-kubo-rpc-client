@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { notImplemented } from '../../../../constants.js'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 
 /**
@@ -28,9 +27,7 @@ export function testList (factory, options) {
     after(function () { return factory.clean() })
 
     it('should list config profiles', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
+
       const profiles = await ipfs.config.profiles.list()
 
       expect(profiles).to.be.an('array')

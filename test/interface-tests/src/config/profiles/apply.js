@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { notImplemented } from '../../../../constants.js'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 
 /**
@@ -36,9 +35,7 @@ export function testApply (factory, options) {
     })
 
     it('should strip private key from diff output', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
+
       const originalConfig = await ipfs.config.getAll()
       const diff = await ipfs.config.profiles.apply('default-networking', { dryRun: true })
 

@@ -1,32 +1,116 @@
 /* eslint-env mocha */
-
-import { isWindows, isFirefox } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
 
-/** @typedef {import("ipfsd-ctl").ControllerOptions} ControllerOptions */
+const isFirefox = globalThis.navigator?.userAgent?.toLowerCase().includes('firefox')
+const isWindows = globalThis.process && globalThis.process.platform && globalThis.process.platform === 'win32'
 
-describe('kubo-rpc-client tests against go-ipfs', function () {
+describe('kubo-rpc-client tests against Kubo', function () {
   const commonFactory = factory({
     type: 'go'
   })
 
-  tests.root(commonFactory)
+  tests.root(commonFactory, {
+    skip: [
+      {
+        name: 'should add with mode as string',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should add with mode as number',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should add with mtime as Date',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should add with mtime as { nsecs, secs }',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should add with mtime as timespec',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should add with mtime as hrtime',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should export a chunk of a file',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should ls with metadata',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should ls single file with metadata',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should ls single file without containing directory with metadata',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should override raw leaves when file is smaller than one block and metadata is present',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should add directories with metadata',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      {
+        name: 'should support bidirectional streaming',
+        reason: 'Not supported by http'
+      },
+      {
+        name: 'should error during add-all stream',
+        reason: 'Not supported by http'
+      }
+    ].concat(isFirefox
+      ? [{
+          name: 'should add a BIG Uint8Array',
+          reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
+        }, {
+          name: 'should add a BIG Uint8Array with progress enabled',
+          reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
+        }, {
+          name: 'should add big files',
+          reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
+        }]
+      : [])
+  })
 
-  tests.bitswap(commonFactory)
+  tests.bitswap(commonFactory, {
+    skip: [
+      {
+        name: '.bitswap.unwant',
+        reason: 'TODO not implemented in Kubo yet'
+      }
+    ]
+  })
 
   tests.block(commonFactory)
 
   tests.bootstrap(commonFactory)
 
   tests.config(commonFactory, {
-    // skip: [
-    //   // config.replace
-    //   {
-    //     name: 'replace',
-    //     reason: 'FIXME Waiting for fix on go-ipfs https://github.com/ipfs/js-ipfs-http-client/pull/307#discussion_r69281789 and https://github.com/ipfs/go-ipfs/issues/2927 '
-    //   }
-    // ]
+    skip: [
+      // config.replace
+      {
+        name: 'replace',
+        reason: 'FIXME Waiting for fix on Kubo https://github.com/ipfs/js-ipfs-http-client/pull/307#discussion_r69281789 and https://github.com/ipfs/kubo/issues/2927'
+      },
+      {
+        name: 'should list config profiles',
+        reason: 'TODO: Not implemented in Kubo'
+      },
+      {
+        name: 'should strip private key from diff output',
+        reason: 'TODO: Not implemented in Kubo'
+      }
+    ]
   })
 
   tests.dag(commonFactory, {
@@ -56,291 +140,291 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
     skip: [
       {
         name: 'should ls directory',
-        reason: 'TODO unskip when go-ipfs supports --long https://github.com/ipfs/go-ipfs/pull/6528'
+        reason: 'TODO unskip when Kubo supports --long https://github.com/ipfs/kubo/pull/6528'
       },
       {
         name: 'should list a file directly',
-        reason: 'TODO unskip when go-ipfs supports --long https://github.com/ipfs/go-ipfs/pull/6528'
+        reason: 'TODO unskip when Kubo supports --long https://github.com/ipfs/kubo/pull/6528'
       },
       {
         name: 'should ls directory and include metadata',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should read from outside of mfs',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should ls from outside of mfs',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update the mode for a file',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update the mode for a directory',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update the mode for a hamt-sharded-directory',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update modes with basic symbolic notation that adds bits',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update modes with basic symbolic notation that removes bits',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update modes with basic symbolic notation that overrides bits',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update modes with multiple symbolic notation',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update modes with special symbolic notation',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should apply special execute permissions to world',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should apply special execute permissions to user',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should apply special execute permissions to user and group',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should apply special execute permissions to sharded directories',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update file mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update directory mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should update the mtime for a hamt-sharded-directory',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should create an empty file',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mode',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mode',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should respect metadata when copying files',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should respect metadata when copying directories',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should respect metadata when copying from outside of mfs',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should have default mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should set mtime as Date',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should set mtime as { nsecs, secs }',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should set mtime as timespec',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should set mtime as hrtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and have default mode',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mode as string',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mode as number',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mtime as Date',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mtime as { nsecs, secs }',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mtime as timespec',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should make directory and specify mtime as hrtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mode as a string',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mode as a number',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mtime as Date',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mtime as { nsecs, secs }',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mtime as timespec',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should write file and specify mtime as hrtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should stat file with mode',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should stat file with mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should stat dir with mode',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should stat dir with mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should stat sharded dir with mode',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should stat sharded dir with mtime',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'lists a raw node',
-        reason: 'TODO go-ipfs does not support ipfs paths for all mfs commands'
+        reason: 'TODO Kubo does not support ipfs paths for all mfs commands'
       },
       {
         name: 'lists a raw node in an mfs directory',
-        reason: 'TODO go-ipfs does not support non-ipfs nodes in mfs'
+        reason: 'TODO Kubo does not support non-ipfs nodes in mfs'
       },
       {
         name: 'writes a small file with an escaped slash in the title',
-        reason: 'TODO go-ipfs does not support escapes in paths'
+        reason: 'TODO Kubo does not support escapes in paths'
       },
       {
         name: 'overwrites a file with a different CID version',
-        reason: 'TODO go-ipfs does not support changing the CID version'
+        reason: 'TODO Kubo does not support changing the CID version'
       },
       {
         name: 'partially overwrites a file with a different CID version',
-        reason: 'TODO go-ipfs does not support changing the CID version'
+        reason: 'TODO Kubo does not support changing the CID version'
       },
       {
         name: 'refuses to copy multiple files to a non-existent child directory',
-        reason: 'TODO go-ipfs does not support copying multiple files at once'
+        reason: 'TODO Kubo does not support copying multiple files at once'
       },
       {
         name: 'refuses to copy files to an unreadable node',
-        reason: 'TODO go-ipfs does not support identity format, maybe in 0.5.0?'
+        reason: 'TODO Kubo does not support identity format, maybe in 0.5.0?'
       },
       {
         name: 'copies a file to a pre-existing directory',
-        reason: 'TODO go-ipfs does not copying files into existing directories if the directory is specify as the target path'
+        reason: 'TODO Kubo does not copying files into existing directories if the directory is specify as the target path'
       },
       {
         name: 'copies multiple files to new location',
-        reason: 'TODO go-ipfs does not support copying multiple files at once'
+        reason: 'TODO Kubo does not support copying multiple files at once'
       },
       {
         name: 'copies files to deep mfs paths and creates intermediate directories',
-        reason: 'TODO go-ipfs does not support the parents flag in the cp command'
+        reason: 'TODO Kubo does not support the parents flag in the cp command'
       },
       {
         name: 'copies a sharded directory to a normal directory',
-        reason: 'TODO go-ipfs does not copying files into existing directories if the directory is specify as the target path'
+        reason: 'TODO Kubo does not copying files into existing directories if the directory is specify as the target path'
       },
       {
         name: 'copies a normal directory to a sharded directory',
-        reason: 'TODO go-ipfs does not copying files into existing directories if the directory is specify as the target path'
+        reason: 'TODO Kubo does not copying files into existing directories if the directory is specify as the target path'
       },
       {
         name: 'removes multiple files',
-        reason: 'TODO go-ipfs does not support removing multiple files'
+        reason: 'TODO Kubo does not support removing multiple files'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when removing a file',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "85675" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "85675" to type "bool" (for option "-size")'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when removing a subshard',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "2109" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "2109" to type "bool" (for option "-size")'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when removing a file from a subshard of a subshard',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "170441" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "170441" to type "bool" (for option "-size")'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when removing a subshard of a subshard',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "11463" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "11463" to type "bool" (for option "-size")'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when adding a new file',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "5835" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "5835" to type "bool" (for option "-size")'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when creating a new subshard',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "8038" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "8038" to type "bool" (for option "-size")'
       },
       {
         name: ' results in the same hash as a sharded directory created by the importer when adding a file to a subshard',
-        reason: 'TODO go-ipfs errors out with HTTPError: Could not convert value "6620" to type "bool" (for option "-size")'
+        reason: 'TODO Kubo errors out with HTTPError: Could not convert value "6620" to type "bool" (for option "-size")'
       },
       {
         name: 'results in the same hash as a sharded directory created by the importer when adding a file to a subshard',
@@ -352,15 +436,15 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
       },
       {
         name: 'stats a dag-cbor node',
-        reason: 'TODO go-ipfs does not support non-dag-pb nodes in mfs'
+        reason: 'TODO Kubo does not support non-dag-pb nodes in mfs'
       },
       {
         name: 'stats an identity CID',
-        reason: 'TODO go-ipfs does not support non-dag-pb nodes in mfs'
+        reason: 'TODO Kubo does not support non-dag-pb nodes in mfs'
       },
       {
         name: 'limits how many bytes to write to a file (Really large file)',
-        reason: 'TODO go-ipfs drops the connection'
+        reason: 'TODO Kubo drops the connection'
       }
     ]
       .concat(isFirefox
@@ -389,21 +473,34 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
         : [])
   })
 
-  tests.key(commonFactory)
+  tests.key(commonFactory, {
+    skip: [
+      // key.export
+      {
+        name: 'export',
+        reason: 'TODO not implemented in Kubo yet'
+      },
+      // key.import
+      {
+        name: 'import',
+        reason: 'TODO not implemented in Kubo yet'
+      }
+    ]
+  })
 
   tests.miscellaneous(commonFactory, {
     skip: [
       {
         name: 'should include the interface-ipfs-core version',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should include the ipfs-http-client version',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       },
       {
         name: 'should have protocols property',
-        reason: 'TODO not implemented in go-ipfs yet'
+        reason: 'TODO not implemented in Kubo yet'
       }
     ]
   })
@@ -427,25 +524,25 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
       // name.pubsub.cancel
       {
         name: 'should cancel a subscription correctly returning true',
-        reason: 'go-ipfs is really slow for publishing and resolving ipns records, unless in offline mode'
+        reason: 'Kubo is really slow for publishing and resolving ipns records, unless in offline mode'
       },
       // name.pubsub.subs
       {
         name: 'should get the list of subscriptions updated after a resolve',
-        reason: 'go-ipfs is really slow for publishing and resolving ipns records, unless in offline mode'
+        reason: 'Kubo is really slow for publishing and resolving ipns records, unless in offline mode'
       },
       // name.pubsub
       {
         name: 'should publish and then resolve correctly',
-        reason: 'js-ipfs and go-ipfs behaviour differs'
+        reason: 'js-ipfs and Kubo behaviour differs'
       },
       {
         name: 'should self resolve, publish and then resolve correctly',
-        reason: 'js-ipfs and go-ipfs behaviour differs'
+        reason: 'js-ipfs and Kubo behaviour differs'
       },
       {
         name: 'should handle event on publish correctly',
-        reason: 'js-ipfs and go-ipfs behaviour differs'
+        reason: 'js-ipfs and Kubo behaviour differs'
       }
     ]
   })
@@ -454,31 +551,31 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
     skip: [
       {
         name: 'should get data by base58 encoded multihash string',
-        reason: 'FIXME go-ipfs throws invalid encoding: base58'
+        reason: 'FIXME Kubo throws invalid encoding: base58'
       },
       {
         name: 'should get object by base58 encoded multihash',
-        reason: 'FIXME go-ipfs throws invalid encoding: base58'
+        reason: 'FIXME Kubo throws invalid encoding: base58'
       },
       {
         name: 'should get object by base58 encoded multihash',
-        reason: 'FIXME go-ipfs throws invalid encoding: base58'
+        reason: 'FIXME Kubo throws invalid encoding: base58'
       },
       {
         name: 'should get object by base58 encoded multihash string',
-        reason: 'FIXME go-ipfs throws invalid encoding: base58'
+        reason: 'FIXME Kubo throws invalid encoding: base58'
       },
       {
         name: 'should get links by base58 encoded multihash',
-        reason: 'FIXME go-ipfs throws invalid encoding: base58'
+        reason: 'FIXME Kubo throws invalid encoding: base58'
       },
       {
         name: 'should get links by base58 encoded multihash string',
-        reason: 'FIXME go-ipfs throws invalid encoding: base58'
+        reason: 'FIXME Kubo throws invalid encoding: base58'
       },
       {
         name: 'should put a Protobuf encoded Uint8Array',
-        reason: 'FIXME go-ipfs throws invalid encoding: protobuf'
+        reason: 'FIXME Kubo throws invalid encoding: protobuf'
       }
     ]
       .concat(isFirefox
@@ -502,7 +599,7 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
     skip: [
       {
         name: 'should fail when pinging a peer that is not available',
-        reason: 'FIXME go-ipfs return success with text: Looking up peer <cid>'
+        reason: 'FIXME Kubo return success with text: Looking up peer <cid>'
       }
     ]
   })
@@ -521,11 +618,11 @@ describe('kubo-rpc-client tests against go-ipfs', function () {
       isWindows
         ? [{
             name: 'should send/receive 100 messages',
-            reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/go-ipfs/issues/4778'
+            reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/kubo/issues/4778'
           },
           {
             name: 'should receive multiple messages',
-            reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/go-ipfs/issues/4778'
+            reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/kubo/issues/4778'
           }]
         : []
     )
