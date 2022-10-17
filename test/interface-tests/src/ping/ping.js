@@ -38,7 +38,7 @@ export function testPing (factory, options) {
       await ipfsA.swarm.connect(nodeBId.addresses[0])
     })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should send the specified number of packets', async function () {
       const count = 3

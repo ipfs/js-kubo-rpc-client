@@ -34,7 +34,7 @@ export function testRmAll (factory, options) {
       return clearPins(ipfs)
     })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should pipe the output of ls to rm', async function () {
       await ipfs.pin.add(fixtures.directory.cid)

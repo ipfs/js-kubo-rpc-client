@@ -41,7 +41,7 @@ export function testPeers (factory, options) {
       // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should list peers this node is connected to', async function () {
       const peers = await ipfsA.swarm.peers()

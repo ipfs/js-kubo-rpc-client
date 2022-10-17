@@ -32,7 +32,7 @@ export function testRm (factory, options) {
       return clearPins(ipfs)
     })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should remove a recursive pin', async function () {
       await ipfs.pin.add(fixtures.directory.cid)

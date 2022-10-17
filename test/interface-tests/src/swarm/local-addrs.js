@@ -26,7 +26,7 @@ export function testLocalAddrs (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should list local addresses the node is listening on', async function () {
       const multiaddrs = await ipfs.swarm.localAddrs()

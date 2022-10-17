@@ -26,7 +26,7 @@ export function testReset (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     it('should return a list of bootstrap peers when resetting the bootstrap nodes', async function () {
       const res = await ipfs.bootstrap.reset()

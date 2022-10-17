@@ -25,7 +25,7 @@ export function testPut (factory, options) {
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(function () { factory.clean() })
+    after(async function () { return factory.clean() })
 
     const pbNode = {
       Data: uint8ArrayFromString('some data'),
