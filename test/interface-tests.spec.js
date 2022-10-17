@@ -25,6 +25,8 @@ const brokenRootTests = [
   ...(env.isBrowser || env.isWebWorker ? ['should get a nested directory', 'should compress a directory as a tarball'].map((name) => ({ reason: brokenDuringKuboRpcClientMigration, name })) : [])
 ]
 
+const getBrokenTestConfig = (condition, ...names) => names.map((name) => ({ reason: brokenDuringKuboRpcClientMigration, name }))
+
 describe('kubo-rpc-client tests against Kubo', function () {
   const commonFactory = factory({
     type: 'go'
@@ -105,6 +107,7 @@ describe('kubo-rpc-client tests against Kubo', function () {
 
   tests.bitswap(commonFactory, {
     skip: [
+      ...getBrokenTestConfig(env.isNode, 'transfer a file between'),
       {
         name: '.bitswap.unwant',
         reason: 'TODO not implemented in Kubo yet'
