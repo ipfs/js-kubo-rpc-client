@@ -33,7 +33,7 @@ export function testResolve (factory, options) {
 
     before(async function () {
       ipfs = (await factory.spawn({
-        type: 'proc',
+        type: 'go',
         ipfsOptions: merge(ipfsOptions, {
           config: {
             Routing: {

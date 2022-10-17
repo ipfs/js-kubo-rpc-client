@@ -32,7 +32,7 @@ export function testPeers (factory, options) {
     let ipfsBId
 
     before(async function () {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
@@ -101,7 +101,7 @@ export function testPeers (factory, options) {
     }
 
     it('should list peers only once', async function () {
-      const nodeA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      const nodeA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       const nodeB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       const nodeBId = await nodeB.id()
       await nodeA.swarm.connect(nodeBId.addresses[0])
