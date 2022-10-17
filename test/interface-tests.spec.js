@@ -151,18 +151,7 @@ describe('kubo-rpc-client tests against Kubo', function () {
     ]
   })
 
-  tests.dht(commonFactory, {
-    skip: [
-      ...[
-        '.dht.put', 'should put a value to the DHT',
-        '.dht.get', 'should respect timeout option when getting a value from the DHT'
-      ].map((name) => ({ reason: brokenDuringKuboRpcClientMigration, name })),
-      {
-        name: 'should error when DHT not available',
-        reason: 'go returns a query error'
-      }
-    ]
-  })
+  tests.dht(commonFactory)
 
   tests.files(commonFactory, {
     skip: [
