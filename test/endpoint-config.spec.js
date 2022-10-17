@@ -4,7 +4,7 @@
 import { expect } from 'aegir/chai'
 import { create as httpClient } from '../src/index.js'
 
-describe('.getEndpointConfig', () => {
+describe('.getEndpointConfig', function () {
   it('should return the endpoint configuration', function () {
     const ipfs = httpClient('https://127.0.0.1:5501/ipfs/api/')
     const endpoint = ipfs.getEndpointConfig()

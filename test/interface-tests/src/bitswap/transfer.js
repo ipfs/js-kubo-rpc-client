@@ -28,9 +28,9 @@ export function testTransfer (factory, options) {
   describe('transfer blocks', function () {
     this.timeout(60 * 1000)
 
-    afterEach(() => factory.clean())
+    afterEach(function () { factory.clean() })
 
-    describe('transfer a block between', () => {
+    describe('transfer a block between', function () {
       it('2 peers', async function () {
         // webworkers are not dialable because webrtc is not available
         const remote = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
@@ -45,7 +45,7 @@ export function testTransfer (factory, options) {
         expect(b).to.equalBytes(data)
       })
 
-      it('3 peers', async () => {
+      it('3 peers', async function () {
         const blocks = Array(6).fill(0).map(() => uint8ArrayFromString(`IPFS is awesome ${nanoid()}`))
         const remote1 = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remote1Id = await remote1.id()
@@ -74,8 +74,8 @@ export function testTransfer (factory, options) {
       })
     })
 
-    describe('transfer a file between', () => {
-      it('2 peers', async () => {
+    describe('transfer a file between', function () {
+      it('2 peers', async function () {
         const content = randomBytes(1024)
         const remote = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remoteId = await remote.id()

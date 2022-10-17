@@ -15,17 +15,17 @@ export function testBitswap (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.stats.bitswap', () => {
+  describe('.stats.bitswap', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get bitswap stats', async () => {
+    it('should get bitswap stats', async function () {
       const res = await ipfs.stats.bitswap()
       expectIsBitswap(null, res)
     })

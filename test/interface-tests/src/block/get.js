@@ -19,19 +19,19 @@ export function testGet (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.block.get', () => {
+  describe('.block.get', function () {
     const data = uint8ArrayFromString('blorb')
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
     /** @type {CID} */
     let cid
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when getting a block', () => {
       return testTimeout(() => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {
@@ -39,13 +39,13 @@ export function testGet (factory, options) {
       }))
     })
 
-    it('should get by CID', async () => {
+    it('should get by CID', async function () {
       const block = await ipfs.block.get(cid)
 
       expect(block).to.equalBytes(uint8ArrayFromString('blorb'))
     })
 
-    it('should get an empty block', async () => {
+    it('should get an empty block', async function () {
       const cid = await ipfs.block.put(new Uint8Array(0), {
         format: 'dag-pb',
         mhtype: 'sha2-256',
@@ -56,7 +56,7 @@ export function testGet (factory, options) {
       expect(block).to.equalBytes(new Uint8Array(0))
     })
 
-    it('should get a block added as CIDv0 with a CIDv1', async () => {
+    it('should get a block added as CIDv0 with a CIDv1', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const cidv0 = await ipfs.block.put(input)
@@ -68,7 +68,7 @@ export function testGet (factory, options) {
       expect(block).to.equalBytes(input)
     })
 
-    it('should get a block added as CIDv1 with a CIDv0', async () => {
+    it('should get a block added as CIDv1 with a CIDv0', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const cidv1 = await ipfs.block.put(input, {
@@ -83,7 +83,7 @@ export function testGet (factory, options) {
       expect(block).to.equalBytes(input)
     })
 
-    it('should get a block with an identity CID, without putting first', async () => {
+    it('should get a block with an identity CID, without putting first', async function () {
       const identityData = uint8ArrayFromString('A16461736466190144', 'base16upper')
       const identityHash = await identity.digest(identityData)
       const identityCID = CID.createV1(identity.code, identityHash)

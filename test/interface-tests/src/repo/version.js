@@ -15,17 +15,17 @@ export function testVersion (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.repo.version', () => {
+  describe('.repo.version', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get the repo version', async () => {
+    it('should get the repo version', async function () {
       const version = await ipfs.repo.version()
       expect(version).to.exist()
     })

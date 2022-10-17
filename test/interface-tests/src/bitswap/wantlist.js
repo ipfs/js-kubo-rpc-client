@@ -31,7 +31,7 @@ export function testWantlist (factory, options) {
     let ipfsB
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
@@ -43,7 +43,7 @@ export function testWantlist (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when getting bitswap wantlist', () => {
       return testTimeout(() => ipfsA.bitswap.wantlist({
@@ -55,14 +55,14 @@ export function testWantlist (factory, options) {
       return waitForWantlistKey(ipfsB, key)
     })
 
-    it('should not get the wantlist when offline', async () => {
+    it('should not get the wantlist when offline', async function () {
       const node = await factory.spawn()
       await node.stop()
 
       return expect(node.api.bitswap.stat()).to.eventually.be.rejected()
     })
 
-    it('should remove blocks from the wantlist when requests are cancelled', async () => {
+    it('should remove blocks from the wantlist when requests are cancelled', async function () {
       const controller = new AbortController()
       const cid = CID.parse('QmSoLPppuBtQSGwKDZT2M73ULpjvfd3aZ6ha4oFGL1KaGa')
 
@@ -79,7 +79,7 @@ export function testWantlist (factory, options) {
       await waitForWantlistKeyToBeRemoved(ipfsA, cid.toString())
     })
 
-    it('should keep blocks in the wantlist when only one request is cancelled', async () => {
+    it('should keep blocks in the wantlist when only one request is cancelled', async function () {
       const controller = new AbortController()
       const otherController = new AbortController()
       const cid = CID.parse('QmSoLPppuBtQSGwKDZT2M73ULpjvfd3aZ6ha4oFGL1Kaaa')

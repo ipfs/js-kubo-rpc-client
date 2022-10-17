@@ -61,16 +61,16 @@ export function testImport (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag.import', () => {
+  describe('.dag.import', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should import a car file', async () => {
+    it('should import a car file', async function () {
       const blocks = await createBlocks(5)
       const car = await createCar(blocks)
 
@@ -87,7 +87,7 @@ export function testImport (factory, options) {
         .and.have.nested.property('[0].type', 'recursive')
     })
 
-    it('should import a car file without pinning the roots', async () => {
+    it('should import a car file without pinning the roots', async function () {
       const blocks = await createBlocks(5)
       const car = await createCar(blocks)
 
@@ -98,7 +98,7 @@ export function testImport (factory, options) {
       await expect(all(ipfs.pin.ls({ paths: blocks[0].cid }))).to.eventually.be.rejectedWith(/is not pinned/)
     })
 
-    it('should import multiple car files', async () => {
+    it('should import multiple car files', async function () {
       const blocks1 = await createBlocks(5)
       const car1 = await createCar(blocks1)
 
@@ -119,7 +119,7 @@ export function testImport (factory, options) {
       }
     })
 
-    it('should import car with roots but no blocks', async () => {
+    it('should import car with roots but no blocks', async function () {
       const input = loadFixture('test/interface-tests/fixtures/car/combined_naked_roots_genesis_and_128.car')
       const reader = await CarReader.fromBytes(input)
       const cids = await reader.getRoots()
@@ -146,7 +146,7 @@ export function testImport (factory, options) {
       expect(result3).to.deep.include({ root: { cid: cids[1], pinErrorMsg: '' } })
     })
 
-    it('should import lotus devnet genesis shuffled nulroot', async () => {
+    it('should import lotus devnet genesis shuffled nulroot', async function () {
       const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car')
       const reader = await CarReader.fromBytes(input)
       const cids = await reader.getRoots()

@@ -15,9 +15,9 @@ describe('.add', function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { f.clean() })
 
-  it('should ignore metadata until https://github.com/ipfs/go-ipfs/issues/6920 is implemented', async () => {
+  it('should ignore metadata until https://github.com/ipfs/go-ipfs/issues/6920 is implemented', async function () {
     const data = uint8ArrayFromString('some data')
     const result = await ipfs.add(data, {
       mode: 0o600,

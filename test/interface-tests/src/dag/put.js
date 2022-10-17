@@ -19,13 +19,13 @@ export function testPut (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag.put', () => {
+  describe('.dag.put', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
     const pbNode = {
       Data: uint8ArrayFromString('some data'),
@@ -78,7 +78,7 @@ export function testPut (factory, options) {
       })
     })
 
-    it('should return the cid', async () => {
+    it('should return the cid', async function () {
       const cid = await ipfs.dag.put(cborNode, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-256'
@@ -97,13 +97,13 @@ export function testPut (factory, options) {
       return ipfs.dag.put(cborNode)
     })
 
-    it('should set defaults when calling put without options', async () => {
+    it('should set defaults when calling put without options', async function () {
       const cid = await ipfs.dag.put(cborNode)
       expect(cid.code).to.equal(dagCBOR.code)
       expect(cid.multihash.code).to.equal(sha256.code)
     })
 
-    it('should override hash algorithm default and resolve with it', async () => {
+    it('should override hash algorithm default and resolve with it', async function () {
       const cid = await ipfs.dag.put(cborNode, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-512'
@@ -112,6 +112,6 @@ export function testPut (factory, options) {
       expect(cid.multihash.code).to.equal(sha512.code)
     })
 
-    it.skip('should put by passing the cid instead of format and hashAlg', (done) => {})
+    it.skip('should put by passing the cid instead of format and hashAlg', () => {})
   })
 }

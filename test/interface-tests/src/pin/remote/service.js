@@ -24,17 +24,17 @@ export function testService (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => {
+    after(async function () {
       await factory.clean()
     })
-    afterEach(() => clearServices(ipfs))
+    afterEach(function () { return clearServices(ipfs) })
 
-    describe('.pin.remote.service.add', () => {
-      it('should add a service', async () => {
+    describe('.pin.remote.service.add', function () {
+      it('should add a service', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -47,13 +47,13 @@ export function testService (factory, options) {
         }])
       })
 
-      it('service add requires endpoint', async () => {
+      it('service add requires endpoint', async function () {
         // @ts-expect-error missing property
         const result = ipfs.pin.remote.service.add('noend', { key: 'token' })
         await expect(result).to.eventually.be.rejectedWith(/is required/)
       })
 
-      it('service add requires key', async () => {
+      it('service add requires key', async function () {
         // @ts-expect-error missing property
         const result = ipfs.pin.remote.service.add('nokey', {
           endpoint: ENDPOINT
@@ -62,7 +62,7 @@ export function testService (factory, options) {
         await expect(result).to.eventually.be.rejectedWith(/is required/)
       })
 
-      it('add multiple services', async () => {
+      it('add multiple services', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -86,7 +86,7 @@ export function testService (factory, options) {
         ].sort(byName))
       })
 
-      it('can not add service with existing name', async () => {
+      it('can not add service with existing name', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -101,13 +101,13 @@ export function testService (factory, options) {
       })
     })
 
-    describe('.pin.remote.service.ls', () => {
-      it('should list services', async () => {
+    describe('.pin.remote.service.ls', function () {
+      it('should list services', async function () {
         const services = await ipfs.pin.remote.service.ls()
         expect(services).to.deep.equal([])
       })
 
-      it('should list added service', async () => {
+      it('should list added service', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -120,7 +120,7 @@ export function testService (factory, options) {
         }])
       })
 
-      it('should include service stats', async () => {
+      it('should include service stats', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -143,7 +143,7 @@ export function testService (factory, options) {
         }])
       })
 
-      it('should report unreachable services', async () => {
+      it('should report unreachable services', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -181,8 +181,8 @@ export function testService (factory, options) {
       })
     })
 
-    describe('.pin.remote.service.rm', () => {
-      it('should remove service', async () => {
+    describe('.pin.remote.service.rm', function () {
+      it('should remove service', async function () {
         await ipfs.pin.remote.service.add('pinbot', {
           endpoint: ENDPOINT,
           key: KEY
@@ -199,12 +199,12 @@ export function testService (factory, options) {
         expect(await ipfs.pin.remote.service.ls()).to.deep.equal([])
       })
 
-      it('should not fail if service does not registered', async () => {
+      it('should not fail if service does not registered', async function () {
         expect(await ipfs.pin.remote.service.ls()).to.deep.equal([])
         expect(await ipfs.pin.remote.service.rm('pinbot')).to.equal(undefined)
       })
 
-      it('expects service name', async () => {
+      it('expects service name', async function () {
         // @ts-expect-error invalid arg
         const result = ipfs.pin.remote.service.rm()
         await expect(result).to.eventually.be.rejectedWith(/is required/)

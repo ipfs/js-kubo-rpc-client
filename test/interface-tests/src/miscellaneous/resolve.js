@@ -31,7 +31,7 @@ export function testResolve (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         type: 'proc',
         ipfsOptions: merge(ipfsOptions, {
@@ -45,9 +45,9 @@ export function testResolve (factory, options) {
       ipfsId = await ipfs.id()
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should resolve an IPFS hash', async () => {
+    it('should resolve an IPFS hash', async function () {
       const content = uint8ArrayFromString('Hello world')
 
       const { cid } = await ipfs.add(content)
@@ -55,7 +55,7 @@ export function testResolve (factory, options) {
       expect(path).to.equal(`/ipfs/${cid}`)
     })
 
-    it('should resolve an IPFS hash and return a base64url encoded CID in path', async () => {
+    it('should resolve an IPFS hash and return a base64url encoded CID in path', async function () {
       const { cid } = await ipfs.add(uint8ArrayFromString('base64url encoded'), {
         cidVersion: 1
       })
@@ -66,7 +66,7 @@ export function testResolve (factory, options) {
     })
 
     // Test resolve turns /ipfs/QmRootHash/path/to/file into /ipfs/QmFileHash
-    it('should resolve an IPFS path link', async () => {
+    it('should resolve an IPFS path link', async function () {
       const path = 'path/to/testfile.txt'
       const content = uint8ArrayFromString('Hello world')
       const [{ cid: fileCid }, , , { cid: rootCid }] = await all(ipfs.addAll([{ path, content }], { wrapWithDirectory: true }))
@@ -75,7 +75,7 @@ export function testResolve (factory, options) {
       expect(resolve).to.equal(`/ipfs/${fileCid}`)
     })
 
-    it('should resolve up to the last node', async () => {
+    it('should resolve up to the last node', async function () {
       const content = { path: { to: { file: nanoid() } } }
       const options = { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' }
       const cid = await ipfs.dag.put(content, options)
@@ -85,7 +85,7 @@ export function testResolve (factory, options) {
       expect(resolved).to.equal(path)
     })
 
-    it('should resolve up to the last node across multiple nodes', async () => {
+    it('should resolve up to the last node across multiple nodes', async function () {
       const options = { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' }
       const childCid = await ipfs.dag.put({ node: { with: { file: nanoid() } } }, options)
       const parentCid = await ipfs.dag.put({ path: { to: childCid } }, options)

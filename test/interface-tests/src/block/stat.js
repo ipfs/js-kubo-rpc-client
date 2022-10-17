@@ -18,19 +18,19 @@ export function testStat (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.block.stat', () => {
+  describe('.block.stat', function () {
     const data = uint8ArrayFromString('blorb')
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
     /** @type {CID} */
     let cid
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when statting a block', () => {
       return testTimeout(() => ipfs.block.stat(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
@@ -38,7 +38,7 @@ export function testStat (factory, options) {
       }))
     })
 
-    it('should stat by CID', async () => {
+    it('should stat by CID', async function () {
       const stats = await ipfs.block.stat(cid)
       expect(stats.cid.toString()).to.equal(cid.toString())
       expect(stats).to.have.property('size', data.length)

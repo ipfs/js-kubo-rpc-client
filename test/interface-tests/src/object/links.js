@@ -26,13 +26,13 @@ export function testLinks (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get empty links by multihash', async () => {
+    it('should get empty links by multihash', async function () {
       const testObj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -45,7 +45,7 @@ export function testLinks (factory, options) {
       expect(node.Links).to.eql(links)
     })
 
-    it('should get links by multihash', async () => {
+    it('should get links by multihash', async function () {
       const node1a = {
         Data: uint8ArrayFromString('Some data 1'),
         Links: []
@@ -72,7 +72,7 @@ export function testLinks (factory, options) {
       expect(node1b.Links).to.deep.equal(links)
     })
 
-    it('should get links from CBOR object', async () => {
+    it('should get links from CBOR object', async function () {
       const hashes = []
 
       const res1 = await ipfs.add(uint8ArrayFromString('test data'))

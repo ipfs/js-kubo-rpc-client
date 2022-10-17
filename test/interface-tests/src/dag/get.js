@@ -30,12 +30,14 @@ export function testGet (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag.get', () => {
+  describe('.dag.get', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () {
+      ipfs = (await factory.spawn()).api
+    })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     /**
      * @type {dagPB.PBNode}
@@ -74,7 +76,8 @@ export function testGet (factory, options) {
      */
     let cidJose
 
-    before(async () => {
+    before(async function () {
+      ipfs = (await factory.spawn()).api
       const someData = uint8ArrayFromString('some other data')
       pbNode = {
         Data: someData,
@@ -117,7 +120,7 @@ export function testGet (factory, options) {
       }))
     })
 
-    it('should get a dag-pb node', async () => {
+    it('should get a dag-pb node', async function () {
       const cid = await ipfs.dag.put(pbNode, {
         storeCodec: 'dag-pb',
         hashAlg: 'sha2-256'
@@ -129,7 +132,7 @@ export function testGet (factory, options) {
       expect(pbNode).to.eql(node)
     })
 
-    it('should get a dag-cbor node', async () => {
+    it('should get a dag-cbor node', async function () {
       const cid = await ipfs.dag.put(cborNode, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-256'
@@ -141,7 +144,7 @@ export function testGet (factory, options) {
       expect(cborNode).to.eql(node)
     })
 
-    it('should get a dag-pb node with path', async () => {
+    it('should get a dag-pb node with path', async function () {
       const result = await ipfs.dag.get(cidPb, {
         path: '/'
       })
@@ -159,10 +162,10 @@ export function testGet (factory, options) {
       expect(result.value).to.eql(uint8ArrayFromString('I am inside a Protobuf'))
     })
 
-    it.skip('should get a dag-pb node value one level deep', (done) => {})
-    it.skip('should get a dag-pb node value two levels deep', (done) => {})
+    it.skip('should get a dag-pb node value one level deep', () => {})
+    it.skip('should get a dag-pb node value two levels deep', () => {})
 
-    it('should get a dag-cbor node with path', async () => {
+    it('should get a dag-cbor node with path', async function () {
       const result = await ipfs.dag.get(cidCbor, {
         path: '/'
       })
@@ -173,16 +176,16 @@ export function testGet (factory, options) {
       expect(cid.equals(cidCbor)).to.be.true()
     })
 
-    it('should get a dag-cbor node local value', async () => {
+    it('should get a dag-cbor node local value', async function () {
       const result = await ipfs.dag.get(cidCbor, {
         path: 'someData'
       })
       expect(result.value).to.eql('I am inside a Cbor object')
     })
 
-    it.skip('should get dag-cbor node value one level deep', (done) => {})
-    it.skip('should get dag-cbor node value two levels deep', (done) => {})
-    it.skip('should get dag-cbor value via dag-pb node', (done) => {})
+    it.skip('should get dag-cbor node value one level deep', () => {})
+    it.skip('should get dag-cbor node value two levels deep', () => {})
+    it.skip('should get dag-cbor value via dag-pb node', () => {})
 
     it('should get only a CID, due to resolving locally only', async function () {
       const result = await ipfs.dag.get(cidCbor, {
@@ -204,20 +207,12 @@ export function testGet (factory, options) {
       expect(result.value).to.eql(uint8ArrayFromString('I am inside a Protobuf'))
     })
 
-    it('should get only a CID, due to resolving locally only', async function () {
-      const result = await ipfs.dag.get(cidCbor, {
-        path: 'pb/Data',
-        localResolve: true
-      })
-      expect(result.value.equals(cidPb)).to.be.true()
-    })
-
     it('should get with options and no path', async function () {
       const result = await ipfs.dag.get(cidCbor, { localResolve: true })
       expect(result.value).to.deep.equal(nodeCbor)
     })
 
-    it('should get a node added as CIDv0 with a CIDv1', async () => {
+    it('should get a node added as CIDv0 with a CIDv1', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const node = {
@@ -238,7 +233,7 @@ export function testGet (factory, options) {
       expect(output.value.Data).to.eql(input)
     })
 
-    it('should get a node added as CIDv1 with a CIDv0', async () => {
+    it('should get a node added as CIDv1 with a CIDv0', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const res = await all(importer([{ content: input }], blockstore(ipfs), {
@@ -255,7 +250,7 @@ export function testGet (factory, options) {
       expect(UnixFS.unmarshal(output.value.Data).data).to.eql(input)
     })
 
-    it('should be able to get part of a dag-cbor node', async () => {
+    it('should be able to get part of a dag-cbor node', async function () {
       const cbor = {
         foo: 'dag-cbor-bar'
       }
@@ -270,7 +265,7 @@ export function testGet (factory, options) {
       expect(result.value).to.equal('dag-cbor-bar')
     })
 
-    it('should be able to traverse from one dag-cbor node to another', async () => {
+    it('should be able to traverse from one dag-cbor node to another', async function () {
       const cbor1 = {
         foo: 'dag-cbor-bar'
       }
@@ -286,7 +281,7 @@ export function testGet (factory, options) {
       expect(result.value).to.equal('dag-cbor-bar')
     })
 
-    it('should be able to get a DAG node with format raw', async () => {
+    it('should be able to get a DAG node with format raw', async function () {
       const buf = Uint8Array.from([0, 1, 2, 3])
 
       const cid = await ipfs.dag.put(buf, {
@@ -298,7 +293,7 @@ export function testGet (factory, options) {
       expect(result.value).to.deep.equal(buf)
     })
 
-    it('should be able to get a dag-cbor node with the identity hash', async () => {
+    it('should be able to get a dag-cbor node with the identity hash', async function () {
       const identityData = uint8ArrayFromString('A16461736466190144', 'base16upper')
       const identityHash = await identity.digest(identityData)
       const identityCID = CID.createV1(identity.code, identityHash)
@@ -318,7 +313,7 @@ export function testGet (factory, options) {
         .to.eventually.be.rejected()
     })
 
-    it('should return nested content when getting a CID with a path', async () => {
+    it('should return nested content when getting a CID with a path', async function () {
       const regularContent = { test: '123' }
       const cid1 = await ipfs.dag.put(regularContent)
       const linkedContent = { link: cid1 }
@@ -329,7 +324,7 @@ export function testGet (factory, options) {
       expect(atPath).to.have.deep.property('value', regularContent)
     })
 
-    it('should not return nested content when getting a CID with a path and localResolve is true', async () => {
+    it('should not return nested content when getting a CID with a path and localResolve is true', async function () {
       const regularContent = { test: '123' }
       const cid1 = await ipfs.dag.put(regularContent)
       const linkedContent = { link: cid1 }
@@ -340,7 +335,7 @@ export function testGet (factory, options) {
       expect(atPath).to.have.deep.property('value').that.is.an.instanceOf(CID)
     })
 
-    it('should get a dag-jose node', async () => {
+    it('should get a dag-jose node', async function () {
       const cid = await ipfs.dag.put(joseNode, {
         storeCodec: 'dag-jose',
         hashAlg: 'sha2-256'
@@ -352,7 +347,7 @@ export function testGet (factory, options) {
       expect(joseNode).to.eql(node)
     })
 
-    it('should get a dag-jose node with path', async () => {
+    it('should get a dag-jose node with path', async function () {
       const result = await ipfs.dag.get(cidJose, {
         path: '/'
       })
@@ -363,7 +358,7 @@ export function testGet (factory, options) {
       expect(cid.equals(cidJose)).to.be.true()
     })
 
-    it('should get a dag-jose node local value', async () => {
+    it('should get a dag-jose node local value', async function () {
       const result = await ipfs.dag.get(cidJose, {
         path: 'payload'
       })

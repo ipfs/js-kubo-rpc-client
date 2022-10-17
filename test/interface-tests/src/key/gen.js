@@ -19,7 +19,7 @@ export function testGen (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.key.gen', () => {
+  describe('.key.gen', function () {
     const keyTypes = [
       {
         opts: { type: 'rsa', size: 2048 },
@@ -38,11 +38,11 @@ export function testGen (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     keyTypes.forEach((kt) => {
       it(`should generate a new ${kt.opts.type || 'default'} key`, async function () {

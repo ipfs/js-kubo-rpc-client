@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
+import { notImplemented } from '../../../../constants.js'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 
 /**
@@ -20,13 +21,13 @@ export function testApply (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should apply a config profile', async () => {
+    it('should apply a config profile', async function () {
       const diff = await ipfs.config.profiles.apply('lowpower')
       expect(diff.original.Swarm?.ConnMgr?.LowWater).to.not.equal(diff.updated.Swarm?.ConnMgr?.LowWater)
 
@@ -34,7 +35,10 @@ export function testApply (factory, options) {
       expect(newConfig.Swarm?.ConnMgr?.LowWater).to.equal(diff.updated.Swarm?.ConnMgr?.LowWater)
     })
 
-    it('should strip private key from diff output', async () => {
+    it('should strip private key from diff output', async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
       const originalConfig = await ipfs.config.getAll()
       const diff = await ipfs.config.profiles.apply('default-networking', { dryRun: true })
 
@@ -44,7 +48,7 @@ export function testApply (factory, options) {
       expect(diff).to.not.have.nested.property('updated.Identity.PrivKey')
     })
 
-    it('should not apply a config profile in dry-run mode', async () => {
+    it('should not apply a config profile in dry-run mode', async function () {
       const originalConfig = await ipfs.config.getAll()
 
       await ipfs.config.profiles.apply('server', { dryRun: true })

@@ -21,17 +21,17 @@ export function testPut (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.block.put', () => {
+  describe('.block.put', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should put a buffer, using defaults', async () => {
+    it('should put a buffer, using defaults', async function () {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
       const blob = uint8ArrayFromString('blorb')
 
@@ -41,7 +41,7 @@ export function testPut (factory, options) {
       expect(cid.bytes).to.equalBytes(base58btc.decode(`z${expectedHash}`))
     })
 
-    it('should put a buffer, using options', async () => {
+    it('should put a buffer, using options', async function () {
       const blob = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const cid = await ipfs.block.put(blob, {
@@ -58,7 +58,7 @@ export function testPut (factory, options) {
       expect(await all(ipfs.pin.ls({ paths: cid }))).to.have.lengthOf(1)
     })
 
-    it('should put a Block instance', async () => {
+    it('should put a Block instance', async function () {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
       const expectedCID = CID.parse(expectedHash)
       const b = uint8ArrayFromString('blorb')

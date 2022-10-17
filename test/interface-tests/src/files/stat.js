@@ -33,29 +33,28 @@ export function testStat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         args: factory.opts.type === 'go' ? [] : ['--enable-sharding-experiment']
       })).api
+      await ipfs.add(fixtures.smallFile.data)
     })
 
-    before(async () => { await ipfs.add(fixtures.smallFile.data) })
+    after(function () { return factory.clean() })
 
-    after(() => factory.clean())
-
-    it('refuses to stat files with an empty path', async () => {
+    it('refuses to stat files with an empty path', async function () {
       await expect(ipfs.files.stat('')).to.eventually.be.rejected()
     })
 
-    it('refuses to lists files with an invalid path', async () => {
+    it('refuses to lists files with an invalid path', async function () {
       await expect(ipfs.files.stat('not-valid')).to.eventually.be.rejectedWith(/paths must start with a leading slash/)
     })
 
-    it('fails to stat non-existent file', async () => {
+    it('fails to stat non-existent file', async function () {
       await expect(ipfs.files.stat('/i-do-not-exist')).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('stats an empty directory', async () => {
+    it('stats an empty directory', async function () {
       const path = `/directory-${Math.random()}`
 
       await ipfs.files.mkdir(path)
@@ -72,7 +71,7 @@ export function testStat (factory, options) {
 
     })
 
-    it('stats a small file', async () => {
+    it('stats a small file', async function () {
       const filePath = `/stat-${Math.random()}/small-file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, smallFile, {
@@ -88,7 +87,7 @@ export function testStat (factory, options) {
       })
     })
 
-    it('stats a large file', async () => {
+    it('stats a large file', async function () {
       const filePath = `/stat-${Math.random()}/large-file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, largeFile, {
@@ -104,7 +103,7 @@ export function testStat (factory, options) {
       })
     })
 
-    it('stats a raw node', async () => {
+    it('stats a raw node', async function () {
       const filePath = `/stat-${Math.random()}/large-file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, largeFile, {
@@ -126,7 +125,7 @@ export function testStat (factory, options) {
       expect(rawNodeStats.type).to.equal('file') // this is what go does
     })
 
-    it('stats a raw node in an mfs directory', async () => {
+    it('stats a raw node in an mfs directory', async function () {
       const filePath = `/stat-${Math.random()}/large-file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, largeFile, {
@@ -153,7 +152,7 @@ export function testStat (factory, options) {
       expect(rawNodeStats.type).to.equal('file') // this is what go does
     })
 
-    it('stats a dag-cbor node', async () => {
+    it('stats a dag-cbor node', async function () {
       const path = '/cbor.node'
       const node = {}
       const cid = await ipfs.dag.put(node, {
@@ -167,7 +166,7 @@ export function testStat (factory, options) {
       expect(stats.cid.toString()).to.equal(cid.toString())
     })
 
-    it('stats an identity CID', async () => {
+    it('stats an identity CID', async function () {
       const data = uint8ArrayFromString('derp')
       const path = `/test-${nanoid()}/identity.node`
       const hash = await identity.digest(data)
@@ -353,7 +352,7 @@ export function testStat (factory, options) {
       })
     })
 
-    it('should stat outside of mfs', async () => {
+    it('should stat outside of mfs', async function () {
       const stat = await ipfs.files.stat(`/ipfs/${fixtures.smallFile.cid}`)
 
       expect({
@@ -371,7 +370,7 @@ export function testStat (factory, options) {
       expect(stat.sizeLocal).to.be.undefined()
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -393,7 +392,7 @@ export function testStat (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('stats a sharded directory', async () => {
+      it('stats a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
 
         const stats = await ipfs.files.stat(`${shardedDirPath}`)
@@ -402,7 +401,7 @@ export function testStat (factory, options) {
         expect(stats.size).to.equal(0)
       })
 
-      it('stats a file inside a sharded directory', async () => {
+      it('stats a file inside a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const files = []
 

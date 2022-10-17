@@ -22,20 +22,20 @@ export function testReset (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should return a list of bootstrap peers when resetting the bootstrap nodes', async () => {
+    it('should return a list of bootstrap peers when resetting the bootstrap nodes', async function () {
       const res = await ipfs.bootstrap.reset()
 
       const peers = res.Peers
       expect(peers).to.have.property('length').that.is.gt(1)
     })
 
-    it('should return a list of all peers removed when all option is passed', async () => {
+    it('should return a list of all peers removed when all option is passed', async function () {
       const addRes = await ipfs.bootstrap.reset()
       const addedPeers = addRes.Peers
 

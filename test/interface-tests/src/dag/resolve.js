@@ -18,14 +18,14 @@ export function testResolve (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag.resolve', () => {
+  describe('.dag.resolve', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should respect timeout option when resolving a path within a DAG node', async () => {
+    it('should respect timeout option when resolving a path within a DAG node', async function () {
       const cid = await ipfs.dag.put({}, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
 
       return testTimeout(() => ipfs.dag.resolve(cid, {
@@ -33,7 +33,7 @@ export function testResolve (factory, options) {
       }))
     })
 
-    it('should resolve a path inside a cbor node', async () => {
+    it('should resolve a path inside a cbor node', async function () {
       const obj = {
         a: 1,
         b: [1, 2, 3],
@@ -50,7 +50,7 @@ export function testResolve (factory, options) {
       expect(result).to.have.property('remainderPath', 'c/cb')
     })
 
-    it('should resolve a path inside a cbor node by CID', async () => {
+    it('should resolve a path inside a cbor node by CID', async function () {
       const obj = {
         a: 1,
         b: [1, 2, 3],
@@ -67,7 +67,7 @@ export function testResolve (factory, options) {
       expect(result).to.have.property('remainderPath', 'c/cb')
     })
 
-    it('should resolve a multi-node path inside a cbor node', async () => {
+    it('should resolve a multi-node path inside a cbor node', async function () {
       const obj0 = {
         ca: [5, 6, 7],
         cb: 'foo'
@@ -87,7 +87,7 @@ export function testResolve (factory, options) {
       expect(result).to.have.property('remainderPath', 'cb')
     })
 
-    it('should resolve a multi-node path inside a cbor node by CID', async () => {
+    it('should resolve a multi-node path inside a cbor node by CID', async function () {
       const obj0 = {
         ca: [5, 6, 7],
         cb: 'foo'
@@ -107,7 +107,7 @@ export function testResolve (factory, options) {
       expect(result).to.have.property('remainderPath', 'cb')
     })
 
-    it('should resolve a raw node', async () => {
+    it('should resolve a raw node', async function () {
       const node = uint8ArrayFromString('hello world')
       const cid = await ipfs.dag.put(node, { storeCodec: 'raw', hashAlg: 'sha2-256' })
 
@@ -116,7 +116,7 @@ export function testResolve (factory, options) {
       expect(result).to.have.property('remainderPath', '')
     })
 
-    it('should resolve a path inside a dag-pb node linked to from another dag-pb node', async () => {
+    it('should resolve a path inside a dag-pb node linked to from another dag-pb node', async function () {
       const someData = uint8ArrayFromString('some other data')
       const childNode = {
         Data: someData,

@@ -31,7 +31,7 @@ export function testPeers (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsBId
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
@@ -41,9 +41,9 @@ export function testPeers (factory, options) {
       // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should list peers this node is connected to', async () => {
+    it('should list peers this node is connected to', async function () {
       const peers = await ipfsA.swarm.peers()
       expect(peers).to.have.length.above(0)
 
@@ -61,7 +61,7 @@ export function testPeers (factory, options) {
       // expect(peer).to.not.have.a.property('streams')
     })
 
-    it('should list peers this node is connected to with verbose option', async () => {
+    it('should list peers this node is connected to with verbose option', async function () {
       const peers = await ipfsA.swarm.peers({ verbose: true })
       expect(peers).to.have.length.above(0)
 
@@ -100,7 +100,7 @@ export function testPeers (factory, options) {
       }
     }
 
-    it('should list peers only once', async () => {
+    it('should list peers only once', async function () {
       const nodeA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
       const nodeB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       const nodeBId = await nodeB.id()
@@ -112,7 +112,7 @@ export function testPeers (factory, options) {
       expect(peersB).to.have.length(1)
     })
 
-    it('should list peers only once even if they have multiple addresses', async () => {
+    it('should list peers only once even if they have multiple addresses', async function () {
       // TODO: Change to port 0, needs: https://github.com/ipfs/interface-ipfs-core/issues/152
       const config = getConfig(isBrowser && factory.opts.type !== 'go'
         ? [

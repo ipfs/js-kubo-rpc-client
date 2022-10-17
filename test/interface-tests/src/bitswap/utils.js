@@ -53,6 +53,7 @@ export async function waitForWantlistKeyToBeRemoved (ipfs, key, opts = {}) {
     if (list.some(cid => cid.toString() === key)) {
       await delay(opts.interval)
 
+      // eslint-disable-next-line no-continue
       continue
     }
 

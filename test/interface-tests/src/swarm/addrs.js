@@ -30,7 +30,7 @@ export function testAddrs (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsBId
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
@@ -38,9 +38,9 @@ export function testAddrs (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should get a list of node addresses', async () => {
+    it('should get a list of node addresses', async function () {
       const peers = await ipfsA.swarm.addrs()
       expect(peers).to.not.be.empty()
       expect(peers).to.be.an('array')

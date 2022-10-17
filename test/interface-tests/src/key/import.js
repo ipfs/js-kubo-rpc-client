@@ -17,17 +17,17 @@ export function testImport (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.key.import', () => {
+  describe('.key.import', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should import an exported key', async () => {
+    it('should import an exported key', async function () {
       const password = nanoid()
 
       const key = await keys.generateKeyPair('Ed25519')

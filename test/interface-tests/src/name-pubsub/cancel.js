@@ -17,19 +17,19 @@ export function testCancel (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.name.pubsub.cancel', () => {
+  describe('.name.pubsub.cancel', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       const peerInfo = await ipfs.id()
       nodeId = peerInfo.id
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should return false when the name that is intended to cancel is not subscribed', async function () {
       // @ts-ignore this is mocha

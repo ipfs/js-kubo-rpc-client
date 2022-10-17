@@ -18,17 +18,17 @@ export function testBw (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.stats.bw', () => {
+  describe('.stats.bw', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get bandwidth stats ', async () => {
+    it('should get bandwidth stats ', async function () {
       const res = await last(ipfs.stats.bw())
 
       if (!res) {
@@ -38,7 +38,7 @@ export function testBw (factory, options) {
       expectIsBandwidth(null, res)
     })
 
-    it('should throw error for invalid interval option', async () => {
+    it('should throw error for invalid interval option', async function () {
       await expect(all(ipfs.stats.bw({ poll: true, interval: 'INVALID INTERVAL' })))
         .to.eventually.be.rejected()
         .with.property('message').that.matches(/invalid duration/)

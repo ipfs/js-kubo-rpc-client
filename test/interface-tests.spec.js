@@ -6,42 +6,27 @@ import { factory } from './utils/factory.js'
 
 /** @typedef {import("ipfsd-ctl").ControllerOptions} ControllerOptions */
 
-describe('kubo-rpc-client tests against go-ipfs', () => {
+describe('kubo-rpc-client tests against go-ipfs', function () {
   const commonFactory = factory({
     type: 'go'
   })
 
   tests.root(commonFactory)
 
-  tests.bitswap(commonFactory, {
-    // skip: [
-    //   {
-    //     name: '.bitswap.unwant',
-    //     reason: 'TODO not implemented in go-ipfs yet'
-    //   }
-    // ]
-  })
+  tests.bitswap(commonFactory)
 
   tests.block(commonFactory)
 
   tests.bootstrap(commonFactory)
 
   tests.config(commonFactory, {
-    skip: [
-      // config.replace
-      {
-        name: 'replace',
-        reason: 'FIXME Waiting for fix on go-ipfs https://github.com/ipfs/js-ipfs-http-client/pull/307#discussion_r69281789 and https://github.com/ipfs/go-ipfs/issues/2927'
-      },
-      {
-        name: 'should list config profiles',
-        reason: 'TODO: Not implemented in go-ipfs'
-      },
-      {
-        name: 'should strip private key from diff output',
-        reason: 'TODO: Not implemented in go-ipfs'
-      }
-    ]
+    // skip: [
+    //   // config.replace
+    //   {
+    //     name: 'replace',
+    //     reason: 'FIXME Waiting for fix on go-ipfs https://github.com/ipfs/js-ipfs-http-client/pull/307#discussion_r69281789 and https://github.com/ipfs/go-ipfs/issues/2927 '
+    //   }
+    // ]
   })
 
   tests.dag(commonFactory, {

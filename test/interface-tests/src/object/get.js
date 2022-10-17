@@ -29,13 +29,13 @@ export function testGet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get object by multihash', async () => {
+    it('should get object by multihash', async function () {
       const obj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -58,7 +58,7 @@ export function testGet (factory, options) {
       expect(node1.Links).to.eql(node2.Links)
     })
 
-    it('should get object with links by multihash string', async () => {
+    it('should get object with links by multihash string', async function () {
       const node1a = {
         Data: uint8ArrayFromString('Some data 1'),
         Links: []
@@ -93,7 +93,7 @@ export function testGet (factory, options) {
       expect(node1a.Data).to.eql(node1c.Data)
     })
 
-    it('should get object by base58 encoded multihash', async () => {
+    it('should get object by base58 encoded multihash', async function () {
       const obj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -116,7 +116,7 @@ export function testGet (factory, options) {
       expect(node1a.Links).to.eql(node1b.Links)
     })
 
-    it('should supply unaltered data', async () => {
+    it('should supply unaltered data', async function () {
       // has to be big enough to span several DAGNodes
       const data = randomBytes(1024 * 3000)
 

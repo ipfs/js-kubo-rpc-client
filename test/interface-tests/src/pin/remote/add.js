@@ -25,23 +25,23 @@ export function testAdd (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       await ipfs.pin.remote.service.add(SERVICE, {
         endpoint: ENDPOINT,
         key: KEY
       })
     })
-    after(async () => {
+    after(async function () {
       await clearServices(ipfs)
       await factory.clean()
     })
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       await clearRemotePins(ipfs)
     })
 
-    it('should add a CID and return the added CID', async () => {
+    it('should add a CID and return the added CID', async function () {
       const pin = await ipfs.pin.remote.add(fixtures.files[0].cid, {
         name: 'fixtures-files-0',
         background: true,
@@ -55,7 +55,7 @@ export function testAdd (factory, options) {
       })
     })
 
-    it('should fail if service is not provided', async () => {
+    it('should fail if service is not provided', async function () {
       const result = ipfs.pin.remote.add(fixtures.files[0].cid, {
         name: 'fixtures-files-0',
         background: true
@@ -64,7 +64,7 @@ export function testAdd (factory, options) {
       await expect(result).to.eventually.be.rejectedWith(/service name must be passed/)
     })
 
-    it('if name is not provided defaults to ""', async () => {
+    it('if name is not provided defaults to ""', async function () {
       const pin = await ipfs.pin.remote.add(fixtures.files[0].cid, {
         background: true,
         service: SERVICE
@@ -77,7 +77,7 @@ export function testAdd (factory, options) {
       })
     })
 
-    it('should default to blocking pin', async () => {
+    it('should default to blocking pin', async function () {
       const { cid } = fixtures.files[0]
       const result = ipfs.pin.remote.add(cid, {
         service: SERVICE
@@ -104,7 +104,7 @@ export function testAdd (factory, options) {
         name: ''
       })
     })
-    it('should pin dag-cbor', async () => {
+    it('should pin dag-cbor', async function () {
       const cid = await ipfs.dag.put({}, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-256'
@@ -123,7 +123,7 @@ export function testAdd (factory, options) {
       })
     })
 
-    it('should pin raw', async () => {
+    it('should pin raw', async function () {
       const cid = await ipfs.dag.put(new Uint8Array(0), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'

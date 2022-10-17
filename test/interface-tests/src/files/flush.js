@@ -22,11 +22,11 @@ export function testFlush (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should not flush not found file/dir, expect error', async () => {
+    it('should not flush not found file/dir, expect error', async function () {
       const testDir = `/test-${nanoid()}`
 
       try {
@@ -41,14 +41,14 @@ export function testFlush (factory, options) {
       expect(ipfs.files.flush()).to.eventually.be.rejected()
     })
 
-    it('should flush root', async () => {
+    it('should flush root', async function () {
       const root = await ipfs.files.stat('/')
       const flushed = await ipfs.files.flush('/')
 
       expect(root.cid.toString()).to.equal(flushed.toString())
     })
 
-    it('should flush specific dir', async () => {
+    it('should flush specific dir', async function () {
       const testDir = `/test-${nanoid()}`
 
       await ipfs.files.mkdir(testDir, { parents: true })

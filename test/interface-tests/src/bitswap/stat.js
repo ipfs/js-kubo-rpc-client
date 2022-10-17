@@ -22,18 +22,18 @@ export function testStat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get bitswap stats', async () => {
+    it('should get bitswap stats', async function () {
       const res = await ipfs.bitswap.stat()
       expectIsBitswap(null, res)
     })
 
-    it('should not get bitswap stats when offline', async () => {
+    it('should not get bitswap stats when offline', async function () {
       const node = await factory.spawn()
       await node.stop()
 

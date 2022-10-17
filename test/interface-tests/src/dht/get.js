@@ -28,16 +28,16 @@ export function testGet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeB
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
 
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should respect timeout option when getting a value from the DHT', async () => {
+    it('should respect timeout option when getting a value from the DHT', async function () {
       const data = await nodeA.add('should put a value to the DHT')
       const publish = await nodeA.name.publish(data.cid)
 
@@ -46,7 +46,7 @@ export function testGet (factory, options) {
       })))
     })
 
-    it('should error when getting a non-existent key from the DHT', async () => {
+    it('should error when getting a non-existent key from the DHT', async function () {
       const key = '/ipns/k51qzi5uqu5dl0dbfddy2wb42nvbc6anyxnkrguy5l0h0bv9kaih6j6vqdskqk'
       const events = await all(nodeA.dht.get(key))
 
@@ -57,7 +57,7 @@ export function testGet (factory, options) {
       expect(events.filter(event => event.name === 'QUERY_ERROR')).to.not.be.empty()
     })
 
-    it('should get a value after it was put on another node', async () => {
+    it('should get a value after it was put on another node', async function () {
       const data = await nodeA.add('should put a value to the DHT')
       const publish = await nodeA.name.publish(data.cid)
       const events = await all(nodeA.dht.get(`/ipns/${publish.name}`))

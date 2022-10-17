@@ -22,13 +22,13 @@ export function testSetData (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should set data for an existing node', async () => {
+    it('should set data for an existing node', async function () {
       const obj = {
         Data: uint8ArrayFromString('patch test object'),
         Links: []

@@ -106,7 +106,7 @@ export function testGet (factory, options) {
       return all(source)
     }
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
 
       await Promise.all([
@@ -115,7 +115,7 @@ export function testGet (factory, options) {
       ])
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when getting files', () => {
       return testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
@@ -123,7 +123,7 @@ export function testGet (factory, options) {
       })))
     })
 
-    it('should get with a base58 encoded multihash', async () => {
+    it('should get with a base58 encoded multihash', async function () {
       const output = await pipe(
         ipfs.get(fixtures.smallFile.cid),
         tarballed,
@@ -134,7 +134,7 @@ export function testGet (factory, options) {
       expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.smallFile.data)
     })
 
-    it('should get a file added as CIDv0 with a CIDv1', async () => {
+    it('should get a file added as CIDv0 with a CIDv1', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
       const res = await all(importer({ content: input }, blockstore(ipfs)))
 
@@ -153,7 +153,7 @@ export function testGet (factory, options) {
       expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
     })
 
-    it('should get a file added as CIDv1 with a CIDv0', async () => {
+    it('should get a file added as CIDv1 with a CIDv0', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
       const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: false }))
 
@@ -172,7 +172,7 @@ export function testGet (factory, options) {
       expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
     })
 
-    it('should get a file added as CIDv1 with rawLeaves', async () => {
+    it('should get a file added as CIDv1 with rawLeaves', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
       const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: true }))
 
@@ -189,7 +189,7 @@ export function testGet (factory, options) {
       expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
     })
 
-    it('should get a BIG file', async () => {
+    it('should get a BIG file', async function () {
       const output = await pipe(
         ipfs.get(fixtures.bigFile.cid),
         tarballed,
@@ -279,7 +279,7 @@ export function testGet (factory, options) {
       ])
     })
 
-    it('should get with ipfs path, as object and nested value', async () => {
+    it('should get with ipfs path, as object and nested value', async function () {
       const file = {
         path: 'a/testfile.txt',
         content: fixtures.smallFile.data
@@ -303,7 +303,7 @@ export function testGet (factory, options) {
       expect(uint8ArrayToString(output[0].body)).to.equal('Plz add me!\n')
     })
 
-    it('should compress a file directly', async () => {
+    it('should compress a file directly', async function () {
       const output = await pipe(
         ipfs.get(fixtures.smallFile.cid, {
           compress: true,
@@ -315,7 +315,7 @@ export function testGet (factory, options) {
       expect(uint8ArrayConcat(output)).to.equalBytes(fixtures.smallFile.data)
     })
 
-    it('should compress a file as a tarball', async () => {
+    it('should compress a file as a tarball', async function () {
       const output = await pipe(
         ipfs.get(fixtures.smallFile.cid, {
           archive: true,
@@ -329,7 +329,7 @@ export function testGet (factory, options) {
       expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.smallFile.data)
     })
 
-    it('should not compress a directory', async () => {
+    it('should not compress a directory', async function () {
       const dirs = [
         content('pp.txt'),
         emptyDir('empty-folder'),
@@ -345,14 +345,14 @@ export function testGet (factory, options) {
       }))).to.eventually.be.rejectedWith(/file is not regular/)
     })
 
-    it('should compress a file with invalid compression level', async () => {
+    it('should compress a file with invalid compression level', async function () {
       await expect(drain(ipfs.get(fixtures.smallFile.cid, {
         compress: true,
         compressionLevel: 10
       }))).to.eventually.be.rejected()
     })
 
-    it('should compress a directory as a tarball', async () => {
+    it('should compress a directory as a tarball', async function () {
       const dirs = [
         content('pp.txt'),
         emptyDir('empty-folder'),
@@ -388,13 +388,13 @@ export function testGet (factory, options) {
       ])
     })
 
-    it('should error on invalid key', async () => {
+    it('should error on invalid key', async function () {
       const invalidCid = 'somethingNotMultihash'
 
       await expect(all(ipfs.get(invalidCid))).to.eventually.be.rejected()
     })
 
-    it('get path containing "+"s', async () => {
+    it('get path containing "+"s', async function () {
       const filename = 'ti,c64x+mega++mod-pic.txt'
       const subdir = 'tmp/c++files'
       const expectedCid = 'QmPkmARcqjo5fqK1V1o8cFsuaXxWYsnwCNLJUYS4KeZyff'

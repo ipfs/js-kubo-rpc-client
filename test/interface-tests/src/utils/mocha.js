@@ -121,6 +121,7 @@ export function getIt (config) {
 
       if (only) {
         if (only.reason) name = `${name} (${only.reason})`
+        // eslint-disable-next-line mocha/no-exclusive-tests
         return it.only(name, impl) // eslint-disable-line no-only-tests/no-only-tests
       }
     }

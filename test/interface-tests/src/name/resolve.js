@@ -27,7 +27,7 @@ export function testResolve (factory, options) {
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         ipfsOptions: {
           config: {
@@ -41,7 +41,7 @@ export function testResolve (factory, options) {
       nodeId = peerInfo.id
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should resolve a record default options', async function () {
       // @ts-ignore this is mocha
@@ -72,7 +72,7 @@ export function testResolve (factory, options) {
       expect(resolvedPath).to.equal(`/ipfs/${cid}`)
     })
 
-    it('should resolve a record recursive === false', async () => {
+    it('should resolve a record recursive === false', async function () {
       const { path } = await ipfs.add(uint8ArrayFromString('should resolve a record recursive === false'))
       await ipfs.name.publish(path, { allowOffline: true })
       expect(await last(ipfs.name.resolve(`/ipns/${nodeId}`, { recursive: false })))
@@ -107,7 +107,7 @@ export function testResolve (factory, options) {
         .to.eq(`/ipfs/${path}/remainder/file.txt`)
     })
 
-    it('should resolve a record recursive === false with remainder', async () => {
+    it('should resolve a record recursive === false with remainder', async function () {
       const { path } = await ipfs.add(uint8ArrayFromString('should resolve a record recursive = false with remainder'))
       await ipfs.name.publish(path, { allowOffline: true })
       expect(await last(ipfs.name.resolve(`/ipns/${nodeId}/remainder/file.txt`, { recursive: false })))
@@ -128,7 +128,7 @@ export function testResolve (factory, options) {
         .to.eq(`/ipfs/${path}/remainder/file.txt`)
     })
 
-    it('should not get the entry if its validity time expired', async () => {
+    it('should not get the entry if its validity time expired', async function () {
       const publishOptions = {
         lifetime: '100ms',
         ttl: '10s',
@@ -154,43 +154,43 @@ export function testResolve (factory, options) {
     let ipfs
     this.retries(5)
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should resolve /ipns/ipfs.io', async () => {
+    it('should resolve /ipns/ipfs.io', async function () {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io')))
         .to.match(/\/ipfs\/.+$/)
     })
 
-    it('should resolve /ipns/ipfs.io recursive === false', async () => {
+    it('should resolve /ipns/ipfs.io recursive === false', async function () {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io', { recursive: false })))
         .to.match(/\/ipns\/.+$/)
     })
 
-    it('should resolve /ipns/ipfs.io recursive === true', async () => {
+    it('should resolve /ipns/ipfs.io recursive === true', async function () {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io', { recursive: true })))
         .to.match(/\/ipfs\/.+$/)
     })
 
-    it('should resolve /ipns/ipfs.io with remainder', async () => {
+    it('should resolve /ipns/ipfs.io with remainder', async function () {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg')))
         .to.match(/\/ipfs\/.+\/images\/ipfs-logo.svg$/)
     })
 
-    it('should resolve /ipns/ipfs.io with remainder recursive === false', async () => {
+    it('should resolve /ipns/ipfs.io with remainder recursive === false', async function () {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg', { recursive: false })))
         .to.match(/\/ipns\/.+\/images\/ipfs-logo.svg$/)
     })
 
-    it('should resolve /ipns/ipfs.io with remainder recursive === true', async () => {
+    it('should resolve /ipns/ipfs.io with remainder recursive === true', async function () {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io/images/ipfs-logo.svg', { recursive: true })))
         .to.match(/\/ipfs\/.+\/images\/ipfs-logo.svg$/)
     })
 
-    it('should fail to resolve /ipns/ipfs.a', async () => {
+    it('should fail to resolve /ipns/ipfs.a', async function () {
       try {
         await last(ipfs.name.resolve('ipfs.a'))
       } catch (/** @type {any} */ error) {
@@ -198,7 +198,7 @@ export function testResolve (factory, options) {
       }
     })
 
-    it('should resolve ipns path with hamt-shard recursive === true', async () => {
+    it('should resolve ipns path with hamt-shard recursive === true', async function () {
       expect(await last(ipfs.name.resolve('/ipns/tr.wikipedia-on-ipfs.org/wiki/Anasayfa.html', { recursive: true })))
         .to.match(/\/ipfs\/.+$/)
     })

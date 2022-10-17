@@ -43,7 +43,7 @@ export function testSubscribe (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs2Id
 
-    before(async () => {
+    before(async function () {
       ipfs1 = (await factory.spawn({ ipfsOptions })).api
 
       // webworkers are not dialable because webrtc is not available
@@ -53,12 +53,12 @@ export function testSubscribe (factory, options) {
       ipfs2Id = await ipfs2.id()
     })
 
-    beforeEach(() => {
+    beforeEach(function () {
       topic = getTopic()
       subscribedTopics = [topic]
     })
 
-    afterEach(async () => {
+    afterEach(async function () {
       const nodes = [ipfs1, ipfs2]
       for (let i = 0; i < subscribedTopics.length; i++) {
         const topic = subscribedTopics[i]
@@ -68,10 +68,10 @@ export function testSubscribe (factory, options) {
       await delay(100)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    describe('single node', () => {
-      it('should subscribe to one topic', async () => {
+    describe('single node', function () {
+      it('should subscribe to one topic', async function () {
         const msgStream = pushable()
 
         await ipfs1.pubsub.subscribe(topic, msg => {
@@ -90,7 +90,7 @@ export function testSubscribe (factory, options) {
         expect(msg).to.have.property('from', ipfs1Id.id)
       })
 
-      it('should subscribe to one topic with options', async () => {
+      it('should subscribe to one topic with options', async function () {
         const msgStream = pushable()
 
         await ipfs1.pubsub.subscribe(topic, msg => {
@@ -109,7 +109,7 @@ export function testSubscribe (factory, options) {
         }
       })
 
-      it('should subscribe to topic multiple times with different handlers', async () => {
+      it('should subscribe to topic multiple times with different handlers', async function () {
         const msgStream1 = pushable()
         const msgStream2 = pushable()
 
@@ -150,7 +150,7 @@ export function testSubscribe (factory, options) {
         expect(await ipfs1.pubsub.ls()).to.eql([])
       })
 
-      it('should allow discover option to be passed', async () => {
+      it('should allow discover option to be passed', async function () {
         const msgStream = pushable()
 
         await ipfs1.pubsub.subscribe(topic, msg => {
@@ -166,8 +166,8 @@ export function testSubscribe (factory, options) {
       })
     })
 
-    describe('multiple connected nodes', () => {
-      before(() => {
+    describe('multiple connected nodes', function () {
+      before(function () {
         if (ipfs1.pubsub.setMaxListeners) {
           ipfs1.pubsub.setMaxListeners(100)
         }
@@ -251,7 +251,7 @@ export function testSubscribe (factory, options) {
         abort2.abort()
       })
 
-      it('should receive messages from a different node', async () => {
+      it('should receive messages from a different node', async function () {
         const expectedString = 'hello from the other side'
 
         const msgStream1 = pushable()
@@ -286,7 +286,7 @@ export function testSubscribe (factory, options) {
         expect(sub2Msg.from).to.eql(ipfs2Id.id)
       })
 
-      it('should round trip a non-utf8 binary buffer', async () => {
+      it('should round trip a non-utf8 binary buffer', async function () {
         const expectedHex = 'a36161636179656162830103056164a16466666666f4'
         const buffer = uint8ArrayFromString(expectedHex, 'base16')
 
@@ -322,7 +322,7 @@ export function testSubscribe (factory, options) {
         expect(sub2Msg.from).to.eql(ipfs2Id.id)
       })
 
-      it('should receive multiple messages', async () => {
+      it('should receive multiple messages', async function () {
         const outbox = ['hello', 'world', 'this', 'is', 'pubsub']
 
         const msgStream1 = pushable()
@@ -410,7 +410,7 @@ export function testSubscribe (factory, options) {
         })
       })
 
-      it('should receive messages from a different node on lots of topics', async () => {
+      it('should receive messages from a different node on lots of topics', async function () {
         // @ts-ignore this is mocha
         this.timeout(5 * 60 * 1000)
 
@@ -470,7 +470,7 @@ export function testSubscribe (factory, options) {
         }
       })
 
-      it('should unsubscribe multiple handlers', async () => {
+      it('should unsubscribe multiple handlers', async function () {
         // @ts-ignore this is mocha
         this.timeout(2 * 60 * 1000)
 
@@ -507,7 +507,7 @@ export function testSubscribe (factory, options) {
         expect(handler2).to.have.property('callCount', 1)
       })
 
-      it('should unsubscribe individual handlers', async () => {
+      it('should unsubscribe individual handlers', async function () {
         // @ts-ignore this is mocha
         this.timeout(2 * 60 * 1000)
 

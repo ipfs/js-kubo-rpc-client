@@ -32,35 +32,35 @@ export function testLs (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       await ipfs.pin.remote.service.add(SERVICE, {
         endpoint: ENDPOINT,
         key: KEY
       })
     })
-    after(async () => {
+    after(async function () {
       await clearServices(ipfs)
       await factory.clean()
     })
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       await clearRemotePins(ipfs)
     })
 
-    it('requires service option', async () => {
+    it('requires service option', async function () {
       const result = ipfs.pin.remote.ls({})
       await expect(all(result)).to.eventually.be.rejectedWith(/service name must be passed/)
     })
 
-    it('list no pins', async () => {
+    it('list no pins', async function () {
       const result = ipfs.pin.remote.ls({ service: SERVICE })
       const pins = await all(result)
       expect(pins).to.deep.equal([])
     })
 
-    describe('list pins by status', () => {
-      it('list only pinned pins by default', async () => {
+    describe('list pins by status', function () {
+      it('list only pinned pins by default', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -81,7 +81,7 @@ export function testLs (factory, options) {
         ])
       })
 
-      it('should list "queued" pins', async () => {
+      it('should list "queued" pins', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -103,7 +103,7 @@ export function testLs (factory, options) {
         ])
       })
 
-      it('should list "pinning" pins', async () => {
+      it('should list "pinning" pins', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -125,7 +125,7 @@ export function testLs (factory, options) {
         ])
       })
 
-      it('should list "failed" pins', async () => {
+      it('should list "failed" pins', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -147,7 +147,7 @@ export function testLs (factory, options) {
         ])
       })
 
-      it('should list queued+pinned pins', async () => {
+      it('should list queued+pinned pins', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -174,7 +174,7 @@ export function testLs (factory, options) {
         ].sort(byCID))
       })
 
-      it('should list queued+pinned+pinning pins', async () => {
+      it('should list queued+pinned+pinning pins', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -206,7 +206,7 @@ export function testLs (factory, options) {
         ].sort(byCID))
       })
 
-      it('should list queued+pinned+pinning+failed pins', async () => {
+      it('should list queued+pinned+pinning+failed pins', async function () {
         await addRemotePins(ipfs, SERVICE, {
           one: cid1,
           'pinned-two': cid2,
@@ -244,8 +244,8 @@ export function testLs (factory, options) {
       })
     })
 
-    describe('list pins by name', () => {
-      it('should list no pins when names do not match', async () => {
+    describe('list pins by name', function () {
+      it('should list no pins when names do not match', async function () {
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2,
@@ -260,7 +260,7 @@ export function testLs (factory, options) {
 
         expect(list).to.deep.equal([])
       })
-      it('should list only pins with matchin names', async () => {
+      it('should list only pins with matchin names', async function () {
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2
@@ -290,7 +290,7 @@ export function testLs (factory, options) {
         ].sort(byCID))
       })
 
-      it('should list only pins with matchin names & status', async () => {
+      it('should list only pins with matchin names & status', async function () {
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2
@@ -320,8 +320,8 @@ export function testLs (factory, options) {
       })
     })
 
-    describe('list pins by cid', () => {
-      it('should list pins with matching cid', async () => {
+    describe('list pins by cid', function () {
+      it('should list pins with matching cid', async function () {
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2,
@@ -344,7 +344,7 @@ export function testLs (factory, options) {
         ])
       })
 
-      it('should list pins with any matching cid', async () => {
+      it('should list pins with any matching cid', async function () {
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2,
@@ -372,7 +372,7 @@ export function testLs (factory, options) {
         ].sort(byCID))
       })
 
-      it('should list pins with matching cid+status', async () => {
+      it('should list pins with matching cid+status', async function () {
         await addRemotePins(ipfs, SERVICE, {
           'pinned-a': cid1,
           'failed-b': cid2,
@@ -400,7 +400,7 @@ export function testLs (factory, options) {
         ].sort(byCID))
       })
 
-      it('should list pins with matching cid+status+name', async () => {
+      it('should list pins with matching cid+status+name', async function () {
         await addRemotePins(ipfs, SERVICE, {
           'pinned-a': cid1,
           'failed-b': cid2,

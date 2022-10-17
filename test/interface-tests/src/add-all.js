@@ -13,7 +13,7 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import bufferStream from 'it-buffer-stream'
 import * as raw from 'multiformats/codecs/raw'
-// import * as dagPB from '@ipld/dag-pb'
+import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
 import { isFirefox, notImplemented } from '../../constants.js'
@@ -71,9 +71,9 @@ export function testAddAll (factory, options) {
       expect(stats).to.have.deep.property('mtime', expectedMtime)
     }
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should add a File as array of tuples', async function () {
       if (!supportsFileReader) {
@@ -90,7 +90,7 @@ export function testAddAll (factory, options) {
       expect(filesAdded[0].cid.toString()).to.be.eq('QmTVfLxf3qXiJgr4KwG6UBckcNvTqBp93Rwy5f7h3mHsVC')
     })
 
-    it('should add a Uint8Array as array of tuples', async () => {
+    it('should add a Uint8Array as array of tuples', async function () {
       const tuple = { path: 'testfile.txt', content: fixtures.smallFile.data }
 
       const filesAdded = await all(ipfs.addAll([tuple]))
@@ -240,7 +240,7 @@ export function testAddAll (factory, options) {
       expect(progressSizes).to.deep.equal(total)
     })
 
-    it('should receive file name from progress event', async () => {
+    it('should receive file name from progress event', async function () {
       /** @type {string[]} */
       const receivedNames = []
 
@@ -296,34 +296,34 @@ export function testAddAll (factory, options) {
       expect(nonSeqDirFilePaths.every(p => filesAddedPaths.includes(p))).to.be.true()
     })
 
-    it('should fail when passed invalid input', async () => {
+    it('should fail when passed invalid input', async function () {
       const nonValid = 138
 
       // @ts-expect-error nonValid is the wrong type
       await expect(all(ipfs.addAll(nonValid))).to.eventually.be.rejected()
     })
 
-    it('should fail when passed single file objects', async () => {
+    it('should fail when passed single file objects', async function () {
       const nonValid = { content: 'hello world' }
 
       // @ts-expect-error nonValid is non valid
       await expect(all(ipfs.addAll(nonValid))).to.eventually.be.rejectedWith(/single item passed/)
     })
 
-    it('should fail when passed single strings', async () => {
+    it('should fail when passed single strings', async function () {
       const nonValid = 'hello world'
 
       await expect(all(ipfs.addAll(nonValid))).to.eventually.be.rejectedWith(/single item passed/)
     })
 
-    it('should fail when passed single buffers', async () => {
+    it('should fail when passed single buffers', async function () {
       const nonValid = uint8ArrayFromString('hello world')
 
       // @ts-expect-error nonValid is non valid
       await expect(all(ipfs.addAll(nonValid))).to.eventually.be.rejectedWith(/single item passed/)
     })
 
-    it('should wrap content in a directory', async () => {
+    it('should wrap content in a directory', async function () {
       const data = { path: 'testfile.txt', content: fixtures.smallFile.data }
 
       const filesAdded = await all(ipfs.addAll([data], { wrapWithDirectory: true }))
@@ -515,7 +515,7 @@ export function testAddAll (factory, options) {
       expect(files).to.have.nested.property('[0].cid.multihash.code', sha512.code)
     })
 
-    it('should respect raw leaves when file is smaller than one block and no metadata is present', async () => {
+    it('should respect raw leaves when file is smaller than one block and no metadata is present', async function () {
       const files = await all(ipfs.addAll([Uint8Array.from([0, 1, 2])], {
         cidVersion: 1,
         rawLeaves: true
@@ -527,7 +527,7 @@ export function testAddAll (factory, options) {
       expect(files[0].size).to.equal(3)
     })
 
-    it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
+    it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -549,7 +549,7 @@ export function testAddAll (factory, options) {
       expect(files[0].size).to.equal(18)
     })
 
-    it('should add directories with metadata', async () => {
+    it('should add directories with metadata', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

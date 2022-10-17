@@ -45,17 +45,17 @@ export function testGc (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.repo.gc', () => {
+  describe('.repo.gc', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should run garbage collection', async () => {
+    it('should run garbage collection', async function () {
       const res = await ipfs.add(uint8ArrayFromString('apples'))
 
       const pinset = await all(ipfs.pin.ls())
@@ -68,7 +68,7 @@ export function testGc (factory, options) {
       expect(finalPinset.map(obj => obj.cid.toString())).not.includes(res.cid.toString())
     })
 
-    it('should clean up unpinned data', async () => {
+    it('should clean up unpinned data', async function () {
       // Add some data. Note: this will implicitly pin the data, which causes
       // some blocks to be added for the data itself and for the pinning
       // information that refers to the blocks
@@ -96,7 +96,7 @@ export function testGc (factory, options) {
       await shouldNotHaveRef(ipfs, cid)
     })
 
-    it('should clean up removed MFS files', async () => {
+    it('should clean up removed MFS files', async function () {
       // Add a file to MFS
       await ipfs.files.write('/test', uint8ArrayFromString('oranges'), { create: true })
       const stats = await ipfs.files.stat('/test')
@@ -123,7 +123,7 @@ export function testGc (factory, options) {
       await shouldNotHaveRef(ipfs, stats.cid)
     })
 
-    it('should clean up block only after unpinned and removed from MFS', async () => {
+    it('should clean up block only after unpinned and removed from MFS', async function () {
       // Add a file to MFS
       await ipfs.files.write('/test', uint8ArrayFromString('peaches'), { create: true })
       const stats = await ipfs.files.stat('/test')
@@ -170,7 +170,7 @@ export function testGc (factory, options) {
       await shouldNotHaveRef(ipfs, dataCid)
     })
 
-    it('should clean up indirectly pinned data after recursive pin removal', async () => {
+    it('should clean up indirectly pinned data after recursive pin removal', async function () {
       // Add some data
       const addRes = await ipfs.add(uint8ArrayFromString('pears'))
       const dataCid = addRes.cid

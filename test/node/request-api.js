@@ -5,7 +5,7 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { create as httpClient } from '../../src/index.js'
 import http from 'http'
 
-describe('\'deal with HTTP weirdness\' tests', () => {
+describe('\'deal with HTTP weirdness\' tests', function () {
   it('does not crash if no content-type header is provided', async function () {
     // go-ipfs always (currently) adds a content-type header, even if no content is present,
     // the standard behaviour for an http-api is to omit this header if no content is present
@@ -25,9 +25,10 @@ describe('\'deal with HTTP weirdness\' tests', () => {
   })
 })
 
-describe('trailer headers', () => {
+// eslint-disable-next-line mocha/max-top-level-suites
+describe('trailer headers', function () {
   // TODO: needs fixing https://github.com/ipfs/js-ipfs-http-client/pull/624#issuecomment-344181950
-  it.skip('should deal with trailer x-stream-error correctly', (done) => {
+  it.skip('should deal with trailer x-stream-error correctly', function (done) {
     const server = http.createServer((req, res) => {
       res.setHeader('x-chunked-output', '1')
       res.setHeader('content-type', 'application/json')
@@ -52,7 +53,7 @@ describe('trailer headers', () => {
   })
 })
 
-describe('error handling', () => {
+describe('error handling', function () {
   it('should handle plain text error response', async function () {
     const server = http.createServer((req, res) => {
       // Consume the entire request, before responding.

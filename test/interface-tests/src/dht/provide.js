@@ -25,16 +25,16 @@ export function testProvide (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       const nodeB = (await factory.spawn()).api
 
       await ensureReachable(ipfs, nodeB)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should provide local CID', async () => {
+    it('should provide local CID', async function () {
       const res = await ipfs.add(uint8ArrayFromString('test'))
 
       await all(ipfs.dht.provide(res.cid))
@@ -49,12 +49,12 @@ export function testProvide (factory, options) {
         .that.include('not found locally')
     })
 
-    it('should provide a CIDv1', async () => {
+    it('should provide a CIDv1', async function () {
       const res = await ipfs.add(uint8ArrayFromString('test'), { cidVersion: 1 })
       await all(ipfs.dht.provide(res.cid))
     })
 
-    it('should error on non CID arg', async () => {
+    it('should error on non CID arg', async function () {
       // @ts-expect-error invalid arg
       return expect(all(ipfs.dht.provide({}))).to.eventually.be.rejected()
     })

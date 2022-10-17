@@ -22,16 +22,16 @@ export function testExport (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag.export', () => {
+  describe('.dag.export', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should export a car file', async () => {
+    it('should export a car file', async function () {
       const child = dagPB.encode({
         Data: uint8ArrayFromString('block-' + Math.random()),
         Links: []

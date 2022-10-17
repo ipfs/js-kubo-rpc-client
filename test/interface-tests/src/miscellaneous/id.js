@@ -24,13 +24,13 @@ export function testId (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get the node ID', async () => {
+    it('should get the node ID', async function () {
       const res = await ipfs.id()
       expect(res).to.have.a.property('id').that.is.a('string')
       expect(res).to.have.a.property('publicKey')
@@ -43,7 +43,7 @@ export function testId (factory, options) {
       }
     })
 
-    it('should have protocols property', async () => {
+    it('should have protocols property', async function () {
       const res = await ipfs.id()
 
       expect(res).to.have.a.property('protocols').that.is.an('array')

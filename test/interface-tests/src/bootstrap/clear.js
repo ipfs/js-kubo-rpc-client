@@ -24,11 +24,11 @@ export function testClear (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should return a list containing the peer removed when called with a valid arg (ip4)', async () => {
+    it('should return a list containing the peer removed when called with a valid arg (ip4)', async function () {
       await ipfs.bootstrap.clear()
 
       const addRes = await ipfs.bootstrap.add(validIp4)
@@ -41,7 +41,7 @@ export function testClear (factory, options) {
       expect(peers).to.have.property('length').that.is.equal(1)
     })
 
-    it('should return a list of all peers removed when all option is passed', async () => {
+    it('should return a list of all peers removed when all option is passed', async function () {
       const addRes = await ipfs.bootstrap.reset()
       const addedPeers = addRes.Peers
 

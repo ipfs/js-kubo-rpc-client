@@ -23,13 +23,13 @@ export function testData (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get data by CID', async () => {
+    it('should get data by CID', async function () {
       const testObj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []

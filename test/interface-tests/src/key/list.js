@@ -16,15 +16,15 @@ export function testList (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.key.list', () => {
+  describe('.key.list', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should list all the keys', async function () {
       // @ts-ignore this is mocha

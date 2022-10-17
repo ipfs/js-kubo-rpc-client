@@ -45,13 +45,13 @@ export function testChmod (factory, options) {
       expect(updatedMode).to.equal(parseInt(expectedFinalMode, 8))
     }
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should update the mode for a file', async () => {
+    it('should update the mode for a file', async function () {
       const path = `/foo-${Math.random()}`
 
       await ipfs.files.write(path, uint8ArrayFromString('Hello world'), {
@@ -68,7 +68,7 @@ export function testChmod (factory, options) {
       expect(updatedMode).to.equal(parseInt('0777', 8))
     })
 
-    it('should update the mode for a directory', async () => {
+    it('should update the mode for a directory', async function () {
       const path = `/foo-${Math.random()}`
 
       await ipfs.files.mkdir(path)
@@ -82,7 +82,7 @@ export function testChmod (factory, options) {
       expect(updatedMode).to.equal(parseInt('0777', 8))
     })
 
-    it('should update the mode for a hamt-sharded-directory', async () => {
+    it('should update the mode for a hamt-sharded-directory', async function () {
       const path = `/foo-${Math.random()}`
 
       await ipfs.files.mkdir(path)
@@ -100,7 +100,7 @@ export function testChmod (factory, options) {
       expect(updatedMode).to.equal(parseInt('0777', 8))
     })
 
-    it('should update modes with basic symbolic notation that adds bits', async () => {
+    it('should update modes with basic symbolic notation that adds bits', async function () {
       await testChmod('0000', '+x', '0111')
       await testChmod('0000', '+w', '0222')
       await testChmod('0000', '+r', '0444')
@@ -124,7 +124,7 @@ export function testChmod (factory, options) {
       await testChmod('0000', 'a+r', '0444')
     })
 
-    it('should update modes with basic symbolic notation that removes bits', async () => {
+    it('should update modes with basic symbolic notation that removes bits', async function () {
       await testChmod('0111', '-x', '0000')
       await testChmod('0222', '-w', '0000')
       await testChmod('0444', '-r', '0000')
@@ -148,7 +148,7 @@ export function testChmod (factory, options) {
       await testChmod('0444', 'a-r', '0000')
     })
 
-    it('should update modes with basic symbolic notation that overrides bits', async () => {
+    it('should update modes with basic symbolic notation that overrides bits', async function () {
       await testChmod('0777', '=x', '0111')
       await testChmod('0777', '=w', '0222')
       await testChmod('0777', '=r', '0444')
@@ -172,18 +172,18 @@ export function testChmod (factory, options) {
       await testChmod('0777', 'a=r', '0444')
     })
 
-    it('should update modes with multiple symbolic notation', async () => {
+    it('should update modes with multiple symbolic notation', async function () {
       await testChmod('0000', 'g+x,u+w', '0210')
     })
 
-    it('should update modes with special symbolic notation', async () => {
+    it('should update modes with special symbolic notation', async function () {
       await testChmod('0000', 'g+s', '2000')
       await testChmod('0000', 'u+s', '4000')
       await testChmod('0000', '+t', '1000')
       await testChmod('0000', '+s', '6000')
     })
 
-    it('should apply special execute permissions to world', async () => {
+    it('should apply special execute permissions to world', async function () {
       const path = `/foo-${Math.random()}`
       const sub = `${path}/sub`
       const file = `${path}/sub/foo.txt`
@@ -220,7 +220,7 @@ export function testChmod (factory, options) {
       await expect(ipfs.files.stat(bin)).to.eventually.have.property('mode', 0o755)
     })
 
-    it('should apply special execute permissions to user', async () => {
+    it('should apply special execute permissions to user', async function () {
       const path = `/foo-${Math.random()}`
       const sub = `${path}/sub`
       const file = `${path}/sub/foo.txt`
@@ -257,7 +257,7 @@ export function testChmod (factory, options) {
       await expect(ipfs.files.stat(bin)).to.eventually.have.property('mode', 0o744)
     })
 
-    it('should apply special execute permissions to user and group', async () => {
+    it('should apply special execute permissions to user and group', async function () {
       const path = `/foo-${Math.random()}`
       const sub = `${path}/sub`
       const file = `${path}/sub/foo.txt`
@@ -294,7 +294,7 @@ export function testChmod (factory, options) {
       await expect(ipfs.files.stat(bin)).to.eventually.have.property('mode', 0o754)
     })
 
-    it('should apply special execute permissions to sharded directories', async () => {
+    it('should apply special execute permissions to sharded directories', async function () {
       const path = `/foo-${Math.random()}`
       const sub = `${path}/sub`
       const file = `${path}/sub/foo.txt`

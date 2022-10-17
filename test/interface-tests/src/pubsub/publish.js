@@ -24,13 +24,13 @@ export function testPublish (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should fail with undefined msg', async () => {
+    it('should fail with undefined msg', async function () {
       const topic = getTopic()
       // @ts-expect-error invalid parameter
       await expect(ipfs.pubsub.publish(topic)).to.eventually.be.rejected()
@@ -41,7 +41,7 @@ export function testPublish (factory, options) {
       return ipfs.pubsub.publish(topic, uint8ArrayFromString(nanoid()))
     })
 
-    it('should publish 10 times within time limit', async () => {
+    it('should publish 10 times within time limit', async function () {
       const count = 10
       const topic = getTopic()
 

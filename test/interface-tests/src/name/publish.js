@@ -20,14 +20,14 @@ export function testPublish (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.name.publish offline', () => {
+  describe('.name.publish offline', function () {
     const keyName = nanoid()
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         ipfsOptions: {
           config: {
@@ -42,7 +42,7 @@ export function testPublish (factory, options) {
       await ipfs.add(fixture.data, { pin: false })
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should publish an IPNS record with the default params', async function () {
       // @ts-ignore this is mocha
@@ -63,7 +63,7 @@ export function testPublish (factory, options) {
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
-    it('should publish correctly with the lifetime option and resolve', async () => {
+    it('should publish correctly with the lifetime option and resolve', async function () {
       const { path } = await ipfs.add(uint8ArrayFromString('should publish correctly with the lifetime option and resolve'))
       await ipfs.name.publish(path, { allowOffline: true, resolve: false, lifetime: '2h' })
       expect(await last(ipfs.name.resolve(`/ipns/${nodeId}`))).to.eq(`/ipfs/${path}`)

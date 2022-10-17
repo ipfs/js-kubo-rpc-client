@@ -28,13 +28,13 @@ export function testPut (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should put an object', async () => {
+    it('should put an object', async function () {
       const obj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -46,7 +46,7 @@ export function testPut (factory, options) {
       expect(node).to.deep.equal(obj)
     })
 
-    it('should pin an object when putting', async () => {
+    it('should pin an object when putting', async function () {
       const obj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -63,7 +63,7 @@ export function testPut (factory, options) {
       expect(pin).to.have.property('type', 'recursive')
     })
 
-    it('should not pin an object by default', async () => {
+    it('should not pin an object by default', async function () {
       const obj = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -76,7 +76,7 @@ export function testPut (factory, options) {
       }))).to.eventually.be.rejectedWith(/not pinned/)
     })
 
-    it('should put a Protobuf DAGNode', async () => {
+    it('should put a Protobuf DAGNode', async function () {
       const dNode = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []
@@ -92,7 +92,7 @@ export function testPut (factory, options) {
       return expect(ipfs.object.put(nanoid())).to.eventually.be.rejected()
     })
 
-    it('should put a Protobuf DAGNode with a link', async () => {
+    it('should put a Protobuf DAGNode with a link', async function () {
       const node1a = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []

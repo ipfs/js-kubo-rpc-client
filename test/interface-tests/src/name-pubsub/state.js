@@ -15,15 +15,15 @@ export function testState (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.name.pubsub.state', () => {
+  describe('.name.pubsub.state', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should get the current state of pubsub', async function () {
       // @ts-ignore this is mocha

@@ -27,9 +27,9 @@ export function testRm (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${nanoid()}`
@@ -37,16 +37,16 @@ export function testRm (factory, options) {
       return expect(ipfs.files.rm(`${testDir}/a`)).to.eventually.be.rejected()
     })
 
-    it('refuses to remove files without arguments', async () => {
+    it('refuses to remove files without arguments', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.rm()).to.eventually.be.rejected()
     })
 
-    it('refuses to remove the root path', async () => {
+    it('refuses to remove the root path', async function () {
       await expect(ipfs.files.rm('/')).to.eventually.be.rejected()
     })
 
-    it('refuses to remove a directory without the recursive flag', async () => {
+    it('refuses to remove a directory without the recursive flag', async function () {
       const path = `/directory-${Math.random()}.txt`
 
       await ipfs.files.mkdir(path)
@@ -54,11 +54,11 @@ export function testRm (factory, options) {
       await expect(ipfs.files.rm(path)).to.eventually.be.rejectedWith(/use -r to remove directories/)
     })
 
-    it('refuses to remove a non-existent file', async () => {
+    it('refuses to remove a non-existent file', async function () {
       await expect(ipfs.files.rm(`/file-${Math.random()}`)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('removes a file', async () => {
+    it('removes a file', async function () {
       const file = `/some-file-${Math.random()}.txt`
 
       await ipfs.files.write(file, randomBytes(100), {
@@ -71,7 +71,7 @@ export function testRm (factory, options) {
       await expect(ipfs.files.stat(file)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('removes multiple files', async () => {
+    it('removes multiple files', async function () {
       const file1 = `/some-file-${Math.random()}.txt`
       const file2 = `/some-file-${Math.random()}.txt`
 
@@ -89,7 +89,7 @@ export function testRm (factory, options) {
       await expect(ipfs.files.stat(file2)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('removes a directory', async () => {
+    it('removes a directory', async function () {
       const directory = `/directory-${Math.random()}`
 
       await ipfs.files.mkdir(directory)
@@ -100,7 +100,7 @@ export function testRm (factory, options) {
       await expect(ipfs.files.stat(directory)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('recursively removes a directory', async () => {
+    it('recursively removes a directory', async function () {
       const directory = `/directory-${Math.random()}`
       const subdirectory = `/directory-${Math.random()}`
       const path = `${directory}${subdirectory}`
@@ -116,7 +116,7 @@ export function testRm (factory, options) {
       await expect(ipfs.files.stat(directory)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('recursively removes a directory with files in', async () => {
+    it('recursively removes a directory with files in', async function () {
       const directory = `/directory-${Math.random()}`
       const file = `${directory}/some-file-${Math.random()}.txt`
 
@@ -132,7 +132,7 @@ export function testRm (factory, options) {
       await expect(ipfs.files.stat(directory)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -154,7 +154,7 @@ export function testRm (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('recursively removes a sharded directory inside a normal directory', async () => {
+      it('recursively removes a sharded directory inside a normal directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dir = `dir-${Math.random()}`
         const dirPath = `/${dir}`
@@ -176,7 +176,7 @@ export function testRm (factory, options) {
         await expect(ipfs.files.stat(shardedDirPath)).to.eventually.be.rejectedWith(/does not exist/)
       })
 
-      it('recursively removes a sharded directory inside a sharded directory', async () => {
+      it('recursively removes a sharded directory inside a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const otherDirPath = await createShardedDirectory(ipfs)
 

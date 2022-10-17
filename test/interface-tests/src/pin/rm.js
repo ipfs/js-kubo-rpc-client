@@ -22,22 +22,19 @@ export function testRm (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    beforeEach(async () => {
+    beforeEach(async function () {
       ipfs = (await factory.spawn()).api
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
       await all(ipfs.addAll(dir, { pin: false, cidVersion: 0 }))
 
       await ipfs.add(fixtures.files[0].data, { pin: false })
       await ipfs.add(fixtures.files[1].data, { pin: false })
-    })
-
-    after(() => factory.clean())
-
-    beforeEach(() => {
       return clearPins(ipfs)
     })
 
-    it('should remove a recursive pin', async () => {
+    after(function () { factory.clean() })
+
+    it('should remove a recursive pin', async function () {
       await ipfs.pin.add(fixtures.directory.cid)
 
       const unpinnedCid = await ipfs.pin.rm(fixtures.directory.cid, { recursive: true })
@@ -50,7 +47,7 @@ export function testRm (factory, options) {
       })
     })
 
-    it('should remove a direct pin', async () => {
+    it('should remove a direct pin', async function () {
       await ipfs.pin.add(fixtures.directory.cid, { recursive: false })
 
       const unpinnedCid = await ipfs.pin.rm(fixtures.directory.cid, { recursive: false })
@@ -60,7 +57,7 @@ export function testRm (factory, options) {
       expect(pinset.map(p => p.cid)).to.not.deep.include(fixtures.directory.cid)
     })
 
-    it('should fail to remove an indirect pin', async () => {
+    it('should fail to remove an indirect pin', async function () {
       await ipfs.pin.add(fixtures.directory.cid, {
         recursive: true
       })
@@ -70,7 +67,7 @@ export function testRm (factory, options) {
       await expectPinned(ipfs, fixtures.directory.files[0].cid)
     })
 
-    it('should fail when an item is not pinned', async () => {
+    it('should fail when an item is not pinned', async function () {
       await expect(ipfs.pin.rm(fixtures.directory.cid))
         .to.eventually.be.rejectedWith(/not pinned/)
     })

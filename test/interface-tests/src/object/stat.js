@@ -26,13 +26,13 @@ export function testStat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get stats by multihash', async () => {
+    it('should get stats by multihash', async function () {
       const testObj = {
         Data: uint8ArrayFromString('get test object'),
         Links: []
@@ -52,7 +52,7 @@ export function testStat (factory, options) {
       expect(stats).to.deep.equal(expected)
     })
 
-    it('should get stats for object with links by multihash', async () => {
+    it('should get stats for object with links by multihash', async function () {
       const node1a = {
         Data: uint8ArrayFromString(nanoid()),
         Links: []

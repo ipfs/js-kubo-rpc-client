@@ -30,7 +30,7 @@ export function testPing (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let nodeBId
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
@@ -38,9 +38,9 @@ export function testPing (factory, options) {
       await ipfsA.swarm.connect(nodeBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should send the specified number of packets', async () => {
+    it('should send the specified number of packets', async function () {
       const count = 3
       const responses = await all(ipfsA.ping(nodeBId.id, { count }))
       responses.forEach(expectIsPingResponse)
@@ -63,7 +63,7 @@ export function testPing (factory, options) {
       return expect(all(ipfsA.ping(invalidPeerId, { count }))).to.eventually.be.rejected()
     })
 
-    it('can ping without options', async () => {
+    it('can ping without options', async function () {
       const res = await all(ipfsA.ping(nodeBId.id))
       expect(res.length).to.be.ok()
       expect(res[0].success).to.be.true()

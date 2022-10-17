@@ -23,7 +23,7 @@ export function testRmAll (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    beforeEach(async () => {
+    beforeEach(async function () {
       ipfs = (await factory.spawn()).api
 
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
@@ -31,15 +31,12 @@ export function testRmAll (factory, options) {
 
       await ipfs.add(fixtures.files[0].data, { pin: false })
       await ipfs.add(fixtures.files[1].data, { pin: false })
-    })
-
-    after(() => factory.clean())
-
-    beforeEach(() => {
       return clearPins(ipfs)
     })
 
-    it('should pipe the output of ls to rm', async () => {
+    after(function () { factory.clean() })
+
+    it('should pipe the output of ls to rm', async function () {
       await ipfs.pin.add(fixtures.directory.cid)
 
       await drain(ipfs.pin.rmAll(ipfs.pin.ls({ type: 'recursive' })))

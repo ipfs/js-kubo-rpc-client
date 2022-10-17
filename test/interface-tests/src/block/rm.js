@@ -23,13 +23,13 @@ export function testRm (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.block.rm', () => {
+  describe('.block.rm', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when removing a block', () => {
       return testTimeout(() => drain(ipfs.block.rm(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
@@ -37,7 +37,7 @@ export function testRm (factory, options) {
       })))
     })
 
-    it('should remove by CID object', async () => {
+    it('should remove by CID object', async function () {
       const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'
@@ -58,7 +58,7 @@ export function testRm (factory, options) {
       expect(localRefsAfterRemove.find(ref => ref.ref === CID.createV1(raw.code, cid.multihash).toString())).to.not.be.ok()
     })
 
-    it('should remove multiple CIDs', async () => {
+    it('should remove multiple CIDs', async function () {
       const cids = await Promise.all([
         ipfs.dag.put(uint8ArrayFromString(nanoid()), {
           storeCodec: 'raw',
@@ -84,7 +84,7 @@ export function testRm (factory, options) {
       })
     })
 
-    it('should error when removing non-existent blocks', async () => {
+    it('should error when removing non-existent blocks', async function () {
       const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'
@@ -100,7 +100,7 @@ export function testRm (factory, options) {
       expect(result).to.have.nested.property('[0].error.message').that.includes('block not found')
     })
 
-    it('should not error when force removing non-existent blocks', async () => {
+    it('should not error when force removing non-existent blocks', async function () {
       const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'
@@ -117,7 +117,7 @@ export function testRm (factory, options) {
       expect(result[0]).to.not.have.property('error')
     })
 
-    it('should return empty output when removing blocks quietly', async () => {
+    it('should return empty output when removing blocks quietly', async function () {
       const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'
@@ -127,7 +127,7 @@ export function testRm (factory, options) {
       expect(result).to.be.an('array').and.to.have.lengthOf(0)
     })
 
-    it('should error when removing pinned blocks', async () => {
+    it('should error when removing pinned blocks', async function () {
       const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'

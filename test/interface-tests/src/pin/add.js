@@ -24,7 +24,7 @@ export function testAdd (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
 
       await drain(
@@ -47,25 +47,25 @@ export function testAdd (factory, options) {
       )
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    beforeEach(() => {
+    beforeEach(function () {
       return clearPins(ipfs)
     })
 
-    it('should add a CID and return the added CID', async () => {
+    it('should add a CID and return the added CID', async function () {
       const cid = await ipfs.pin.add(fixtures.files[0].cid)
       expect(cid).to.deep.equal(fixtures.files[0].cid)
     })
 
-    it('should add a pin with options and return the added CID', async () => {
+    it('should add a pin with options and return the added CID', async function () {
       const cid = await ipfs.pin.add(fixtures.files[0].cid, {
         recursive: false
       })
       expect(cid).to.deep.equal(fixtures.files[0].cid)
     })
 
-    it('should add recursively', async () => {
+    it('should add recursively', async function () {
       await ipfs.pin.add(fixtures.directory.cid)
       await expectPinned(ipfs, fixtures.directory.cid, pinTypes.recursive)
 
@@ -73,7 +73,7 @@ export function testAdd (factory, options) {
       return Promise.all(pinChecks)
     })
 
-    it('should add directly', async () => {
+    it('should add directly', async function () {
       await ipfs.pin.add(fixtures.directory.cid, {
         recursive: false
       })
@@ -82,7 +82,7 @@ export function testAdd (factory, options) {
       await expectNotPinned(ipfs, fixtures.directory.files[0].cid)
     })
 
-    it('should recursively pin parent of direct pin', async () => {
+    it('should recursively pin parent of direct pin', async function () {
       await ipfs.pin.add(fixtures.directory.files[0].cid, {
         recursive: false
       })
@@ -93,7 +93,7 @@ export function testAdd (factory, options) {
       await expectPinned(ipfs, fixtures.directory.files[0].cid, pinTypes.indirect)
     })
 
-    it('should fail to directly pin a recursive pin', async () => {
+    it('should fail to directly pin a recursive pin', async function () {
       await ipfs.pin.add(fixtures.directory.cid)
       return expect(ipfs.pin.add(fixtures.directory.cid, {
         recursive: false
@@ -123,7 +123,7 @@ export function testAdd (factory, options) {
         .to.eventually.be.rejected().with.property('name', 'TimeoutError')
     })
 
-    it('should pin dag-cbor', async () => {
+    it('should pin dag-cbor', async function () {
       const cid = await ipfs.dag.put({}, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-256'
@@ -139,7 +139,7 @@ export function testAdd (factory, options) {
       })
     })
 
-    it('should pin raw', async () => {
+    it('should pin raw', async function () {
       const cid = await ipfs.dag.put(new Uint8Array(0), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'
@@ -155,7 +155,7 @@ export function testAdd (factory, options) {
       })
     })
 
-    it('should pin dag-cbor with dag-pb child', async () => {
+    it('should pin dag-cbor with dag-pb child', async function () {
       const child = await ipfs.dag.put({
         Data: uint8ArrayFromString(`${Math.random()}`),
         Links: []

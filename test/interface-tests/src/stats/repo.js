@@ -15,17 +15,17 @@ export function testRepo (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.stats.repo', () => {
+  describe('.stats.repo', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should get repo stats', async () => {
+    it('should get repo stats', async function () {
       const res = await ipfs.stats.repo()
       expectIsRepo(null, res)
     })

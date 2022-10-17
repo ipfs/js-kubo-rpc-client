@@ -28,11 +28,11 @@ export function testRead (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('reads a small file', async () => {
+    it('reads a small file', async function () {
       const filePath = '/small-file.txt'
 
       await ipfs.files.write(filePath, smallFile, {
@@ -44,7 +44,7 @@ export function testRead (factory, options) {
       expect(bytes).to.deep.equal(smallFile)
     })
 
-    it('reads a file with an offset', async () => {
+    it('reads a file with an offset', async function () {
       const path = `/some-file-${Math.random()}.txt`
       const data = randomBytes(100)
       const offset = 10
@@ -60,7 +60,7 @@ export function testRead (factory, options) {
       expect(bytes).to.deep.equal(data.slice(offset))
     })
 
-    it('reads a file with a length', async () => {
+    it('reads a file with a length', async function () {
       const path = `/some-file-${Math.random()}.txt`
       const data = randomBytes(100)
       const length = 10
@@ -76,7 +76,7 @@ export function testRead (factory, options) {
       expect(bytes).to.deep.equal(data.slice(0, length))
     })
 
-    it('reads a file with an offset and a length', async () => {
+    it('reads a file with an offset and a length', async function () {
       const path = `/some-file-${Math.random()}.txt`
       const data = randomBytes(100)
       const offset = 10
@@ -94,25 +94,25 @@ export function testRead (factory, options) {
       expect(buffer).to.deep.equal(data.slice(offset, offset + length))
     })
 
-    it('refuses to read a directory', async () => {
+    it('refuses to read a directory', async function () {
       const path = '/'
 
       await expect(drain(ipfs.files.read(path))).to.eventually.be.rejectedWith(/not a file/)
     })
 
-    it('refuses to read a non-existent file', async () => {
+    it('refuses to read a non-existent file', async function () {
       const path = `/file-${Math.random()}.txt`
 
       await expect(drain(ipfs.files.read(path))).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('should read from outside of mfs', async () => {
+    it('should read from outside of mfs', async function () {
       const { cid } = await ipfs.add(fixtures.smallFile.data)
       const testFileData = uint8ArrayConcat(await all(ipfs.files.read(`/ipfs/${cid}`)))
       expect(testFileData).to.eql(fixtures.smallFile.data)
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -134,7 +134,7 @@ export function testRead (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('reads file from inside a sharded directory', async () => {
+      it('reads file from inside a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const filePath = `${shardedDirPath}/file-${Math.random()}.txt`
         const content = Uint8Array.from([0, 1, 2, 3, 4])

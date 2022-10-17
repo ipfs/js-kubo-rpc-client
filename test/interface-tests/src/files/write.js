@@ -105,39 +105,39 @@ export function testWrite (factory, options) {
       expect(stats).to.have.deep.property('mtime', expectedMtime)
     }
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('explodes if it cannot convert content to a source', async () => {
+    it('explodes if it cannot convert content to a source', async function () {
       // @ts-expect-error invalid arg
       await expect(ipfs.files.write('/foo-bad-source', -1, {
         create: true
       })).to.eventually.be.rejected()
     })
 
-    it('explodes if given an invalid path', async () => {
+    it('explodes if given an invalid path', async function () {
       // @ts-expect-error invalid arg
       await expect(ipfs.files.write('foo-no-slash', null, {
         create: true
       })).to.eventually.be.rejected()
     })
 
-    it('explodes if given a negative offset', async () => {
+    it('explodes if given a negative offset', async function () {
       await expect(ipfs.files.write('/foo-negative-offset', uint8ArrayFromString('foo'), {
         offset: -1
       })).to.eventually.be.rejected()
     })
 
-    it('explodes if given a negative length', async () => {
+    it('explodes if given a negative length', async function () {
       await expect(ipfs.files.write('/foo-negative-length', uint8ArrayFromString('foo'), {
         length: -1
       })).to.eventually.be.rejected()
     })
 
-    it('creates a zero length file when passed a zero length', async () => {
+    it('creates a zero length file when passed a zero length', async function () {
       const path = '/foo-zero-length'
       await ipfs.files.write(path, uint8ArrayFromString('foo'), {
         length: 0,
@@ -151,7 +151,7 @@ export function testWrite (factory, options) {
         })
     })
 
-    it('writes a small file using a buffer', async () => {
+    it('writes a small file using a buffer', async function () {
       const filePath = `/small-file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, smallFile, {
@@ -223,7 +223,7 @@ export function testWrite (factory, options) {
       expect(stats.size).to.equal(smallFile.length)
     })
 
-    it('writes a small file with an escaped slash in the title', async () => {
+    it('writes a small file with an escaped slash in the title', async function () {
       const filePath = `/small-\\/file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, smallFile, {
@@ -237,7 +237,7 @@ export function testWrite (factory, options) {
       await expect(ipfs.files.stat('/small-\\')).to.eventually.rejectedWith(/does not exist/)
     })
 
-    it('writes a deeply nested small file', async () => {
+    it('writes a deeply nested small file', async function () {
       const filePath = '/foo/bar/baz/qux/quux/garply/small-file.txt'
 
       await ipfs.files.write(filePath, smallFile, {
@@ -250,7 +250,7 @@ export function testWrite (factory, options) {
       expect(stats.size).to.equal(smallFile.length)
     })
 
-    it('refuses to write to a file in a folder that does not exist', async () => {
+    it('refuses to write to a file in a folder that does not exist', async function () {
       const filePath = `/${Math.random()}/small-file.txt`
 
       try {
@@ -263,7 +263,7 @@ export function testWrite (factory, options) {
       }
     })
 
-    it('refuses to write to a file that does not exist', async () => {
+    it('refuses to write to a file that does not exist', async function () {
       const filePath = `/small-file-${Math.random()}.txt`
 
       try {
@@ -274,7 +274,7 @@ export function testWrite (factory, options) {
       }
     })
 
-    it('refuses to write to a path that has a file in it', async () => {
+    it('refuses to write to a path that has a file in it', async function () {
       const filePath = `/small-file-${Math.random()}.txt`
 
       await ipfs.files.write(filePath, Uint8Array.from([0, 1, 2, 3]), {
@@ -492,7 +492,7 @@ export function testWrite (factory, options) {
       expect(actualBytes).to.deep.equal(newDataStream)
     })
 
-    it('writes a file with a different CID version to the parent', async () => {
+    it('writes a file with a different CID version to the parent', async function () {
       const directory = `cid-versions-${Math.random()}`
       const directoryPath = `/${directory}`
       const fileName = `file-${Math.random()}.txt`
@@ -517,7 +517,7 @@ export function testWrite (factory, options) {
       expect(actualBytes).to.deep.equal(expectedBytes)
     })
 
-    it('overwrites a file with a different CID version', async () => {
+    it('overwrites a file with a different CID version', async function () {
       const directory = `cid-versions-${Math.random()}`
       const directoryPath = `/${directory}`
       const fileName = `file-${Math.random()}.txt`
@@ -548,7 +548,7 @@ export function testWrite (factory, options) {
       expect(actualBytes).to.deep.equal(expectedBytes)
     })
 
-    it('partially overwrites a file with a different CID version', async () => {
+    it('partially overwrites a file with a different CID version', async function () {
       const directory = `cid-versions-${Math.random()}`
       const directoryPath = `/${directory}`
       const fileName = `file-${Math.random()}.txt`
@@ -579,7 +579,7 @@ export function testWrite (factory, options) {
       expect(actualBytes).to.deep.equal(Uint8Array.from([5, 0, 1, 2, 3, 10, 11]))
     })
 
-    it('writes a file with a different hash function to the parent', async () => {
+    it('writes a file with a different hash function to the parent', async function () {
       const directory = `cid-versions-${Math.random()}`
       const directoryPath = `/${directory}`
       const fileName = `file-${Math.random()}.txt`
@@ -651,7 +651,7 @@ export function testWrite (factory, options) {
       })
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -673,7 +673,7 @@ export function testWrite (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('shards a large directory when writing too many links to it', async () => {
+      it('shards a large directory when writing too many links to it', async function () {
         const shardSplitThreshold = 10
         const dirPath = `/sharded-dir-${Math.random()}`
         const newFile = `file-${Math.random()}`
@@ -790,7 +790,7 @@ export function testWrite (factory, options) {
         expect(updatedDirCid.toString()).to.deep.equal('QmY4o7GNvr5eZPnT6k6ALp5zkQ4eiUkJQ6eeUNsdSiqS4f')
       })
 
-      it('writes a file to an already sharded directory', async () => {
+      it('writes a file to an already sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
 
         const newFile = `file-${Math.random()}`
@@ -817,7 +817,7 @@ export function testWrite (factory, options) {
         }))).to.eventually.not.be.empty()
       })
 
-      it('overwrites a file in a sharded directory when positions do not match', async () => {
+      it('overwrites a file in a sharded directory when positions do not match', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const newFile = 'file-0.6944395883502592'
         const newFilePath = `${shardedDirPath}/${newFile}`
@@ -847,7 +847,7 @@ export function testWrite (factory, options) {
         }))).to.eventually.not.be.empty()
       })
 
-      it('overwrites file in a sharded directory', async () => {
+      it('overwrites file in a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const newFile = `file-${Math.random()}`
         const newFilePath = `${shardedDirPath}/${newFile}`
@@ -877,7 +877,7 @@ export function testWrite (factory, options) {
         }))).to.eventually.not.be.empty()
       })
 
-      it('overwrites a file in a subshard of a sharded directory', async () => {
+      it('overwrites a file in a subshard of a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const newFile = 'file-1a.txt'
         const newFilePath = `${shardedDirPath}/${newFile}`
@@ -907,7 +907,7 @@ export function testWrite (factory, options) {
         }))).to.eventually.not.be.empty()
       })
 
-      it('writes a file to a sub-shard of a shard that contains another sub-shard', async () => {
+      it('writes a file to a sub-shard of a shard that contains another sub-shard', async function () {
         const data = Uint8Array.from([0, 1, 2])
 
         await ipfs.files.mkdir('/hamttest-mfs')

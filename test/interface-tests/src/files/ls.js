@@ -29,16 +29,16 @@ export function testLs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should require a path', () => {
       // @ts-expect-error invalid args
       expect(all(ipfs.files.ls())).to.eventually.be.rejected()
     })
 
-    it('lists the root directory', async () => {
+    it('lists the root directory', async function () {
       const fileName = `small-file-${Math.random()}.txt`
       const content = uint8ArrayFromString('Hello world')
 
@@ -56,15 +56,15 @@ export function testLs (factory, options) {
       }])
     })
 
-    it('refuses to lists files with an empty path', async () => {
+    it('refuses to lists files with an empty path', async function () {
       await expect(all(ipfs.files.ls(''))).to.eventually.be.rejected()
     })
 
-    it('refuses to lists files with an invalid path', async () => {
+    it('refuses to lists files with an invalid path', async function () {
       await expect(all(ipfs.files.ls('not-valid'))).to.eventually.be.rejected()
     })
 
-    it('lists files in a directory', async () => {
+    it('lists files in a directory', async function () {
       const dirName = `dir-${Math.random()}`
       const fileName = `small-file-${Math.random()}.txt`
       const content = uint8ArrayFromString('Hello world')
@@ -84,7 +84,7 @@ export function testLs (factory, options) {
       }])
     })
 
-    it('lists a file', async () => {
+    it('lists a file', async function () {
       const fileName = `small-file-${Math.random()}.txt`
       const content = uint8ArrayFromString('Hello world')
 
@@ -102,11 +102,11 @@ export function testLs (factory, options) {
       }])
     })
 
-    it('fails to list non-existent file', async () => {
+    it('fails to list non-existent file', async function () {
       await expect(all(ipfs.files.ls('/i-do-not-exist'))).to.eventually.be.rejected()
     })
 
-    it('lists a raw node', async () => {
+    it('lists a raw node', async function () {
       const filePath = '/stat/large-file.txt'
 
       await ipfs.files.write(filePath, largeFile, {
@@ -131,7 +131,7 @@ export function testLs (factory, options) {
       }])
     })
 
-    it('lists a raw node in an mfs directory', async () => {
+    it('lists a raw node in an mfs directory', async function () {
       const filePath = '/stat/large-file.txt'
 
       await ipfs.files.write(filePath, largeFile, {
@@ -163,7 +163,7 @@ export function testLs (factory, options) {
       }])
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -185,7 +185,7 @@ export function testLs (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('lists a sharded directory contents', async () => {
+      it('lists a sharded directory contents', async function () {
         const fileCount = 1001
         const dirPath = await createShardedDirectory(ipfs, fileCount)
         const files = await all(ipfs.files.ls(dirPath))
@@ -198,7 +198,7 @@ export function testLs (factory, options) {
         })
       })
 
-      it('lists a file inside a sharded directory directly', async () => {
+      it('lists a file inside a sharded directory directly', async function () {
         const dirPath = await createShardedDirectory(ipfs)
         const files = await all(ipfs.files.ls(dirPath))
         const filePath = `${dirPath}/${files[0].name}`
@@ -209,7 +209,7 @@ export function testLs (factory, options) {
         expect(file).to.have.lengthOf(1).and.to.containSubset([files[0]])
       })
 
-      it('lists the contents of a directory inside a sharded directory', async () => {
+      it('lists the contents of a directory inside a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dirPath = `${shardedDirPath}/subdir-${Math.random()}`
         const fileName = `small-file-${Math.random()}.txt`

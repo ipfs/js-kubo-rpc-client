@@ -68,9 +68,9 @@ export function testAdd (factory, options) {
       expect(stats).to.have.deep.property('mtime', expectedMtime)
     }
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should add a File', async function () {
       if (!supportsFileReader) {
@@ -97,7 +97,7 @@ export function testAdd (factory, options) {
       expect(fileAdded.cid.toString()).to.be.eq('QmTVfLxf3qXiJgr4KwG6UBckcNvTqBp93Rwy5f7h3mHsVC')
     })
 
-    it('should add a Uint8Array', async () => {
+    it('should add a Uint8Array', async function () {
       const file = await ipfs.add(fixtures.smallFile.data)
 
       expect(file.cid.toString()).to.equal(fixtures.smallFile.cid.toString())
@@ -106,7 +106,7 @@ export function testAdd (factory, options) {
       expect(file.size).greaterThan(fixtures.smallFile.data.length)
     })
 
-    it('should add a BIG Uint8Array', async () => {
+    it('should add a BIG Uint8Array', async function () {
       if (isFirefox) {
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
@@ -118,7 +118,7 @@ export function testAdd (factory, options) {
       expect(file.size).greaterThan(fixtures.bigFile.data.length)
     })
 
-    it('should add a BIG Uint8Array with progress enabled', async () => {
+    it('should add a BIG Uint8Array with progress enabled', async function () {
       if (isFirefox) {
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
@@ -141,7 +141,7 @@ export function testAdd (factory, options) {
       expect(accumProgress).to.equal(fixtures.bigFile.data.length)
     })
 
-    it('should add an empty file with progress enabled', async () => {
+    it('should add an empty file with progress enabled', async function () {
       let progCalled = false
       let accumProgress = 0
 
@@ -161,7 +161,7 @@ export function testAdd (factory, options) {
       expect(accumProgress).to.equal(fixtures.emptyFile.data.length)
     })
 
-    it('should receive file name from progress event', async () => {
+    it('should receive file name from progress event', async function () {
       let receivedName
 
       /**
@@ -179,14 +179,14 @@ export function testAdd (factory, options) {
       expect(receivedName).to.equal('foo.txt')
     })
 
-    it('should add an empty file without progress enabled', async () => {
+    it('should add an empty file without progress enabled', async function () {
       const file = await ipfs.add(fixtures.emptyFile.data)
 
       expect(file.cid.toString()).to.equal(fixtures.emptyFile.cid.toString())
       expect(file.path).to.equal(fixtures.emptyFile.cid.toString())
     })
 
-    it('should add a Uint8Array as tuple', async () => {
+    it('should add a Uint8Array as tuple', async function () {
       const tuple = { path: 'testfile.txt', content: fixtures.smallFile.data }
 
       const file = await ipfs.add(tuple)
@@ -195,7 +195,7 @@ export function testAdd (factory, options) {
       expect(file.path).to.equal('testfile.txt')
     })
 
-    it('should add a string', async () => {
+    it('should add a string', async function () {
       const data = 'a string'
       const expectedCid = 'QmQFRCwEpwQZ5aQMqCsCaFbdjNLLHoyZYDjr92v1F7HeqX'
 
@@ -206,7 +206,7 @@ export function testAdd (factory, options) {
       expect(`${file.cid}`).to.equal(expectedCid)
     })
 
-    it('should add a TypedArray', async () => {
+    it('should add a TypedArray', async function () {
       const data = Uint8Array.from([1, 3, 8])
       const expectedCid = 'QmRyUEkVCuHC8eKNNJS9BDM9jqorUvnQJK1DM81hfngFqd'
 
@@ -238,31 +238,31 @@ export function testAdd (factory, options) {
       expect(`${file.cid}`).to.equal(expectedCid)
     })
 
-    it('should fail when passed invalid input', async () => {
+    it('should fail when passed invalid input', async function () {
       const nonValid = 138
 
       // @ts-expect-error nonValid is non valid
       await expect(ipfs.add(nonValid)).to.eventually.be.rejected()
     })
 
-    it('should fail when passed undefined input', async () => {
+    it('should fail when passed undefined input', async function () {
       // @ts-expect-error undefined is non valid
       await expect(ipfs.add(undefined)).to.eventually.be.rejected()
     })
 
-    it('should fail when passed null input', async () => {
+    it('should fail when passed null input', async function () {
       // @ts-expect-error null is non valid
       await expect(ipfs.add(null)).to.eventually.be.rejected()
     })
 
-    it('should fail when passed multiple file objects', async () => {
+    it('should fail when passed multiple file objects', async function () {
       const nonValid = [{ content: 'hello' }, { content: 'world' }]
 
       // @ts-expect-error nonValid is non valid
       await expect(ipfs.add(nonValid)).to.eventually.be.rejectedWith(/multiple items passed/)
     })
 
-    it('should wrap content in a directory', async () => {
+    it('should wrap content in a directory', async function () {
       const data = { path: 'testfile.txt', content: fixtures.smallFile.data }
 
       const wrapper = await ipfs.add(data, { wrapWithDirectory: true })
@@ -375,7 +375,7 @@ export function testAdd (factory, options) {
       })
     })
 
-    it('should add from a HTTP URL', async () => {
+    it('should add from a HTTP URL', async function () {
       const text = `TEST${Math.random()}`
       const url = echoUrl(text)
 
@@ -388,7 +388,7 @@ export function testAdd (factory, options) {
       expect(result.size).to.equal(expectedResult.size)
     })
 
-    it('should add from a HTTP URL with redirection', async () => {
+    it('should add from a HTTP URL with redirection', async function () {
       const text = `TEST${Math.random()}`
       const url = echoUrl(text)
 
@@ -412,7 +412,7 @@ export function testAdd (factory, options) {
         .and.to.have.property('name').that.equals('TimeoutError')
     })
 
-    it('should add from a URL with wrap-with-directory=true', async () => {
+    it('should add from a URL with wrap-with-directory=true', async function () {
       const filename = `TEST${Date.now()}.txt` // also acts as data
       const url = echoUrl(filename)
       const addOpts = { wrapWithDirectory: true }
@@ -424,7 +424,7 @@ export function testAdd (factory, options) {
       expect(result).to.deep.equal(expectedResult)
     })
 
-    it('should add from a URL with wrap-with-directory=true and URL-escaped file name', async () => {
+    it('should add from a URL with wrap-with-directory=true and URL-escaped file name', async function () {
       const filename = `320px-Domažlice,_Jiráskova_43_(${Date.now()}).jpg` // also acts as data
       const url = echoUrl(filename)
       const addOpts = { wrapWithDirectory: true }
@@ -441,7 +441,7 @@ export function testAdd (factory, options) {
       return expect(() => ipfs.add(urlSource('123http://invalid'))).to.throw()
     })
 
-    it('should respect raw leaves when file is smaller than one block and no metadata is present', async () => {
+    it('should respect raw leaves when file is smaller than one block and no metadata is present', async function () {
       const file = await ipfs.add(Uint8Array.from([0, 1, 2]), {
         cidVersion: 1,
         rawLeaves: true
@@ -452,7 +452,7 @@ export function testAdd (factory, options) {
       expect(file.size).to.equal(3)
     })
 
-    it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
+    it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -473,7 +473,7 @@ export function testAdd (factory, options) {
       expect(file.size).to.equal(18)
     })
 
-    it('should add a file with a v1 CID', async () => {
+    it('should add a file with a v1 CID', async function () {
       const file = await ipfs.add(Uint8Array.from([0, 1, 2]), {
         cidVersion: 1
       })
@@ -487,7 +487,7 @@ export function testAdd (factory, options) {
       content: uint8ArrayFromString('some content ' + i)
     }))
 
-    it('should be able to add dir without sharding', async () => {
+    it('should be able to add dir without sharding', async function () {
       const result = await last(ipfs.addAll(testFiles))
 
       if (!result) {
@@ -499,7 +499,7 @@ export function testAdd (factory, options) {
       expect(cid.toString()).to.eql('QmWWM8ZV6GPhqJ46WtKcUaBPNHN5yQaFsKDSQ1RE73w94Q')
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -521,7 +521,7 @@ export function testAdd (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('should be able to add dir with sharding', async () => {
+      it('should be able to add dir with sharding', async function () {
         const result = await last(ipfs.addAll(testFiles))
 
         if (!result) {

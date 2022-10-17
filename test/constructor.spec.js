@@ -8,9 +8,9 @@ import { isBrowser } from 'ipfs-utils/src/env.js'
 
 const f = factory()
 
-describe('js-kubo-rpc-client constructor tests', () => {
-  describe('parameter permuations', () => {
-    it('none', () => {
+describe('js-kubo-rpc-client constructor tests', function () {
+  describe('parameter permuations', function () {
+    it('none', function () {
       const ipfs = ipfsClient()
       if (typeof self !== 'undefined') {
         const { hostname, port } = self.location
@@ -20,7 +20,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       }
     })
 
-    it('opts', () => {
+    it('opts', function () {
       const host = 'wizard.world'
       const port = '999'
       const protocol = 'https'
@@ -28,7 +28,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('opts with URL components from URL', () => {
+    it('opts with URL components from URL', function () {
       const host = 'wizard.world'
       const port = '999'
       const protocol = 'https'
@@ -37,7 +37,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('multiaddr dns4 string (implicit http)', () => {
+    it('multiaddr dns4 string (implicit http)', function () {
       const host = 'foo.com'
       const port = '1001'
       const protocol = 'http' // default to http if not specified in multiaddr
@@ -46,7 +46,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('multiaddr dns4 string (explicit https)', () => {
+    it('multiaddr dns4 string (explicit https)', function () {
       const host = 'foo.com'
       const port = '1001'
       const protocol = 'https'
@@ -55,7 +55,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('multiaddr ipv4 string (implicit http)', () => {
+    it('multiaddr ipv4 string (implicit http)', function () {
       const host = '101.101.101.101'
       const port = '1001'
       const protocol = 'http'
@@ -64,7 +64,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('multiaddr ipv4 string (explicit https)', () => {
+    it('multiaddr ipv4 string (explicit https)', function () {
       const host = '101.101.101.101'
       const port = '1001'
       const protocol = 'https'
@@ -73,7 +73,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('multiaddr instance', () => {
+    it('multiaddr instance', function () {
       const host = 'ace.place'
       const port = '1001'
       const addr = multiaddr(`/dns4/${host}/tcp/${port}`)
@@ -81,14 +81,14 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port })
     })
 
-    it('host and port strings', () => {
+    it('host and port strings', function () {
       const host = '1.1.1.1'
       const port = '9999'
       const ipfs = ipfsClient({ host, port })
       expectConfig(ipfs, { host, port })
     })
 
-    it('URL as string', () => {
+    it('URL as string', function () {
       const host = '10.100.100.255'
       const port = '9999'
       const apiPath = '/future/api/v1/'
@@ -96,7 +96,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, apiPath })
     })
 
-    it('URL as URL', () => {
+    it('URL as URL', function () {
       const host = '10.100.100.255'
       const port = '9999'
       const apiPath = '/future/api/v1/'
@@ -104,7 +104,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, apiPath })
     })
 
-    it('host, port and api path', () => {
+    it('host, port and api path', function () {
       const host = '10.100.100.255'
       const port = '9999'
       const apiPath = '/future/api/v1/'
@@ -112,7 +112,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, apiPath })
     })
 
-    it('options.url as URL string', () => {
+    it('options.url as URL string', function () {
       const host = '10.100.100.255'
       const port = '9999'
       const apiPath = '/future/api/v1/'
@@ -120,7 +120,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, apiPath })
     })
 
-    it('options.url as URL', () => {
+    it('options.url as URL', function () {
       const host = '10.100.100.255'
       const port = '9999'
       const apiPath = '/future/api/v1/'
@@ -128,7 +128,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, apiPath })
     })
 
-    it('options.url as multiaddr (implicit http)', () => {
+    it('options.url as multiaddr (implicit http)', function () {
       const host = 'foo.com'
       const port = '1001'
       const protocol = 'http' // default to http if not specified in multiaddr
@@ -137,7 +137,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('options.url as multiaddr (explicit https)', () => {
+    it('options.url as multiaddr (explicit https)', function () {
       const host = 'foo.com'
       const port = '1001'
       const protocol = 'https'
@@ -146,7 +146,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('options.url as multiaddr string (implicit http)', () => {
+    it('options.url as multiaddr string (implicit http)', function () {
       const host = 'foo.com'
       const port = '1001'
       const protocol = 'http' // default to http if not specified in multiaddr
@@ -155,7 +155,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
       expectConfig(ipfs, { host, port, protocol })
     })
 
-    it('options.url as multiaddr string (explicit https)', () => {
+    it('options.url as multiaddr string (explicit https)', function () {
       const host = 'foo.com'
       const port = '1001'
       const protocol = 'https'
@@ -165,7 +165,7 @@ describe('js-kubo-rpc-client constructor tests', () => {
     })
   })
 
-  describe('integration', () => {
+  describe('integration', function () {
     let ipfsd
 
     before(async function () {
@@ -174,9 +174,9 @@ describe('js-kubo-rpc-client constructor tests', () => {
       ipfsd = await f.spawn()
     })
 
-    after(() => f.clean())
+    after(function () { return f.clean() })
 
-    it('can connect to an ipfs http api', async () => {
+    it('can connect to an ipfs http api', async function () {
       await clientWorks(ipfsClient(ipfsd.apiAddr))
     })
   })

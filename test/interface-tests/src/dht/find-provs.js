@@ -29,22 +29,18 @@ export function testFindProvs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeC
 
-    before(async () => {
+    /**
+     * @type {import('multiformats/cid').CID}
+     */
+    let providedCid
+    before('add providers for the same cid', async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
       nodeC = (await factory.spawn()).api
 
       await ensureReachable(nodeB, nodeA)
       await ensureReachable(nodeC, nodeB)
-    })
 
-    after(() => factory.clean())
-
-    /**
-     * @type {import('multiformats/cid').CID}
-     */
-    let providedCid
-    before('add providers for the same cid', async function () {
       const cids = await Promise.all([
         nodeB.object.new('unixfs-dir'),
         nodeC.object.new('unixfs-dir')
@@ -57,6 +53,8 @@ export function testFindProvs (factory, options) {
         all(nodeC.dht.provide(providedCid))
       ])
     })
+
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when finding providers on the DHT', () => {
       return testTimeout(() => drain(nodeA.dht.findProvs(providedCid, {

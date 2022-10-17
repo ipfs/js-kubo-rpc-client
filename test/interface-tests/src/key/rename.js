@@ -16,15 +16,15 @@ export function testRename (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.key.rename', () => {
+  describe('.key.rename', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should rename a key', async function () {
       // @ts-ignore this is mocha

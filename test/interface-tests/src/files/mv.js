@@ -28,25 +28,24 @@ export function testMv (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
-
-    before(async () => {
+    before(async function () {
+      ipfs = (await factory.spawn()).api
       await ipfs.files.mkdir('/test/lv1/lv2', { parents: true })
       await ipfs.files.write('/test/a', uint8ArrayFromString('Hello, world!'), { create: true })
     })
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('refuses to move files without arguments', async () => {
+    it('refuses to move files without arguments', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.mv()).to.eventually.be.rejected()
     })
 
-    it('refuses to move files without enough arguments', async () => {
+    it('refuses to move files without enough arguments', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.mv()).to.eventually.be.rejected()
     })
 
-    it('moves a file', async () => {
+    it('moves a file', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const destination = `/dest-file-${Math.random()}.txt`
       const data = randomBytes(500)
@@ -62,7 +61,7 @@ export function testMv (factory, options) {
       await expect(ipfs.files.stat(source)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
-    it('moves a directory', async () => {
+    it('moves a directory', async function () {
       const source = `/source-directory-${Math.random()}`
       const destination = `/dest-directory-${Math.random()}`
 
@@ -82,7 +81,7 @@ export function testMv (factory, options) {
       }
     })
 
-    it('moves directories recursively', async () => {
+    it('moves directories recursively', async function () {
       const directory = `source-directory-${Math.random()}`
       const subDirectory = `/source-directory-${Math.random()}`
       const source = `/${directory}${subDirectory}`
@@ -109,7 +108,7 @@ export function testMv (factory, options) {
       }
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -131,7 +130,7 @@ export function testMv (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('moves a sharded directory to a normal directory', async () => {
+      it('moves a sharded directory to a normal directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dirPath = `/dir-${Math.random()}`
         const finalShardedDirPath = `${dirPath}${shardedDirPath}`
@@ -151,7 +150,7 @@ export function testMv (factory, options) {
         }
       })
 
-      it('moves a normal directory to a sharded directory', async () => {
+      it('moves a normal directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dirPath = `/dir-${Math.random()}`
         const finalDirPath = `${shardedDirPath}${dirPath}`
@@ -171,7 +170,7 @@ export function testMv (factory, options) {
         }
       })
 
-      it('moves a sharded directory to a sharded directory', async () => {
+      it('moves a sharded directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const otherShardedDirPath = await createShardedDirectory(ipfs)
         const finalShardedDirPath = `${shardedDirPath}${otherShardedDirPath}`
@@ -191,7 +190,7 @@ export function testMv (factory, options) {
         }
       })
 
-      it('moves a file from a normal directory to a sharded directory', async () => {
+      it('moves a file from a normal directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dirPath = `/dir-${Math.random()}`
         const file = `file-${Math.random()}.txt`
@@ -217,7 +216,7 @@ export function testMv (factory, options) {
         }
       })
 
-      it('moves a file from a sharded directory to a normal directory', async () => {
+      it('moves a file from a sharded directory to a normal directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dirPath = `/dir-${Math.random()}`
         const file = `file-${Math.random()}.txt`
@@ -244,7 +243,7 @@ export function testMv (factory, options) {
         }
       })
 
-      it('moves a file from a sharded directory to a sharded directory', async () => {
+      it('moves a file from a sharded directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const otherShardedDirPath = await createShardedDirectory(ipfs)
         const file = `file-${Math.random()}.txt`
@@ -271,7 +270,7 @@ export function testMv (factory, options) {
         }
       })
 
-      it('moves a file from a sub-shard of a sharded directory to a sharded directory', async () => {
+      it('moves a file from a sub-shard of a sharded directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const otherShardedDirPath = await createShardedDirectory(ipfs)
         const file = 'file-1a.txt'

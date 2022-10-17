@@ -48,9 +48,9 @@ export function testTouch (factory, options) {
       expect(stat2).to.have.deep.nested.property('mtime', expectedMtime)
     }
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     it('should have default mtime', async function () {
       // @ts-ignore this is mocha
@@ -109,7 +109,7 @@ export function testTouch (factory, options) {
       expect(stat2).to.have.nested.property('mtime.secs').that.is.greaterThan(seconds)
     })
 
-    it('should update the mtime for a hamt-sharded-directory', async () => {
+    it('should update the mtime for a hamt-sharded-directory', async function () {
       const path = `/foo-${Math.random()}`
 
       await ipfs.files.mkdir(path, {
@@ -139,7 +139,7 @@ export function testTouch (factory, options) {
       expect(updatedMtime.secs).to.be.greaterThan(originalMtime.secs)
     })
 
-    it('should create an empty file', async () => {
+    it('should create an empty file', async function () {
       const path = `/foo-${Math.random()}`
 
       await ipfs.files.touch(path, {

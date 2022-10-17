@@ -21,18 +21,18 @@ export function testNew (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should create a new object with no template', async () => {
+    it('should create a new object with no template', async function () {
       const cid = await ipfs.object.new()
       expect(cid.toString()).to.equal('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n')
     })
 
-    it('should create a new object with unixfs-dir template', async () => {
+    it('should create a new object with unixfs-dir template', async function () {
       const cid = await ipfs.object.new({ template: 'unixfs-dir' })
       expect(cid.toString()).to.equal('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')
     })

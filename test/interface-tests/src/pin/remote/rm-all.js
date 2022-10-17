@@ -32,19 +32,19 @@ export function testRmAll (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       await ipfs.pin.remote.service.add(SERVICE, {
         endpoint: ENDPOINT,
         key: KEY
       })
     })
-    after(async () => {
+    after(async function () {
       await clearServices(ipfs)
       await factory.clean()
     })
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       await addRemotePins(ipfs, SERVICE, {
         'queued-a': cid1,
         'pinning-b': cid2,
@@ -52,16 +52,16 @@ export function testRmAll (factory, options) {
         'failed-d': cid4
       })
     })
-    afterEach(async () => {
+    afterEach(async function () {
       await clearRemotePins(ipfs)
     })
 
-    it('.rmAll requires service option', async () => {
+    it('.rmAll requires service option', async function () {
       const result = ipfs.pin.remote.rmAll({})
       await expect(result).to.eventually.be.rejectedWith(/service name must be passed/)
     })
 
-    it('noop if there is no match', async () => {
+    it('noop if there is no match', async function () {
       await ipfs.pin.remote.rmAll({
         cid: [cid1],
         status: ['pinned', 'failed'],
@@ -97,7 +97,7 @@ export function testRmAll (factory, options) {
       ].sort(byCID))
     })
 
-    it('removes matching pin', async () => {
+    it('removes matching pin', async function () {
       await ipfs.pin.remote.rmAll({
         cid: [cid1],
         status: ['queued', 'pinning', 'pinned', 'failed'],
@@ -128,7 +128,7 @@ export function testRmAll (factory, options) {
       ].sort(byCID))
     })
 
-    it('removes multiple matches', async () => {
+    it('removes multiple matches', async function () {
       const result = ipfs.pin.remote.rmAll({
         cid: [cid1, cid2],
         status: ['queued', 'pinning', 'pinned', 'failed'],

@@ -18,12 +18,24 @@ export function testDagSharnessT0053 (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag (sharness-t0053-dag)', () => {
+  describe('.dag (sharness-t0053-dag)', function () {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    before(async function () {
+      ipfs = (await factory.spawn()).api
+      hash1 = (await ipfs.add({ content: 'foo\n', path: 'file1' })).cid
+      hash2 = (await ipfs.add({ content: 'bar\n', path: 'file2' })).cid
+      hash3 = (await ipfs.add({ content: 'baz\n', path: 'file3' })).cid
+      hash4 = (await ipfs.add({ content: 'qux\n', path: 'file4' })).cid
+
+      ipldObject = new TextEncoder().encode(`{"hello":"world","cats":[{"/":"${hash1}"},{"water":{"/":"${hash2}"}}],"magic":{"/":"${hash3}"},"sub":{"dict":"ionary","beep":[0,"bop"]}}`)
+      ipldObjectDagCbor = base64pad.decode('MomREYXRhRQABAgMEZUxpbmtzgA==')
+      ipldObjectDagPb = base64pad.decode('MCgUAAQIDBA==')
+      ipldObjectDagJson = new TextEncoder().encode('{"Data":{"/":{"bytes":"AAECAwQ"}},"Links":[]}')
+    })
+
+    after(function () { return factory.clean() })
 
     /** @type {CID} */
     let hash1
@@ -46,18 +58,6 @@ export function testDagSharnessT0053 (factory, options) {
     const ipldDagJsonHash = 'baguqeerajwksxu3lxpomdwxvosl542zl3xknhjgxtq3277gafrhl6vdw5tcq'
     const ipldDagPbHash = 'bafybeibazl2z4vqp2tmwcfag6wirmtpnomxknqcgrauj7m2yisrz3qjbom'
 
-    before(async () => {
-      hash1 = (await ipfs.add({ content: 'foo\n', path: 'file1' })).cid
-      hash2 = (await ipfs.add({ content: 'bar\n', path: 'file2' })).cid
-      hash3 = (await ipfs.add({ content: 'baz\n', path: 'file3' })).cid
-      hash4 = (await ipfs.add({ content: 'qux\n', path: 'file4' })).cid
-
-      ipldObject = new TextEncoder().encode(`{"hello":"world","cats":[{"/":"${hash1}"},{"water":{"/":"${hash2}"}}],"magic":{"/":"${hash3}"},"sub":{"dict":"ionary","beep":[0,"bop"]}}`)
-      ipldObjectDagCbor = base64pad.decode('MomREYXRhRQABAgMEZUxpbmtzgA==')
-      ipldObjectDagPb = base64pad.decode('MCgUAAQIDBA==')
-      ipldObjectDagJson = new TextEncoder().encode('{"Data":{"/":{"bytes":"AAECAwQ"}},"Links":[]}')
-    })
-
     it('sanity check', () => {
       expect(hash1.toString()).to.equal('QmYNmQKp6SuaVrpgWRsPTgCQCnpxUYGq76YEKBXuj2N4H6')
       expect(hash2.toString()).to.equal('QmTz3oc4gdpRMKP2sdGUPZTAGRngqjsi99BPoztyP53JMM')
@@ -65,81 +65,81 @@ export function testDagSharnessT0053 (factory, options) {
       expect(hash4.toString()).to.equal('QmZCoKN8vvRbxfn4BMG9678UQTSUwPXRJsRA9jnjoucHUj')
     })
 
-    it('can add an ipld object using defaults (dag-json to dag-cbor)', async () => {
+    it('can add an ipld object using defaults (dag-json to dag-cbor)', async function () {
       // dag-json is default on CLI, force it to interpret our bytes here
       const cid = await ipfs.dag.put(ipldObject, { inputCodec: 'dag-json' })
       expect(cid.toString()).to.equal(ipldHash)
     })
 
-    it('can add an ipld object using dag-json to dag-json', async () => {
+    it('can add an ipld object using dag-json to dag-json', async function () {
       const cid = await ipfs.dag.put(ipldObject, { inputCodec: 'dag-json', storeCodec: 'dag-json' })
       expect(cid.toString()).to.equal('baguqeera6gviseelmbzn2ugoddo5vulxlshqs3kw5ymgsb6w4cabnoh4ldpa')
     })
 
-    it('can add an ipld object using dag-json to dag-cbor', async () => {
+    it('can add an ipld object using dag-json to dag-cbor', async function () {
       const cid = await ipfs.dag.put(ipldObject, { inputCodec: 'dag-json', storeCodec: 'dag-cbor' })
       expect(cid.toString()).to.equal(ipldHash)
     })
 
     // this is not testing what the upstream sharness is testing since we're converting it locally
     // and not asking the CLI for it, but it's included for completeness
-    it('can add an ipld object using cid-base=base58btc', async () => {
+    it('can add an ipld object using cid-base=base58btc', async function () {
       const cid = await ipfs.dag.put(ipldObject, { inputCodec: 'dag-json' })
       expect(cid.toString(base58btc)).to.equal('zdpuAoN1XJ3GsrxEzMuCbRKZzRUVJekJUCbPVgCgE4D9yYqVi')
     })
 
     // (1) dag-cbor input
 
-    it('can add a dag-cbor input block stored as dag-cbor', async () => {
+    it('can add a dag-cbor input block stored as dag-cbor', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagCbor, { inputCodec: 'dag-cbor', storeCodec: 'dag-cbor' })
       expect(cid.toString()).to.equal(ipldDagCborHash)
     })
 
-    it('can add a dag-cbor input block stored as dag-pb', async () => {
+    it('can add a dag-cbor input block stored as dag-pb', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagCbor, { inputCodec: 'dag-cbor', storeCodec: 'dag-pb' })
       expect(cid.toString()).to.equal(ipldDagPbHash)
     })
 
-    it('can add a dag-cbor input block stored as dag-json', async () => {
+    it('can add a dag-cbor input block stored as dag-json', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagCbor, { inputCodec: 'dag-cbor', storeCodec: 'dag-json' })
       expect(cid.toString()).to.equal(ipldDagJsonHash)
     })
 
     // (2) dag-json input
 
-    it('can add a dag-json input block stored as dag-cbor', async () => {
+    it('can add a dag-json input block stored as dag-cbor', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagJson, { inputCodec: 'dag-json', storeCodec: 'dag-cbor' })
       expect(cid.toString()).to.equal(ipldDagCborHash)
     })
 
-    it('can add a dag-json input block stored as dag-pb', async () => {
+    it('can add a dag-json input block stored as dag-pb', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagJson, { inputCodec: 'dag-json', storeCodec: 'dag-pb' })
       expect(cid.toString()).to.equal(ipldDagPbHash)
     })
 
-    it('can add a dag-json input block stored as dag-json', async () => {
+    it('can add a dag-json input block stored as dag-json', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagJson, { inputCodec: 'dag-json', storeCodec: 'dag-json' })
       expect(cid.toString()).to.equal(ipldDagJsonHash)
     })
 
     // (3) dag-pb input
 
-    it('can add a dag-pb input block stored as dag-cbor', async () => {
+    it('can add a dag-pb input block stored as dag-cbor', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagPb, { inputCodec: 'dag-pb', storeCodec: 'dag-cbor' })
       expect(cid.toString()).to.equal(ipldDagCborHash)
     })
 
-    it('can add a dag-pb input block stored as dag-pb', async () => {
+    it('can add a dag-pb input block stored as dag-pb', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagPb, { inputCodec: 'dag-pb', storeCodec: 'dag-pb' })
       expect(cid.toString()).to.equal(ipldDagPbHash)
     })
 
-    it('can add a dag-pb input block stored as dag-json', async () => {
+    it('can add a dag-pb input block stored as dag-json', async function () {
       const cid = await ipfs.dag.put(ipldObjectDagPb, { inputCodec: 'dag-pb', storeCodec: 'dag-json' })
       expect(cid.toString()).to.equal(ipldDagJsonHash)
     })
 
-    it('can get dag-cbor, dag-json, dag-pb blocks as dag-json', async () => {
+    it('can get dag-cbor, dag-json, dag-pb blocks as dag-json', async function () {
       const resultCbor = await ipfs.dag.get(CID.parse(ipldDagCborHash))
       const resultJson = await ipfs.dag.get(CID.parse(ipldDagJsonHash))
       const resultPb = await ipfs.dag.get(CID.parse(ipldDagPbHash))
@@ -153,7 +153,7 @@ export function testDagSharnessT0053 (factory, options) {
     form of the node. But this test code as it's written is doing the encode locally and
     asserting on that .. which is just testing the codec.
 
-    it('can get dag-pb block transcoded as dag-cbor', async () => {
+    it('can get dag-pb block transcoded as dag-cbor', async function () {
       const { value } = await ipfs.dag.get(CID.parse(ipldDagPbHash), { outputCodec: 'dag-cbor' })
       const block = await Block.encode({ value, codec: dagCbor, hasher: sha256 })
       expect(bytes.toHex(block.cid.multihash.bytes)).to.equal('122082a2e4c892e7dcf1d491b30d68aa73ba76bec94f87d4e1a887596ce0730a534a')
@@ -162,7 +162,7 @@ export function testDagSharnessT0053 (factory, options) {
 
     // Skipped: 'dag put and dag get transcodings match' - tests the round-trip of the above
 
-    it('resolving sub-objects works', async () => {
+    it('resolving sub-objects works', async function () {
       let result = await ipfs.dag.get(CID.parse(ipldHash), { path: 'hello' })
       expect(result.value).to.equal('world')
       result = await ipfs.dag.get(CID.parse(ipldHash), { path: 'sub' })

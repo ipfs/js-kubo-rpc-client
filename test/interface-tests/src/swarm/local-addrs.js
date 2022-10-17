@@ -22,13 +22,13 @@ export function testLocalAddrs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should list local addresses the node is listening on', async () => {
+    it('should list local addresses the node is listening on', async function () {
       const multiaddrs = await ipfs.swarm.localAddrs()
 
       expect(multiaddrs).to.be.an.instanceOf(Array)

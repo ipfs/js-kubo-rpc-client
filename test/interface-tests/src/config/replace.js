@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
+import { notImplemented } from '../../../constants.js'
 import { getDescribe, getIt } from '../utils/mocha.js'
 
 /**
@@ -20,11 +21,15 @@ export function testReplace (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
+      if (notImplemented()) {
+        return this.skip('Not implemented in kubo yet')
+      }
+
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
     const config = {
       Addresses: {
@@ -32,14 +37,14 @@ export function testReplace (factory, options) {
       }
     }
 
-    it('should replace the whole config', async () => {
+    it('should replace the whole config', async function () {
       await ipfs.config.replace(config)
 
       const _config = await ipfs.config.getAll()
       expect(_config).to.deep.equal(config)
     })
 
-    it('should replace to empty config', async () => {
+    it('should replace to empty config', async function () {
       await ipfs.config.replace({})
 
       const _config = await ipfs.config.getAll()

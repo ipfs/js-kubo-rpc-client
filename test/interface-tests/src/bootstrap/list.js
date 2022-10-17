@@ -22,11 +22,11 @@ export function testList (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should return a list of peers', async () => {
+    it('should return a list of peers', async function () {
       const res = await ipfs.bootstrap.list()
 
       const peers = res.Peers

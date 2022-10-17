@@ -27,16 +27,16 @@ export function testFindPeer (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeB
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
 
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should respect timeout option when finding a peer on the DHT', async () => {
+    it('should respect timeout option when finding a peer on the DHT', async function () {
       const nodeBId = await nodeB.id()
 
       await testTimeout(() => drain(nodeA.dht.findPeer(nodeBId.id, {
@@ -44,7 +44,7 @@ export function testFindPeer (factory, options) {
       })))
     })
 
-    it('should find other peers', async () => {
+    it('should find other peers', async function () {
       const nodeBId = await nodeB.id()
 
       const results = await all(nodeA.dht.findPeer(nodeBId.id))
@@ -62,7 +62,7 @@ export function testFindPeer (factory, options) {
       expect(peerAddresses).to.deep.include(nodeAddresses[0])
     })
 
-    it('should fail to find other peer if peer does not exist', async () => {
+    it('should fail to find other peer if peer does not exist', async function () {
       const events = await all(nodeA.dht.findPeer('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ'))
 
       // no finalPeer events found

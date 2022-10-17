@@ -20,21 +20,21 @@ export function testGet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should fail with error', async () => {
+    it('should fail with error', async function () {
       // @ts-expect-error missing arg
       await expect(ipfs.config.get()).to.eventually.rejectedWith('key argument is required')
     })
 
-    it('should retrieve a value through a key', async () => {
+    it('should retrieve a value through a key', async function () {
       const peerId = await ipfs.config.get('Identity.PeerID')
       expect(peerId).to.exist()
     })
 
-    it('should retrieve a value through a nested key', async () => {
+    it('should retrieve a value through a nested key', async function () {
       const swarmAddrs = await ipfs.config.get('Addresses.Swarm')
       expect(swarmAddrs).to.exist()
     })
@@ -54,17 +54,17 @@ export function testGet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should retrieve the whole config', async () => {
+    it('should retrieve the whole config', async function () {
       const config = await ipfs.config.getAll()
 
       expect(config).to.be.an('object')
     })
 
-    it('should retrieve the whole config with options', async () => {
+    it('should retrieve the whole config with options', async function () {
       const config = await ipfs.config.getAll({ signal: undefined })
 
       expect(config).to.be.an('object')

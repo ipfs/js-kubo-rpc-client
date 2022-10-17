@@ -23,7 +23,7 @@ export function testLs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       // two files wrapped in directories, only root CID pinned recursively
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
@@ -37,10 +37,10 @@ export function testLs (factory, options) {
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
     // 1st, because ipfs.add pins automatically
-    it('should list all recursive pins', async () => {
+    it('should list all recursive pins', async function () {
       const pinset = await all(ipfs.pin.ls({ type: 'recursive' }))
 
       expect(pinset).to.deep.include({
@@ -53,7 +53,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should list all indirect pins', async () => {
+    it('should list all indirect pins', async function () {
       const pinset = await all(ipfs.pin.ls({ type: 'indirect' }))
 
       expect(pinset).to.not.deep.include({
@@ -78,7 +78,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should list all types of pins', async () => {
+    it('should list all types of pins', async function () {
       const pinset = await all(ipfs.pin.ls())
 
       expect(pinset).to.not.be.empty()
@@ -105,7 +105,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should list all direct pins', async () => {
+    it('should list all direct pins', async function () {
       const pinset = await all(ipfs.pin.ls({ type: 'direct' }))
       expect(pinset).to.have.lengthOf(1)
       expect(pinset).to.deep.include({
@@ -114,7 +114,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should list pins for a specific hash', async () => {
+    it('should list pins for a specific hash', async function () {
       const pinset = await all(ipfs.pin.ls({
         paths: fixtures.files[0].cid
       }))
@@ -146,7 +146,7 @@ export function testLs (factory, options) {
         .and.to.have.property('message', `no link named "I-DONT-EXIST.txt" under ${fixtures.directory.cid}`)
     })
 
-    it('should list indirect pins for a specific path', async () => {
+    it('should list indirect pins for a specific path', async function () {
       const pinset = await all(ipfs.pin.ls({
         paths: `/ipfs/${fixtures.directory.cid}/files/ipfs.txt`,
         type: 'indirect'
@@ -158,7 +158,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should list recursive pins for a specific hash', async () => {
+    it('should list recursive pins for a specific hash', async function () {
       const pinset = await all(ipfs.pin.ls({
         paths: fixtures.files[0].cid,
         type: 'recursive'
@@ -170,7 +170,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should list pins for multiple CIDs', async () => {
+    it('should list pins for multiple CIDs', async function () {
       const pinset = await all(ipfs.pin.ls({
         paths: [fixtures.files[0].cid, fixtures.files[1].cid]
       }))
@@ -193,7 +193,7 @@ export function testLs (factory, options) {
         // .with.property('code').that.equals('ERR_INVALID_PIN_TYPE')
     })
 
-    it('should list pins with metadata', async () => {
+    it('should list pins with metadata', async function () {
       const { cid } = await ipfs.add(`data-${Math.random()}`, {
         pin: false
       })

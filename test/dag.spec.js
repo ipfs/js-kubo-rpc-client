@@ -19,9 +19,9 @@ describe('.dag', function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { f.clean() })
 
-  it('should be able to put and get a DAG node with dag-pb codec', async () => {
+  it('should be able to put and get a DAG node with dag-pb codec', async function () {
     const data = uint8ArrayFromString('some data')
     const node = {
       Data: data,
@@ -37,7 +37,7 @@ describe('.dag', function () {
     expect(result.value.Data).to.deep.equal(data)
   })
 
-  it('should be able to put and get a DAG node with dag-cbor codec', async () => {
+  it('should be able to put and get a DAG node with dag-cbor codec', async function () {
     const cbor = { foo: 'dag-cbor-bar' }
     const cid = await ipfs.dag.put(cbor, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
 
@@ -49,7 +49,7 @@ describe('.dag', function () {
     expect(result.value).to.deep.equal(cbor)
   })
 
-  it('should be able to put and get a DAG node with raw codec', async () => {
+  it('should be able to put and get a DAG node with raw codec', async function () {
     const node = uint8ArrayFromString('some data')
     const cid = await ipfs.dag.put(node, { storeCodec: 'raw', hashAlg: 'sha2-256' })
 
@@ -61,7 +61,7 @@ describe('.dag', function () {
     expect(result.value).to.deep.equal(node)
   })
 
-  it('should error when missing DAG resolver for multicodec from requested CID', async () => {
+  it('should error when missing DAG resolver for multicodec from requested CID', async function () {
     const cid = await ipfs.block.put(Uint8Array.from([0, 1, 2, 3]), {
       format: 'git-raw'
     })
@@ -69,13 +69,13 @@ describe('.dag', function () {
     await expect(ipfs.dag.get(cid)).to.eventually.be.rejectedWith(/No codec found/)
   })
 
-  it('should error when putting node with esoteric codec', () => {
+  it('should error when putting node with esoteric codec', function () {
     const node = uint8ArrayFromString('some data')
 
     return expect(ipfs.dag.put(node, { storeCodec: 'git-raw', hashAlg: 'sha2-256' })).to.eventually.be.rejectedWith(/No codec found/)
   })
 
-  it('should pass through raw bytes with inputCodec', async () => {
+  it('should pass through raw bytes with inputCodec', async function () {
     const node = uint8ArrayFromString('blob 9\0some data')
     // we don't support git-raw in the HTTP client, but inputCodec and a Uint8Array should make
     // the raw data pass through to go-ipfs, which does talk git-raw
@@ -84,7 +84,7 @@ describe('.dag', function () {
     expect(cid.toString(base32)).to.equal('baf4bcfd4azdl7vj4d4hnix75qfld6mabo4l4uwa')
   })
 
-  it('should attempt to load an unsupported codec', async () => {
+  it('should attempt to load an unsupported codec', async function () {
     let askedToLoadCodec
     const ipfs2 = httpClient({
       url: `http://${ipfs.apiHost}:${ipfs.apiPort}`,
@@ -106,7 +106,7 @@ describe('.dag', function () {
     expect(askedToLoadCodec).to.be.true()
   })
 
-  it('should allow formats to be specified without overwriting others', async () => {
+  it('should allow formats to be specified without overwriting others', async function () {
     const ipfs2 = httpClient({
       url: `http://${ipfs.apiHost}:${ipfs.apiPort}`,
       ipld: {

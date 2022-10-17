@@ -28,20 +28,20 @@ export function testDisconnect (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsBId
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
     })
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
-    it('should disconnect from a peer', async () => {
+    it('should disconnect from a peer', async function () {
       let peers
 
       peers = await ipfsA.swarm.peers()

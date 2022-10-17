@@ -31,35 +31,35 @@ export function testCp (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('refuses to copy files without a source', async () => {
+    it('refuses to copy files without a source', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.cp()).to.eventually.be.rejected.with('Please supply at least one source')
     })
 
-    it('refuses to copy files without a source, even with options', async () => {
+    it('refuses to copy files without a source, even with options', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.cp({})).to.eventually.be.rejected.with('Please supply at least one source')
     })
 
-    it('refuses to copy files without a destination', async () => {
+    it('refuses to copy files without a destination', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.cp('/source')).to.eventually.be.rejected.with('Please supply at least one source')
     })
 
-    it('refuses to copy files without a destination, even with options', async () => {
+    it('refuses to copy files without a destination, even with options', async function () {
       // @ts-expect-error invalid args
       await expect(ipfs.files.cp('/source', {})).to.eventually.be.rejected.with('Please supply at least one source')
     })
 
-    it('refuses to copy a non-existent file', async () => {
+    it('refuses to copy a non-existent file', async function () {
       await expect(ipfs.files.cp('/i-do-not-exist', '/destination', {})).to.eventually.be.rejected.with('does not exist')
     })
 
-    it('refuses to copy multiple files to a non-existent child directory', async () => {
+    it('refuses to copy multiple files to a non-existent child directory', async function () {
       const src1 = `/src1-${Math.random()}`
       const src2 = `/src2-${Math.random()}`
       const parent = `/output-${Math.random()}`
@@ -75,7 +75,7 @@ export function testCp (factory, options) {
         .that.has.property('message').that.matches(/destination did not exist/)
     })
 
-    it('refuses to copy files to an unreadable node', async () => {
+    it('refuses to copy files to an unreadable node', async function () {
       const src1 = `/src2-${Math.random()}`
       const parent = `/output-${Math.random()}`
 
@@ -94,7 +94,7 @@ export function testCp (factory, options) {
         .that.has.property('message').that.matches(/unsupported codec/i)
     })
 
-    it('refuses to copy files to an exsting file', async () => {
+    it('refuses to copy files to an exsting file', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const destination = `/dest-file-${Math.random()}.txt`
 
@@ -113,7 +113,7 @@ export function testCp (factory, options) {
       }
     })
 
-    it('refuses to copy a file to itself', async () => {
+    it('refuses to copy a file to itself', async function () {
       const source = `/source-file-${Math.random()}.txt`
 
       await ipfs.files.write(source, randomBytes(100), {
@@ -128,7 +128,7 @@ export function testCp (factory, options) {
       }
     })
 
-    it('copies a file to new location', async () => {
+    it('copies a file to new location', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const destination = `/dest-file-${Math.random()}.txt`
       const data = randomBytes(500)
@@ -144,7 +144,7 @@ export function testCp (factory, options) {
       expect(bytes).to.deep.equal(data)
     })
 
-    it('copies a file to a pre-existing directory', async () => {
+    it('copies a file to a pre-existing directory', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const directory = `/dest-directory-${Math.random()}`
       const destination = `${directory}${source}`
@@ -159,7 +159,7 @@ export function testCp (factory, options) {
       expect(stats.size).to.equal(500)
     })
 
-    it('copies directories', async () => {
+    it('copies directories', async function () {
       const source = `/source-directory-${Math.random()}`
       const destination = `/dest-directory-${Math.random()}`
 
@@ -170,7 +170,7 @@ export function testCp (factory, options) {
       expect(stats.type).to.equal('directory')
     })
 
-    it('copies directories recursively', async () => {
+    it('copies directories recursively', async function () {
       const directory = `/source-directory-${Math.random()}`
       const subDirectory = `/source-directory-${Math.random()}`
       const source = `${directory}${subDirectory}`
@@ -188,7 +188,7 @@ export function testCp (factory, options) {
       expect(subDirStats.type).to.equal('directory')
     })
 
-    it('copies multiple files to new location', async () => {
+    it('copies multiple files to new location', async function () {
       const sources = [{
         path: `/source-file-${Math.random()}.txt`,
         data: randomBytes(500)
@@ -215,7 +215,7 @@ export function testCp (factory, options) {
       }
     })
 
-    it('copies files from ipfs paths', async () => {
+    it('copies files from ipfs paths', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const destination = `/dest-file-${Math.random()}.txt`
 
@@ -230,7 +230,7 @@ export function testCp (factory, options) {
       expect(destinationStats.size).to.equal(100)
     })
 
-    it('copies files from deep ipfs paths', async () => {
+    it('copies files from deep ipfs paths', async function () {
       const dir = `dir-${Math.random()}`
       const file = `source-file-${Math.random()}.txt`
       const source = `/${dir}/${file}`
@@ -248,7 +248,7 @@ export function testCp (factory, options) {
       expect(destinationStats.size).to.equal(100)
     })
 
-    it('copies files to deep mfs paths and creates intermediate directories', async () => {
+    it('copies files to deep mfs paths and creates intermediate directories', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const destination = `/really/deep/path/to/dest-file-${Math.random()}.txt`
 
@@ -264,7 +264,7 @@ export function testCp (factory, options) {
       expect(destinationStats.size).to.equal(100)
     })
 
-    it('fails to copy files to deep mfs paths when intermediate directories do not exist', async () => {
+    it('fails to copy files to deep mfs paths when intermediate directories do not exist', async function () {
       const source = `/source-file-${Math.random()}.txt`
       const destination = `/really/deep/path-${Math.random()}/to-${Math.random()}/dest-file-${Math.random()}.txt`
 
@@ -346,7 +346,7 @@ export function testCp (factory, options) {
       expect(stats).to.have.property('mode', mode)
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -368,7 +368,7 @@ export function testCp (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('copies a sharded directory to a normal directory', async () => {
+      it('copies a sharded directory to a normal directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
 
         const normalDir = `dir-${Math.random()}`
@@ -389,7 +389,7 @@ export function testCp (factory, options) {
         expect(files.length).to.be.ok()
       })
 
-      it('copies a normal directory to a sharded directory', async () => {
+      it('copies a normal directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
 
         const normalDir = `dir-${Math.random()}`
@@ -407,7 +407,7 @@ export function testCp (factory, options) {
         expect((await ipfs.files.stat(finalDirPath)).type).to.equal('directory')
       })
 
-      it('copies a file from a normal directory to a sharded directory', async () => {
+      it('copies a file from a normal directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
 
         const file = `file-${Math.random()}.txt`
@@ -426,7 +426,7 @@ export function testCp (factory, options) {
         expect((await ipfs.files.stat(finalFilePath)).type).to.equal('file')
       })
 
-      it('copies a file from a sharded directory to a sharded directory', async () => {
+      it('copies a file from a sharded directory to a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const othershardedDirPath = await createShardedDirectory(ipfs)
 
@@ -448,7 +448,7 @@ export function testCp (factory, options) {
         expect((await ipfs.files.stat(finalFilePath)).type).to.equal('file')
       })
 
-      it('copies a file from a sharded directory to a normal directory', async () => {
+      it('copies a file from a sharded directory to a normal directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dir = `dir-${Math.random()}`
         const dirPath = `/${dir}`

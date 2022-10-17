@@ -34,7 +34,7 @@ export function testPubsub (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.name.pubsub', () => {
+  describe('.name.pubsub', function () {
     // TODO make this work in the browser and between daemon and in-proc in nodes
     if (!isNode) return
 
@@ -70,7 +70,7 @@ export function testPubsub (factory, options) {
       await nodeA.swarm.connect(idB.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
     it('should publish and then resolve correctly', async function () {
       // @ts-ignore this is mocha

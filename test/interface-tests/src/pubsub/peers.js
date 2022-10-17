@@ -36,7 +36,7 @@ export function testPeers (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs3Id
 
-    before(async () => {
+    before(async function () {
       ipfs1 = (await factory.spawn({ ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfs2 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
@@ -59,7 +59,7 @@ export function testPeers (factory, options) {
       await ipfs2.swarm.connect(ipfs3Addr)
     })
 
-    afterEach(async () => {
+    afterEach(async function () {
       const nodes = [ipfs1, ipfs2, ipfs3]
       for (let i = 0; i < subscribedTopics.length; i++) {
         const topic = subscribedTopics[i]
@@ -69,9 +69,9 @@ export function testPeers (factory, options) {
       await delay(100)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should not error when not subscribed to a topic', async () => {
+    it('should not error when not subscribed to a topic', async function () {
       const topic = getTopic()
       const peers = await ipfs1.pubsub.peers(topic)
       expect(peers).to.exist()
@@ -79,7 +79,7 @@ export function testPeers (factory, options) {
       // expect(peers).to.be.empty()
     })
 
-    it('should not return extra peers', async () => {
+    it('should not return extra peers', async function () {
       // Currently go-ipfs returns peers that have not been
       // subscribed to the topic. Enable when go-ipfs has been fixed
       const sub1 = () => {}
@@ -99,7 +99,7 @@ export function testPeers (factory, options) {
       expect(peers).to.be.empty()
     })
 
-    it('should return peers for a topic - one peer', async () => {
+    it('should return peers for a topic - one peer', async function () {
       // Currently go-ipfs returns peers that have not been
       // subscribed to the topic. Enable when go-ipfs has been fixed
       const sub1 = () => {}
@@ -116,7 +116,7 @@ export function testPeers (factory, options) {
       await waitForPeers(ipfs1, topic, [ipfs2Id.id], 30000)
     })
 
-    it('should return peers for a topic - multiple peers', async () => {
+    it('should return peers for a topic - multiple peers', async function () {
       const sub1 = () => {}
       const sub2 = () => {}
       const sub3 = () => {}

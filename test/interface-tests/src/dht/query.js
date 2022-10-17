@@ -26,16 +26,16 @@ export function testQuery (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeB
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
 
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should respect timeout option when querying the DHT', async () => {
+    it('should respect timeout option when querying the DHT', async function () {
       const nodeBId = await nodeB.id()
 
       return testTimeout(() => drain(nodeA.dht.query(nodeBId.id, {

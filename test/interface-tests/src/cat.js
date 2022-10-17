@@ -32,14 +32,16 @@ export function testCat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () {
+      ipfs = (await factory.spawn()).api
 
-    after(() => factory.clean())
+      return Promise.all([
+        all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),
+        all(importer({ content: fixtures.bigFile.data }, blockstore(ipfs)))
+      ])
+    })
 
-    before(() => Promise.all([
-      all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),
-      all(importer({ content: fixtures.bigFile.data }, blockstore(ipfs)))
-    ]))
+    after(function () { return factory.clean() })
 
     it('should respect timeout option when catting files', () => {
       return testTimeout(() => drain(ipfs.cat(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
@@ -47,26 +49,26 @@ export function testCat (factory, options) {
       })))
     })
 
-    it('should cat with a base58 string encoded multihash', async () => {
+    it('should cat with a base58 string encoded multihash', async function () {
       const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.smallFile.cid)))
       expect(uint8ArrayToString(data)).to.contain('Plz add me!')
     })
 
-    it('should cat with a Uint8Array multihash', async () => {
+    it('should cat with a Uint8Array multihash', async function () {
       const cid = fixtures.smallFile.cid
 
       const data = uint8ArrayConcat(await all(ipfs.cat(cid)))
       expect(uint8ArrayToString(data)).to.contain('Plz add me!')
     })
 
-    it('should cat with a CID object', async () => {
+    it('should cat with a CID object', async function () {
       const cid = fixtures.smallFile.cid
 
       const data = uint8ArrayConcat(await all(ipfs.cat(cid)))
       expect(uint8ArrayToString(data)).to.contain('Plz add me!')
     })
 
-    it('should cat a file added as CIDv0 with a CIDv1', async () => {
+    it('should cat a file added as CIDv0 with a CIDv1', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const res = await all(importer([{ content: (async function * () { yield input }()) }], blockstore(ipfs)))
@@ -79,7 +81,7 @@ export function testCat (factory, options) {
       expect(output).to.eql(input)
     })
 
-    it('should cat a file added as CIDv1 with a CIDv0', async () => {
+    it('should cat a file added as CIDv1 with a CIDv0', async function () {
       const input = uint8ArrayFromString(`TEST${Math.random()}`)
 
       const res = await all(importer([{ content: (async function * () { yield input }()) }], blockstore(ipfs), { cidVersion: 1, rawLeaves: false }))
@@ -92,20 +94,20 @@ export function testCat (factory, options) {
       expect(output.slice()).to.eql(input)
     })
 
-    it('should cat a BIG file', async () => {
+    it('should cat a BIG file', async function () {
       const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.bigFile.cid)))
       expect(data.length).to.equal(fixtures.bigFile.data.length)
       expect(data.slice()).to.eql(fixtures.bigFile.data)
     })
 
-    it('should cat with IPFS path', async () => {
+    it('should cat with IPFS path', async function () {
       const ipfsPath = '/ipfs/' + fixtures.smallFile.cid
 
       const data = uint8ArrayConcat(await all(ipfs.cat(ipfsPath)))
       expect(uint8ArrayToString(data)).to.contain('Plz add me!')
     })
 
-    it('should cat with IPFS path, nested value', async () => {
+    it('should cat with IPFS path, nested value', async function () {
       const fileToAdd = { path: 'a/testfile.txt', content: fixtures.smallFile.data }
 
       const filesAdded = await all(importer(fileToAdd, blockstore(ipfs)))
@@ -122,7 +124,7 @@ export function testCat (factory, options) {
       expect(uint8ArrayToString(data)).to.contain('Plz add me!')
     })
 
-    it('should cat with IPFS path, deeply nested value', async () => {
+    it('should cat with IPFS path, deeply nested value', async function () {
       const fileToAdd = { path: 'a/b/testfile.txt', content: fixtures.smallFile.data }
 
       const filesAdded = await all(importer([fileToAdd], blockstore(ipfs)))
@@ -154,7 +156,7 @@ export function testCat (factory, options) {
         ])
     })
 
-    it('should error on dir path', async () => {
+    it('should error on dir path', async function () {
       const file = { path: 'dir/testfile.txt', content: fixtures.smallFile.data }
 
       const filesAdded = await all(importer([file], blockstore(ipfs)))
@@ -169,7 +171,7 @@ export function testCat (factory, options) {
       expect(err.message).to.contain('this dag node is a directory')
     })
 
-    it('should export a chunk of a file', async () => {
+    it('should export a chunk of a file', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

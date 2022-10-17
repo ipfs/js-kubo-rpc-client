@@ -25,11 +25,11 @@ export function testAdd (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { factory.clean() })
 
     it('should return an error when called with an invalid arg', () => {
       // @ts-expect-error invalid input
@@ -37,7 +37,7 @@ export function testAdd (factory, options) {
         .and.be.an.instanceOf(Error)
     })
 
-    it('should return a list containing the bootstrap peer when called with a valid arg (ip4)', async () => {
+    it('should return a list containing the bootstrap peer when called with a valid arg (ip4)', async function () {
       const res = await ipfs.bootstrap.add(validIp4)
 
       expect(res).to.be.eql({ Peers: [validIp4] })
@@ -45,7 +45,7 @@ export function testAdd (factory, options) {
       expect(peers).to.have.property('length').that.is.equal(1)
     })
 
-    it('should prevent duplicate inserts of bootstrap peers', async () => {
+    it('should prevent duplicate inserts of bootstrap peers', async function () {
       await ipfs.bootstrap.clear()
 
       const added = await ipfs.bootstrap.add(validIp4)
@@ -58,7 +58,7 @@ export function testAdd (factory, options) {
       expect(list).to.have.property('Peers').that.deep.equals([validIp4])
     })
 
-    it('add a peer to the bootstrap list', async () => {
+    it('add a peer to the bootstrap list', async function () {
       const peer = new Multiaddr('/ip4/111.111.111.111/tcp/1001/p2p/QmXFX2P5ammdmXQgfqGkfswtEVFsZUJ5KeHRXQYCTdiTAb')
 
       const res = await ipfs.bootstrap.add(peer)

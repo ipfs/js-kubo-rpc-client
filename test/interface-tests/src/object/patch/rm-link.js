@@ -25,13 +25,13 @@ export function testRmLink (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should remove a link from an existing node', async () => {
+    it('should remove a link from an existing node', async function () {
       const obj1 = {
         Data: uint8ArrayFromString('patch test object 1'),
         Links: []

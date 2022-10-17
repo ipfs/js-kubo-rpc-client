@@ -21,27 +21,27 @@ export function testSet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('should set a new key', async () => {
+    it('should set a new key', async function () {
       await ipfs.config.set('Fruit', 'banana')
 
       const fruit = await ipfs.config.get('Fruit')
       expect(fruit).to.equal('banana')
     })
 
-    it('should set an already existing key', async () => {
+    it('should set an already existing key', async function () {
       await ipfs.config.set('Fruit', 'morango')
 
       const fruit = await ipfs.config.get('Fruit')
       expect(fruit).to.equal('morango')
     })
 
-    it('should set a number', async () => {
+    it('should set a number', async function () {
       const key = 'Discovery.MDNS.Interval'
       const val = 11
 
@@ -51,7 +51,7 @@ export function testSet (factory, options) {
       expect(result).to.equal(val)
     })
 
-    it('should set a boolean', async () => {
+    it('should set a boolean', async function () {
       const value = true
       const key = 'Discovery.MDNS.Enabled'
 
@@ -59,7 +59,7 @@ export function testSet (factory, options) {
       expect(await ipfs.config.get(key)).to.equal(value)
     })
 
-    it('should set the other boolean', async () => {
+    it('should set the other boolean', async function () {
       const value = false
       const key = 'Discovery.MDNS.Enabled'
 
@@ -67,7 +67,7 @@ export function testSet (factory, options) {
       expect(await ipfs.config.get(key)).to.equal(value)
     })
 
-    it('should set a JSON object', async () => {
+    it('should set a JSON object', async function () {
       const key = 'API.HTTPHeaders.Access-Control-Allow-Origin'
       const val = ['http://example.io']
 

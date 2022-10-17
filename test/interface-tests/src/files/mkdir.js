@@ -54,31 +54,31 @@ export function testMkdir (factory, options) {
       expect(stats).to.have.deep.property('mtime', expectedMtime)
     }
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(function () { return factory.clean() })
 
-    it('requires a directory', async () => {
+    it('requires a directory', async function () {
       await expect(ipfs.files.mkdir('')).to.eventually.be.rejected()
     })
 
-    it('refuses to create a directory without a leading slash', async () => {
+    it('refuses to create a directory without a leading slash', async function () {
       await expect(ipfs.files.mkdir('foo')).to.eventually.be.rejected()
     })
 
-    it('refuses to recreate the root directory when -p is false', async () => {
+    it('refuses to recreate the root directory when -p is false', async function () {
       await expect(ipfs.files.mkdir('/', {
         parents: false
       })).to.eventually.be.rejected()
     })
 
-    it('refuses to create a nested directory when -p is false', async () => {
+    it('refuses to create a nested directory when -p is false', async function () {
       await expect(ipfs.files.mkdir('/foo/bar/baz', {
         parents: false
       })).to.eventually.be.rejected()
     })
 
-    it('creates a directory', async () => {
+    it('creates a directory', async function () {
       const path = '/foo'
 
       await ipfs.files.mkdir(path, {})
@@ -91,7 +91,7 @@ export function testMkdir (factory, options) {
       expect(files.length).to.equal(0)
     })
 
-    it('refuses to create a directory that already exists', async () => {
+    it('refuses to create a directory that already exists', async function () {
       const path = '/qux/quux/quuux'
 
       await ipfs.files.mkdir(path, {
@@ -103,7 +103,7 @@ export function testMkdir (factory, options) {
       })).to.eventually.be.rejected()
     })
 
-    it('does not error when creating a directory that already exists and parents is true', async () => {
+    it('does not error when creating a directory that already exists and parents is true', async function () {
       const path = '/qux/quux/quuux'
 
       await ipfs.files.mkdir(path, {
@@ -115,7 +115,7 @@ export function testMkdir (factory, options) {
       })
     })
 
-    it('creates a nested directory when -p is true', async () => {
+    it('creates a nested directory when -p is true', async function () {
       const path = '/foo/bar/baz'
 
       await ipfs.files.mkdir(path, {
@@ -127,7 +127,7 @@ export function testMkdir (factory, options) {
       expect(files.length).to.equal(0)
     })
 
-    it('creates nested directories', async () => {
+    it('creates nested directories', async function () {
       await ipfs.files.mkdir('/nested-dir')
       await ipfs.files.mkdir('/nested-dir/baz')
 
@@ -136,7 +136,7 @@ export function testMkdir (factory, options) {
       expect(files.length).to.equal(1)
     })
 
-    it('creates a nested directory with a different CID version to the parent', async () => {
+    it('creates a nested directory with a different CID version to the parent', async function () {
       const directory = `cid-versions-${Math.random()}`
       const directoryPath = `/${directory}`
       const subDirectory = `cid-versions-${Math.random()}`
@@ -155,7 +155,7 @@ export function testMkdir (factory, options) {
       await expect(ipfs.files.stat(subDirectoryPath)).to.eventually.have.nested.property('cid.version', 1)
     })
 
-    it('creates a nested directory with a different hash function to the parent', async () => {
+    it('creates a nested directory with a different hash function to the parent', async function () {
       const directory = `cid-versions-${Math.random()}`
       const directoryPath = `/${directory}`
       const subDirectory = `cid-versions-${Math.random()}`
@@ -223,7 +223,7 @@ export function testMkdir (factory, options) {
       })
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
@@ -245,7 +245,7 @@ export function testMkdir (factory, options) {
         ipfs = ipfsd.api
       })
 
-      it('makes a directory inside a sharded directory', async () => {
+      it('makes a directory inside a sharded directory', async function () {
         const shardedDirPath = await createShardedDirectory(ipfs)
         const dirPath = `${shardedDirPath}/subdir-${Math.random()}`
 
