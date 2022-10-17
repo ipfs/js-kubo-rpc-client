@@ -16,7 +16,7 @@ import { getDescribe, getIt } from '../utils/mocha.js'
 import testTimeout from '../utils/test-timeout.js'
 import { identity } from 'multiformats/hashes/identity'
 import blockstore from '../utils/blockstore-adapter.js'
-import { ES256KSigner, createJWS } from 'did-jwt'
+import { ES256KSigner, createJWS, hexToBytes } from 'did-jwt'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -108,7 +108,7 @@ export function testGet (factory, options) {
       await ipfs.dag.put(nodePb, { storeCodec: 'dag-pb', hashAlg: 'sha2-256' })
       await ipfs.dag.put(nodeCbor, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
 
-      const signer = ES256KSigner('278a5de700e29faae8e40e366ec5012b5ec63d36ec77e8a2417154cc1d25383f')
+      const signer = ES256KSigner(hexToBytes('278a5de700e29faae8e40e366ec5012b5ec63d36ec77e8a2417154cc1d25383f'))
       nodeJose = await createJWS(base64url.encode(cidCbor.bytes).slice(1), signer)
       cidJose = CID.createV1(dagJOSE.code, await sha256.digest(dagJOSE.encode(nodeJose)))
       await ipfs.dag.put(nodeJose, { storeCodec: dagJOSE.name, hashAlg: 'sha2-256' })
