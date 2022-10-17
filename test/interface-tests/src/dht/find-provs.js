@@ -68,15 +68,15 @@ export function testFindProvs (factory, options) {
 
       for await (const event of nodeA.dht.findProvs(providedCid)) {
         if (event.name === 'PROVIDER') {
-          providerIds.push(...event.providers.map(prov => prov.id))
+          providerIds.push(...event.providers.map(prov => prov.id.toString()))
         }
       }
 
       const nodeBId = await nodeB.id()
       const nodeCId = await nodeC.id()
 
-      expect(providerIds).to.include(nodeBId.id)
-      expect(providerIds).to.include(nodeCId.id)
+      expect(providerIds).to.include(nodeBId.id.toString())
+      expect(providerIds).to.include(nodeCId.id.toString())
     })
   })
 }
