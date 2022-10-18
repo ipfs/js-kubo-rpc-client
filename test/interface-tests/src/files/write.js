@@ -10,13 +10,11 @@ import { sha512 } from 'multiformats/hashes/sha2'
 import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { createTwoShards } from '../utils/create-two-shards.js'
-import isoRandomStream from 'iso-random-stream'
+import { randomBytes, randomStream } from 'iso-random-stream'
 import all from 'it-all'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import * as raw from 'multiformats/codecs/raw'
 import map from 'it-map'
-const randomBytes = isoRandomStream
-const randomStream = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -190,7 +188,7 @@ export function testWrite (factory, options) {
 
     it('writes a small file using a Node stream (Node only)', async function () {
       if (!isNode) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         this.skip()
       }
       const filePath = `/small-file-${Math.random()}.txt`
@@ -207,7 +205,7 @@ export function testWrite (factory, options) {
 
     it('writes a small file using an HTML5 Blob (Browser only)', async function () {
       if (!global.Blob) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip()
       }
 
@@ -366,7 +364,7 @@ export function testWrite (factory, options) {
         await expect(ipfs.files.stat(path)).to.eventually.have.property('size', contentSize + newContent.length - 1)
 
         const buffer = uint8ArrayConcat(await all(ipfs.files.read(path, {
-          offset
+          offset: offset
         })))
 
         expect(buffer).to.deep.equal(newContent)

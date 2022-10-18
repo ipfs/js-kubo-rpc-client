@@ -12,7 +12,6 @@ import last from 'it-last'
 import * as raw from 'multiformats/codecs/raw'
 import * as dagPB from '@ipld/dag-pb'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { brokenDuringKuboRpcClientMigration, isFirefox, notImplemented } from '../../constants.js'
 
 const echoUrl = (/** @type {string} */ text) => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
 const redirectUrl = (/** @type {string} */ url) => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
@@ -31,7 +30,7 @@ export function testAdd (factory, options) {
   const it = getIt(options)
 
   describe('.add', function () {
-    this.timeout(120 * 1000)
+    this.timeout(1080 * 1000)
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
@@ -74,7 +73,7 @@ export function testAdd (factory, options) {
 
     it('should add a File', async function () {
       if (!supportsFileReader) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip('skip in node')
       }
 
@@ -84,7 +83,7 @@ export function testAdd (factory, options) {
 
     it('should add a File as tuple', async function () {
       if (!supportsFileReader) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip('skip in node')
       }
 
@@ -107,9 +106,6 @@ export function testAdd (factory, options) {
     })
 
     it('should add a BIG Uint8Array', async () => {
-      if (isFirefox) {
-        return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
-      }
       const file = await ipfs.add(fixtures.bigFile.data)
 
       expect(file.cid.toString()).to.equal(fixtures.bigFile.cid.toString())
@@ -119,9 +115,6 @@ export function testAdd (factory, options) {
     })
 
     it('should add a BIG Uint8Array with progress enabled', async () => {
-      if (isFirefox) {
-        return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
-      }
       let progCalled = false
       let accumProgress = 0
 
@@ -218,11 +211,8 @@ export function testAdd (factory, options) {
     })
 
     it('should add readable stream', async function () {
-      if (brokenDuringKuboRpcClientMigration()) {
-        return this.skip('Skipping due to time constraints. See https://github.com/ipfs/js-kubo-rpc-client/issues/5')
-      }
       if (!isNode) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         this.skip()
       }
       const expectedCid = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
@@ -274,7 +264,7 @@ export function testAdd (factory, options) {
     })
 
     it('should add with only-hash=true', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const content = String(Math.random() + Date.now())
 
@@ -302,30 +292,21 @@ export function testAdd (factory, options) {
     })
 
     it('should add with mode as string', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mode = '0777'
       await testMode(mode, parseInt(mode, 8))
     })
 
     it('should add with mode as number', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mode = parseInt('0777', 8)
       await testMode(mode, mode)
     })
 
     it('should add with mtime as Date', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mtime = new Date(5000)
       await testMtime(mtime, {
@@ -335,10 +316,7 @@ export function testAdd (factory, options) {
     })
 
     it('should add with mtime as { nsecs, secs }', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mtime = {
         secs: 5,
@@ -348,10 +326,7 @@ export function testAdd (factory, options) {
     })
 
     it('should add with mtime as timespec', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       await testMtime({
         Seconds: 5,
@@ -363,10 +338,7 @@ export function testAdd (factory, options) {
     })
 
     it('should add with mtime as hrtime', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mtime = process.hrtime()
       await testMtime(mtime, {
@@ -453,9 +425,6 @@ export function testAdd (factory, options) {
     })
 
     it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const file = await ipfs.add({
         content: Uint8Array.from([0, 1, 2]),
         mode: 0o123,

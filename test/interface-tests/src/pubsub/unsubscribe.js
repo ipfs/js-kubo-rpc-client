@@ -7,6 +7,7 @@ import waitFor from '../utils/wait-for.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
+ * @typedef {import('@libp2p/interface-pubsub').Message} Message
  */
 
 /**
@@ -34,7 +35,7 @@ export function testUnsubscribe (factory, options) {
 
     it(`should subscribe and unsubscribe ${count} times`, async () => {
       const someTopic = getTopic()
-      /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn[]} */
+      /** @type {import('@libp2p/interfaces/events').EventHandler<Message>[]} */
       const handlers = Array.from(Array(count), () => msg => {})
 
       for (let i = 0; i < count; i++) {

@@ -27,7 +27,7 @@ export function testRename (factory, options) {
     after(() => factory.clean())
 
     it('should rename a key', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.timeout(30 * 1000)
 
       const oldName = nanoid()

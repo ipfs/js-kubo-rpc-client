@@ -27,7 +27,7 @@ export function testList (factory, options) {
     after(() => factory.clean())
 
     it('should list all the keys', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.timeout(60 * 1000)
 
       const keys = await Promise.all([1, 2, 3].map(() => ipfs.key.gen(nanoid(), { type: 'rsa', size: 2048 })))

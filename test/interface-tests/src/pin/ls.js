@@ -221,7 +221,7 @@ export function testLs (factory, options) {
 
       expect(pinset).to.have.deep.members([{
         type: 'direct',
-        cid,
+        cid: cid,
         metadata
       }])
     })

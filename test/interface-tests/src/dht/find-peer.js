@@ -6,6 +6,7 @@ import testTimeout from '../utils/test-timeout.js'
 import drain from 'it-drain'
 import all from 'it-all'
 import { ensureReachable } from './utils.js'
+import { peerIdFromString } from '@libp2p/peer-id'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -58,12 +59,12 @@ export function testFindPeer (factory, options) {
       const nodeAddresses = nodeBId.addresses.map((addr) => addr.nodeAddress())
       const peerAddresses = finalPeer.peer.multiaddrs.map(ma => ma.nodeAddress())
 
-      expect(id).to.equal(nodeBId.id)
+      expect(id.toString()).to.equal(nodeBId.id.toString())
       expect(peerAddresses).to.deep.include(nodeAddresses[0])
     })
 
     it('should fail to find other peer if peer does not exist', async () => {
-      const events = await all(nodeA.dht.findPeer('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ'))
+      const events = await all(nodeA.dht.findPeer(peerIdFromString('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')))
 
       // no finalPeer events found
       expect(events.filter(event => event.name === 'FINAL_PEER')).to.be.empty()

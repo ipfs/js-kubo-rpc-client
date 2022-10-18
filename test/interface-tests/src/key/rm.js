@@ -27,7 +27,7 @@ export function testRm (factory, options) {
     after(() => factory.clean())
 
     it('should rm a key', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.timeout(30 * 1000)
 
       const key = await ipfs.key.gen(nanoid(), { type: 'rsa', size: 2048 })

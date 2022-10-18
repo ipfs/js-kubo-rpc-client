@@ -6,9 +6,8 @@ import { getDescribe, getIt } from '../utils/mocha.js'
 import { CID } from 'multiformats/cid'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import all from 'it-all'
-import isoRandomStream from 'iso-random-stream'
+import { randomBytes } from 'iso-random-stream'
 import * as raw from 'multiformats/codecs/raw'
-const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

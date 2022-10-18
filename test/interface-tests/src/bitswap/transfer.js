@@ -3,13 +3,11 @@
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { isWebWorker } from 'ipfs-utils/src/env.js'
-import isoRandomStream from 'iso-random-stream'
+import { randomBytes } from 'iso-random-stream'
 import concat from 'it-concat'
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import pmap from 'p-map'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
-const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -21,12 +19,11 @@ const randomBytes = isoRandomStream
  * @param {object} options
  */
 export function testTransfer (factory, options) {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('transfer blocks', function () {
-    this.timeout(60 * 1000)
+    this.timeout(540 * 1000)
 
     afterEach(() => factory.clean())
 
@@ -35,7 +32,7 @@ export function testTransfer (factory, options) {
         // webworkers are not dialable because webrtc is not available
         const remote = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remoteId = await remote.id()
-        const local = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+        const local = (await factory.spawn({ type: 'proc' })).api
         await local.swarm.connect(remoteId.addresses[0])
         const data = uint8ArrayFromString(`IPFS is awesome ${nanoid()}`)
 
@@ -51,7 +48,7 @@ export function testTransfer (factory, options) {
         const remote1Id = await remote1.id()
         const remote2 = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remote2Id = await remote2.id()
-        const local = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+        const local = (await factory.spawn({ type: 'proc' })).api
         await local.swarm.connect(remote1Id.addresses[0])
         await local.swarm.connect(remote2Id.addresses[0])
         await remote1.swarm.connect(remote2Id.addresses[0])
@@ -79,7 +76,7 @@ export function testTransfer (factory, options) {
         const content = randomBytes(1024)
         const remote = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remoteId = await remote.id()
-        const local = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+        const local = (await factory.spawn({ type: 'proc' })).api
         local.swarm.connect(remoteId.addresses[0])
 
         const file = await remote.add({ path: 'awesome.txt', content })

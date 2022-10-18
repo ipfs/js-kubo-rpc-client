@@ -7,7 +7,6 @@ import { isWebWorker } from 'ipfs-utils/src/env.js'
 import testTimeout from '../utils/test-timeout.js'
 import { CID } from 'multiformats/cid'
 import delay from 'delay'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -18,7 +17,6 @@ import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets
  * @param {object} options
  */
 export function testWantlist (factory, options) {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -32,7 +30,7 @@ export function testWantlist (factory, options) {
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
     before(async () => {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      ipfsA = (await factory.spawn({ type: 'proc' })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       // Add key to the wantlist for ipfsB

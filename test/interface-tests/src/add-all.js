@@ -13,10 +13,9 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import bufferStream from 'it-buffer-stream'
 import * as raw from 'multiformats/codecs/raw'
-// import * as dagPB from '@ipld/dag-pb'
+import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { isFirefox, notImplemented } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -32,7 +31,7 @@ export function testAddAll (factory, options) {
   const it = getIt(options)
 
   describe('.addAll', function () {
-    this.timeout(120 * 1000)
+    this.timeout(360 * 1000)
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
@@ -77,7 +76,7 @@ export function testAddAll (factory, options) {
 
     it('should add a File as array of tuples', async function () {
       if (!supportsFileReader) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip('skip in node')
       }
 
@@ -103,7 +102,7 @@ export function testAddAll (factory, options) {
 
     it('should add array of objects with readable stream content', async function () {
       if (!isNode) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         this.skip('Only node supports readable streams')
       }
 
@@ -287,10 +286,10 @@ export function testAddAll (factory, options) {
 
       /**
        * @param {object} arg
-       * @param {string} arg.path
+       * @param {string} [arg.path]
        */
       const toPath = ({ path }) => path
-      const nonSeqDirFilePaths = input.map(toPath).filter(p => p.includes('/a/'))
+      const nonSeqDirFilePaths = input.map(toPath).filter(p => p && p.includes('/a/'))
       const filesAddedPaths = filesAdded.map(toPath)
 
       expect(nonSeqDirFilePaths.every(p => filesAddedPaths.includes(p))).to.be.true()
@@ -337,7 +336,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a directory with only-hash=true', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const content = String(Math.random() + Date.now())
 
@@ -359,30 +358,21 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mode as string', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mode = '0777'
       await testMode(mode, parseInt(mode, 8))
     })
 
     it('should add with mode as number', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mode = parseInt('0777', 8)
       await testMode(mode, mode)
     })
 
     it('should add with mtime as Date', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mtime = new Date(5000)
       await testMtime(mtime, {
@@ -392,10 +382,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as { nsecs, secs }', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mtime = {
         secs: 5,
@@ -405,10 +392,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as timespec', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       await testMtime({
         Seconds: 5,
@@ -420,10 +404,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add with mtime as hrtime', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
       const mtime = process.hrtime()
       await testMtime(mtime, {
@@ -433,7 +414,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a directory from the file system', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       if (!isNode) this.skip()
       const filesPath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
 
@@ -442,7 +423,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a directory from the file system with an odd name', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
       const filesPath = resolve('test/fixtures/weird name folder [v0]', 'interface-ipfs-core')
@@ -452,7 +433,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should ignore a directory from the file system', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
       const filesPath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
@@ -462,7 +443,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a file from the file system', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
       const filePath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
@@ -473,7 +454,7 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a hidden file in a directory from the file system', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
       const filesPath = resolve('test/fixtures', 'interface-ipfs-core')
@@ -484,10 +465,10 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a file with only-hash=true', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(10 * 1000)
 
       const out = await all(ipfs.addAll([{
@@ -528,9 +509,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const files = await all(ipfs.addAll([{
         content: Uint8Array.from([0, 1, 2]),
         mode: 0o123,
@@ -550,9 +528,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add directories with metadata', async () => {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const files = await all(ipfs.addAll([{
         path: '/foo',
         mode: 0o123,
@@ -569,9 +544,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should support bidirectional streaming', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       let progressInvoked = false
 
       /**
@@ -609,9 +581,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should error during add-all stream', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const source = async function * () {
         yield {
           content: 'hello',
@@ -631,9 +600,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add big files', async function () {
-      if (isFirefox) {
-        return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
-      }
       const totalSize = 1024 * 1024 * 200
       const chunkSize = 1024 * 1024 * 99
 

@@ -5,7 +5,6 @@ import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
 import { isWebWorker } from 'ipfs-utils/src/env.js'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -16,7 +15,6 @@ import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets
  * @param {object} options
  */
 export function testPeers (factory, options) {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -37,10 +35,10 @@ export function testPeers (factory, options) {
     let ipfs3Id
 
     before(async () => {
-      ipfs1 = (await factory.spawn({ ipfsOptions })).api
+      ipfs1 = (await factory.spawn()).api
       // webworkers are not dialable because webrtc is not available
-      ipfs2 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
-      ipfs3 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
+      ipfs2 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined })).api
+      ipfs3 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined })).api
 
       ipfs2Id = await ipfs2.id()
       ipfs3Id = await ipfs3.id()

@@ -61,7 +61,9 @@ export function testImport (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  describe('.dag.import', () => {
+  describe('.dag.import', function () {
+    this.timeout(540 * 1000)
+
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
     before(async () => {
@@ -76,7 +78,7 @@ export function testImport (factory, options) {
 
       const result = await all(ipfs.dag.import(car))
       expect(result).to.have.lengthOf(1)
-      // @ts-ignore chai types are messed up
+      // @ts-expect-error chai types are messed up
       expect(result).to.have.nested.deep.property('[0].root.cid', blocks[0].cid)
 
       for (const { cid } of blocks) {
@@ -120,7 +122,7 @@ export function testImport (factory, options) {
     })
 
     it('should import car with roots but no blocks', async () => {
-      const input = loadFixture('test/interface-tests/fixtures/car/combined_naked_roots_genesis_and_128.car')
+      const input = loadFixture('test/interface-tests/fixtures/car/combined_naked_roots_genesis_and_128.car', 'interface-ipfs-core')
       const reader = await CarReader.fromBytes(input)
       const cids = await reader.getRoots()
 
@@ -131,14 +133,14 @@ export function testImport (factory, options) {
       expect(result1).to.deep.include({ root: { cid: cids[0], pinErrorMsg: 'blockstore: block not found' } })
       expect(result1).to.deep.include({ root: { cid: cids[1], pinErrorMsg: 'blockstore: block not found' } })
 
-      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
+      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car', 'interface-ipfs-core') }()))
 
       // have some of the blocks now, should be able to pin one root
       const result2 = await all(ipfs.dag.import(async function * () { yield input }()))
       expect(result2).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
       expect(result2).to.deep.include({ root: { cid: cids[1], pinErrorMsg: 'blockstore: block not found' } })
 
-      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
+      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car', 'interface-ipfs-core') }()))
 
       // have all of the blocks now, should be able to pin both
       const result3 = await all(ipfs.dag.import(async function * () { yield input }()))
@@ -147,7 +149,7 @@ export function testImport (factory, options) {
     })
 
     it('should import lotus devnet genesis shuffled nulroot', async () => {
-      const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car')
+      const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car', 'interface-ipfs-core')
       const reader = await CarReader.fromBytes(input)
       const cids = await reader.getRoots()
 
@@ -155,7 +157,7 @@ export function testImport (factory, options) {
       expect(cids[0].toString()).to.equal('bafkqaaa')
 
       const result = await all(ipfs.dag.import(async function * () { yield input }()))
-      // @ts-ignore chai types are messed up
+      // @ts-expect-error chai types are messed up
       expect(result).to.have.nested.deep.property('[0].root.cid', cids[0])
     })
   })

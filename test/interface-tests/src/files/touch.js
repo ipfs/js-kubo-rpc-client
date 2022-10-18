@@ -53,7 +53,7 @@ export function testTouch (factory, options) {
     after(() => factory.clean())
 
     it('should have default mtime', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(5 * 1000)
       const testPath = `/test-${nanoid()}`
 
@@ -74,7 +74,7 @@ export function testTouch (factory, options) {
     })
 
     it('should update file mtime', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(5 * 1000)
       const testPath = `/test-${nanoid()}`
       const mtime = new Date()
@@ -92,7 +92,7 @@ export function testTouch (factory, options) {
     })
 
     it('should update directory mtime', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.slow(5 * 1000)
       const testPath = `/test-${nanoid()}`
       const mtime = new Date()

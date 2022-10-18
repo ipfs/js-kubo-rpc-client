@@ -6,7 +6,6 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
 import testTimeout from './utils/test-timeout.js'
-import { notImplemented } from '../../constants.js'
 
 /**
  * @param {string} prefix
@@ -187,9 +186,6 @@ export function testLs (factory, options) {
     })
 
     it('should ls with metadata', async () => {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const dir = randomName('DIR')
       const mtime = new Date()
       const mode = '0532'
@@ -244,9 +240,6 @@ export function testLs (factory, options) {
     })
 
     it('should ls single file with metadata', async () => {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const dir = randomName('DIR')
       const file = randomName('F0')
 
@@ -281,9 +274,6 @@ export function testLs (factory, options) {
     })
 
     it('should ls single file without containing directory with metadata', async () => {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
       const input = {
         content: randomName('D1'),
         mode: 0o631,

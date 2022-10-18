@@ -72,10 +72,10 @@ export function testExport (factory, options) {
     })
 
     it('export of shuffled devnet export identical to canonical original', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.timeout(360000)
 
-      const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis.car')
+      const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis.car', 'interface-ipfs-core')
       const result = await all(ipfs.dag.import(async function * () { yield input }()))
       const exported = await toBuffer(ipfs.dag.export(result[0].root.cid))
 
@@ -83,10 +83,10 @@ export function testExport (factory, options) {
     })
 
     it('export of shuffled testnet export identical to canonical original', async function () {
-      // @ts-ignore this is mocha
+      // @ts-expect-error this is mocha
       this.timeout(360000)
 
-      const input = loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car')
+      const input = loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car', 'interface-ipfs-core')
       const result = await all(ipfs.dag.import(async function * () { yield input }()))
       const exported = await toBuffer(ipfs.dag.export(result[0].root.cid))
 

@@ -60,7 +60,7 @@ export function testPut (factory, options) {
 
       const nodeBId = await nodeB.id()
 
-      expect(peerResponse.from).to.be.equal(nodeBId.id)
+      expect(peerResponse.from.toString()).to.be.equal(nodeBId.id.toString())
     })
   })
 }
