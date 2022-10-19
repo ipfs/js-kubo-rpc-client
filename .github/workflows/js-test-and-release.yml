@@ -3,6 +3,7 @@
 
 name: test & maybe release
 on:
+  workflow_dispatch:
   push:
     branches:
       - master # with #262 - ${{{ github.default_branch }}}
