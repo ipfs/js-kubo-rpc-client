@@ -364,7 +364,7 @@ export function testWrite (factory, options) {
         await expect(ipfs.files.stat(path)).to.eventually.have.property('size', contentSize + newContent.length - 1)
 
         const buffer = uint8ArrayConcat(await all(ipfs.files.read(path, {
-          offset: offset
+          offset
         })))
 
         expect(buffer).to.deep.equal(newContent)
