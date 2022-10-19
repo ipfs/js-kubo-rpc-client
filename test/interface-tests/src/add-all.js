@@ -416,7 +416,7 @@ export function testAddAll (factory, options) {
     it('should add a directory from the file system', async function () {
       // @ts-expect-error this is mocha
       if (!isNode) this.skip()
-      const filesPath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures/test-folder')
 
       const result = await all(ipfs.addAll(globSource(filesPath, '**/*')))
       expect(result.length).to.be.above(8)
@@ -426,7 +426,7 @@ export function testAddAll (factory, options) {
       // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
-      const filesPath = resolve('test/fixtures/weird name folder [v0]', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures/weird name folder [v0]')
 
       const result = await all(ipfs.addAll(globSource(filesPath, '**/*')))
       expect(result.length).to.be.above(8)
@@ -436,7 +436,7 @@ export function testAddAll (factory, options) {
       // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
-      const filesPath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures/test-folder')
 
       const result = await all(ipfs.addAll(globSource(filesPath, '@(!(files*))')))
       expect(result.length).to.equal(6)
@@ -446,7 +446,7 @@ export function testAddAll (factory, options) {
       // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
-      const filePath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
+      const filePath = resolve('test/interface-tests/fixtures/test-folder')
 
       const result = await all(ipfs.addAll(globSource(filePath, 'ipfs-add.js')))
       expect(result.length).to.equal(1)
@@ -457,7 +457,7 @@ export function testAddAll (factory, options) {
       // @ts-expect-error this is mocha
       if (!isNode) this.skip()
 
-      const filesPath = resolve('test/fixtures', 'interface-ipfs-core')
+      const filesPath = resolve('test/fixtures')
 
       const result = await all(ipfs.addAll(globSource(filesPath, 'hidden-files-folder/**/*', { hidden: true })))
       expect(result.map(object => object.path)).to.include('hidden-files-folder/.hiddenTest.txt')
