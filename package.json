@@ -167,7 +167,7 @@
   },
   "dependencies": {
     "@ipld/dag-cbor": "^7.0.2",
-    "@ipld/dag-json": "^8.0.10",
+    "@ipld/dag-json": "^9.0.0",
     "@ipld/dag-pb": "^2.1.17",
     "@libp2p/logger": "^2.0.1",
     "@libp2p/peer-id": "^1.1.15",
