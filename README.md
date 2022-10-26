@@ -1,5 +1,4 @@
 # kubo-rpc-client <!-- omit in toc -->
-
 [![ipfs.io](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io)
 [![IRC](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 [![Discord](https://img.shields.io/discord/806902334369824788?style=flat-square)](https://discord.gg/ipfs)
@@ -7,6 +6,9 @@
 [![CI](https://img.shields.io/github/workflow/status/ipfs/js-kubo-rpc-client/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml)
 
 > A client library for the Kubo RPC API
+
+## Work In Progress
+This client is still a work in progress and in active development. Please refer to `ipfs-http-client` for now and only use this package if you are aware of the implications. Follow https://github.com/ipfs/js-kubo-rpc-client/milestone/1 for tracking when this library is ready for consumption
 
 ## Table of contents <!-- omit in toc -->
 
