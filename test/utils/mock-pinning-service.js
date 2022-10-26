@@ -27,22 +27,6 @@ export class PinningService {
   }
 
   /**
-   * @param {PinningService} service
-   * @returns {Promise<void>}
-   */
-  static stop (service) {
-    return new Promise((resolve, reject) => {
-      service.server.close((/** @type {any} */ error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve()
-        }
-      })
-    })
-  }
-
-  /**
    * @param {object} config
    * @param {any} config.server
    * @param {string} config.host
@@ -58,5 +42,20 @@ export class PinningService {
 
   get endpoint () {
     return `http://${this.host}:${this.port}`
+  }
+
+  /**
+   * @returns {Promise<void>}
+   */
+   stop () {
+    return new Promise((resolve, reject) => {
+      this.server.close((/** @type {any} */ error) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
   }
 }
