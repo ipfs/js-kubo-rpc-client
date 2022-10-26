@@ -1,5 +1,6 @@
 import { createServer } from 'ipfsd-ctl'
 import getPort from 'aegir/get-port'
+import EchoServer from 'aegir/echo-server'
 
 /** @type {import('aegir').PartialOptions} */
 export default {
@@ -21,17 +22,23 @@ export default {
         ipfsBin: (await import('go-ipfs')).default.path()
       })
 
+      const echoServer = new EchoServer()
+      await echoServer.start()
+
       await server.start()
       return {
         server,
+        echoServer,
         env: {
           IPFSD_SERVER: `http://${server.host}:${server.port}`,
           // PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
-          PINNING_SERVICE_ENDPOINT: 'http://127.0.0.1:5001'
+          PINNING_SERVICE_ENDPOINT: 'http://127.0.0.1:5001',
+          ECHO_SERVER: `http://${echoServer.host}:${echoServer.port}`,
         }
       }
     },
     async after (options, before) {
+      await before.echoServer.stop()
       await before.server.stop()
     }
   }

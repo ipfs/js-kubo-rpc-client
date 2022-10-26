@@ -106,7 +106,7 @@ export function testAdd (factory, options) {
       expect(file.size).greaterThan(fixtures.smallFile.data.length)
     })
 
-    it('should add a BIG Uint8Array', async () => {
+    it('should add a BIG Uint8Array', async function () {
       if (isFirefox) {
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
@@ -118,7 +118,7 @@ export function testAdd (factory, options) {
       expect(file.size).greaterThan(fixtures.bigFile.data.length)
     })
 
-    it('should add a BIG Uint8Array with progress enabled', async () => {
+    it('should add a BIG Uint8Array with progress enabled', async function () {
       if (isFirefox) {
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
@@ -452,7 +452,7 @@ export function testAdd (factory, options) {
       expect(file.size).to.equal(3)
     })
 
-    it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
+    it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

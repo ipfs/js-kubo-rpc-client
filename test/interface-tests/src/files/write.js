@@ -10,13 +10,11 @@ import { sha512 } from 'multiformats/hashes/sha2'
 import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { createTwoShards } from '../utils/create-two-shards.js'
-import isoRandomStream from 'iso-random-stream'
+import { randomBytes, randomStream } from 'iso-random-stream'
 import all from 'it-all'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import * as raw from 'multiformats/codecs/raw'
 import map from 'it-map'
-const randomBytes = isoRandomStream
-const randomStream = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

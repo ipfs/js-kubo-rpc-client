@@ -527,7 +527,7 @@ export function testAddAll (factory, options) {
       expect(files[0].size).to.equal(3)
     })
 
-    it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
+    it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -549,7 +549,7 @@ export function testAddAll (factory, options) {
       expect(files[0].size).to.equal(18)
     })
 
-    it('should add directories with metadata', async () => {
+    it('should add directories with metadata', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

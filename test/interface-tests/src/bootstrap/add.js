@@ -2,10 +2,10 @@
 
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
-import { Multiaddr } from 'multiaddr'
+import { multiaddr } from '@multiformats/multiaddr'
 
 const invalidArg = 'this/Is/So/Invalid/'
-const validIp4 = new Multiaddr('/ip4/104.236.176.52/tcp/4001/p2p/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z')
+const validIp4 = multiaddr('/ip4/104.236.176.52/tcp/4001/p2p/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z')
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

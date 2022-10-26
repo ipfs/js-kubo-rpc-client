@@ -169,7 +169,7 @@ export function testCat (factory, options) {
       expect(err.message).to.contain('this dag node is a directory')
     })
 
-    it('should export a chunk of a file', async () => {
+    it('should export a chunk of a file', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

@@ -22,7 +22,7 @@ export function testUnwant (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -31,7 +31,7 @@ export function testUnwant (factory, options) {
 
     after(() => factory.clean())
 
-    it('should throw error for invalid CID input', async () => {
+    it('should throw error for invalid CID input', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
