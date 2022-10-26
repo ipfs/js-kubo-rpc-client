@@ -47,7 +47,7 @@ export class PinningService {
   /**
    * @returns {Promise<void>}
    */
-   stop () {
+  stop () {
     return new Promise((resolve, reject) => {
       this.server.close((/** @type {any} */ error) => {
         if (error) {
