@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { nanoid } from 'nanoid'
-import { keys } from 'libp2p-crypto'
+import { keys } from '@libp2p/crypto'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 
