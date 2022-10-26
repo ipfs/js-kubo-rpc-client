@@ -10,12 +10,11 @@ export default {
   test: {
     bail: false,
     async before (options) {
-      // const { PinningService } = await import('aegir/test/utils/mock-pinning-service.js')
-      // const pinningService = await PinningService.start()
-      const port = await getPort()
+      const { PinningService } = await import('./test/utils/mock-pinning-service.js')
+      const pinningService = await PinningService.start()
       const server = createServer({
         host: '127.0.0.1',
-        port: port
+        port: 0
       }, {
         type: 'go',
         kuboRpcModule: await import('./src/index.js'),
@@ -29,10 +28,10 @@ export default {
       return {
         server,
         echoServer,
+        pinningService,
         env: {
           IPFSD_SERVER: `http://${server.host}:${server.port}`,
-          // PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
-          PINNING_SERVICE_ENDPOINT: 'http://127.0.0.1:5001',
+          PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
           ECHO_SERVER: `http://${echoServer.host}:${echoServer.port}`,
         }
       }
@@ -40,6 +39,7 @@ export default {
     async after (options, before) {
       await before.echoServer.stop()
       await before.server.stop()
+      await before.pinningService.stop()
     }
   }
 }
