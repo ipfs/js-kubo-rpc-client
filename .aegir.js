@@ -30,7 +30,7 @@ export default {
         echoServer,
         pinningService,
         env: {
-          IPFSD_SERVER: `http://${server.host}:${server.port}`,
+          IPFSD_SERVER: `http://${server.host}:${server.server.info.port}`,
           PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
           ECHO_SERVER: `http://${echoServer.host}:${echoServer.port}`,
         }
