@@ -1,3 +1,17 @@
+## [1.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.1...v1.0.2) (2022-11-02)
+
+
+### Bug Fixes
+
+* update all deps, fix compilation and tests ([#63](https://github.com/ipfs/js-kubo-rpc-client/issues/63)) ([e83705c](https://github.com/ipfs/js-kubo-rpc-client/commit/e83705cbcd0f29a18fd73cabbe62118ac9d708c0))
+
+
+### Trivial Changes
+
+* add workflow_dispatch ci ([ec77f1b](https://github.com/ipfs/js-kubo-rpc-client/commit/ec77f1b5a3b6b4d61483613487eab30c7d7def0c))
+* copy interface-ipfs-core tests ([#49](https://github.com/ipfs/js-kubo-rpc-client/issues/49)) ([c899abb](https://github.com/ipfs/js-kubo-rpc-client/commit/c899abbc32d0f46b55fdda896c6f32240b49d1c6))
+* temporarily set releases to patch only ([ef63c43](https://github.com/ipfs/js-kubo-rpc-client/commit/ef63c43a8dcc44d94683ed353def3ef906a6ffb5))
+
 ## [1.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.0...v1.0.1) (2022-09-23)
 
 
