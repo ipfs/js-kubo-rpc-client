@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import PeerId from 'peer-id'
-import { Multiaddr } from 'multiaddr'
+import { isMultiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { isWebWorker } from 'ipfs-utils/src/env.js'
@@ -50,7 +50,7 @@ export function testAddrs (factory, options) {
         expect(peer).to.have.a.property('addrs').that.is.an('array')
 
         for (const ma of peer.addrs) {
-          expect(Multiaddr.isMultiaddr(ma)).to.be.true()
+          expect(isMultiaddr(ma)).to.be.true()
         }
       }
     })

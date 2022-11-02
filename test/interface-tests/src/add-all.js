@@ -13,7 +13,7 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import bufferStream from 'it-buffer-stream'
 import * as raw from 'multiformats/codecs/raw'
-// import * as dagPB from '@ipld/dag-pb'
+import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
 import { isFirefox, notImplemented } from '../../constants.js'
@@ -435,7 +435,7 @@ export function testAddAll (factory, options) {
     it('should add a directory from the file system', async function () {
       // @ts-ignore this is mocha
       if (!isNode) this.skip()
-      const filesPath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures/test-folder')
 
       const result = await all(ipfs.addAll(globSource(filesPath, '**/*')))
       expect(result.length).to.be.above(8)
@@ -445,7 +445,7 @@ export function testAddAll (factory, options) {
       // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
-      const filesPath = resolve('test/fixtures/weird name folder [v0]', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures/weird name folder [v0]')
 
       const result = await all(ipfs.addAll(globSource(filesPath, '**/*')))
       expect(result.length).to.be.above(8)
@@ -455,7 +455,7 @@ export function testAddAll (factory, options) {
       // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
-      const filesPath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures/test-folder')
 
       const result = await all(ipfs.addAll(globSource(filesPath, '@(!(files*))')))
       expect(result.length).to.equal(6)
@@ -465,7 +465,7 @@ export function testAddAll (factory, options) {
       // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
-      const filePath = resolve('test/fixtures/test-folder', 'interface-ipfs-core')
+      const filePath = resolve('test/interface-tests/fixtures/test-folder')
 
       const result = await all(ipfs.addAll(globSource(filePath, 'ipfs-add.js')))
       expect(result.length).to.equal(1)
@@ -476,7 +476,7 @@ export function testAddAll (factory, options) {
       // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
-      const filesPath = resolve('test/fixtures', 'interface-ipfs-core')
+      const filesPath = resolve('test/interface-tests/fixtures')
 
       const result = await all(ipfs.addAll(globSource(filesPath, 'hidden-files-folder/**/*', { hidden: true })))
       expect(result.map(object => object.path)).to.include('hidden-files-folder/.hiddenTest.txt')
@@ -527,7 +527,7 @@ export function testAddAll (factory, options) {
       expect(files[0].size).to.equal(3)
     })
 
-    it('should override raw leaves when file is smaller than one block and metadata is present', async () => {
+    it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -549,7 +549,7 @@ export function testAddAll (factory, options) {
       expect(files[0].size).to.equal(18)
     })
 
-    it('should add directories with metadata', async () => {
+    it('should add directories with metadata', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

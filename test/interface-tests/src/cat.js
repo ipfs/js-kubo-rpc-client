@@ -144,13 +144,14 @@ export function testCat (factory, options) {
       return expect(drain(ipfs.cat(invalidCid))).to.eventually.be.rejected()
     })
 
-    it('should error on unknown path', () => {
+    it('should error on unknown path', async () => {
       return expect(drain(ipfs.cat(fixtures.smallFile.cid + '/does-not-exist'))).to.eventually.be.rejected()
         .and.be.an.instanceOf(Error)
         .and.to.have.property('message')
         .to.be.oneOf([
           'file does not exist',
-          'no link named "does-not-exist" under Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'
+          'no link named "does-not-exist" under Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP',
+          'func called on wrong kind: "LookupBySegment" called on a data.Bytes node (kind: bytes), but only makes sense on map or list'
         ])
     })
 
@@ -169,7 +170,7 @@ export function testCat (factory, options) {
       expect(err.message).to.contain('this dag node is a directory')
     })
 
-    it('should export a chunk of a file', async () => {
+    it('should export a chunk of a file', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }

@@ -5,10 +5,9 @@ import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import isoRandomStream from 'iso-random-stream'
+import { randomBytes } from 'iso-random-stream'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import all from 'it-all'
-const randomBytes = isoRandomStream
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory

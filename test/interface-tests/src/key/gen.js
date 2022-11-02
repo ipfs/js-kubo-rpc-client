@@ -3,7 +3,7 @@
 import { nanoid } from 'nanoid'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
-import { keys } from 'libp2p-crypto'
+import { keys } from '@libp2p/crypto'
 
 const { supportedKeys, import: importKey } = keys
 

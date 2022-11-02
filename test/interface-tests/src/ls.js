@@ -186,7 +186,7 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should ls with metadata', async () => {
+    it('should ls with metadata', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -243,7 +243,7 @@ export function testLs (factory, options) {
       expect(output[0]).to.have.property('path', path)
     })
 
-    it('should ls single file with metadata', async () => {
+    it('should ls single file with metadata', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
@@ -280,7 +280,7 @@ export function testLs (factory, options) {
       expect(output[0]).to.have.property('path', res.cid.toString())
     })
 
-    it('should ls single file without containing directory with metadata', async () => {
+    it('should ls single file without containing directory with metadata', async function () {
       if (notImplemented()) {
         return this.skip('Not implemented in kubo yet')
       }
