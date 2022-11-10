@@ -260,7 +260,8 @@ export function testLs (factory, options) {
 
         expect(list).to.deep.equal([])
       })
-      it('should list only pins with matchin names', async () => {
+      it('should list only pins with matchin names', async function () {
+        this.timeout(120 * 1000)
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2
@@ -290,7 +291,8 @@ export function testLs (factory, options) {
         ].sort(byCID))
       })
 
-      it('should list only pins with matchin names & status', async () => {
+      it('should list only pins with matchin names & status', async function () {
+        this.timeout(120 * 1000)
         await addRemotePins(ipfs, SERVICE, {
           a: cid1,
           b: cid2
