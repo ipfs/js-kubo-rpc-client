@@ -32,7 +32,8 @@ export function testId (factory, options) {
 
     it('should get the node ID', async () => {
       const res = await ipfs.id()
-      expect(res).to.have.a.property('id').that.is.a('string')
+      expect(res).to.have.a.property('id')
+      expect(res.id.toString()).to.exist()
       expect(res).to.have.a.property('publicKey')
       expect(res).to.have.a.property('agentVersion').that.is.a('string')
       expect(res).to.have.a.property('protocolVersion').that.is.a('string')
