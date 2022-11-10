@@ -32,6 +32,7 @@ export default {
         env: {
           IPFSD_SERVER: `http://${server.host}:${server.server.info.port}`,
           PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
+          PINNING_SERVICE_KEY: 'secret',
           ECHO_SERVER: `http://${echoServer.host}:${echoServer.port}`,
         }
       }
