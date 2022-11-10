@@ -50,11 +50,11 @@ export function testQuery (factory, options) {
 
       for await (const event of nodeA.dht.query(nodeBId.id)) {
         if (event.name === 'PEER_RESPONSE') {
-          peers.push(...event.closer.map(data => data.id))
+          peers.push(...event.closer.map(data => data.id.toString()))
         }
       }
 
-      expect(peers).to.include(nodeBId.id)
+      expect(peers).to.include(nodeBId.id.toString())
     })
   })
 }
