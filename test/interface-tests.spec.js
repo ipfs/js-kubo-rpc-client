@@ -13,6 +13,10 @@ function executeTests (commonFactory) {
   tests.root(commonFactory, {
     skip: [
       {
+        name: 'should print added files',
+        reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/77'
+      },
+      {
         name: 'should add with mode as string',
         reason: 'TODO not implemented in kubo yet'
       },
