@@ -6,11 +6,10 @@ import { factory } from './utils/factory.js'
 
 /** @typedef {import("ipfsd-ctl").ControllerOptions} ControllerOptions */
 
-describe('kubo-rpc-client tests against kubo', () => {
-  const commonFactory = factory({
-    type: 'go'
-  })
-
+/**
+ * @param {Factory<ControllerType>} [commonFactory]
+ */
+function executeTests (commonFactory) {
   tests.root(commonFactory, {
     skip: [
       {
@@ -634,4 +633,38 @@ describe('kubo-rpc-client tests against kubo', () => {
   tests.stats(commonFactory)
 
   tests.swarm(commonFactory)
+}
+
+describe('kubo-rpc-client tests against kubo', async function () {
+  const goVersionsToTest = ['current']
+  /**
+   * Enable running the tests across all go-ipfs versions listed below.
+   * Works best with `--bail=false` otherwise the tests will stop at the first
+   * failure.
+   */
+  if (process.env.GO_IPFS_GAMUT != null) {
+    goVersionsToTest.push(...['12.0', '12', '13', '14', '15', '16'])
+  }
+
+  for (const version of goVersionsToTest) {
+    let ipfsBin
+    try {
+      const { path } = await import(`go-ipfs-${version}`)
+      ipfsBin = path()
+    } catch {
+      ipfsBin = undefined
+    }
+
+    const commonFactory = factory({
+      type: 'go',
+      ipfsBin
+    }, {
+      go: {
+        ipfsBin
+      }
+    })
+    describe(`go-ipfs ${version} at ${ipfsBin}`, () => {
+      executeTests(commonFactory)
+    })
+  }
 })
