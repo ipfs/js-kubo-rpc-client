@@ -66,7 +66,7 @@ export function testResolve (factory, options) {
 
       // Represent Peer ID as CIDv1 Base32
       // https://github.com/libp2p/specs/blob/master/RFC/0001-text-peerid-cid.md
-      const keyCid = CID.createV1(0x72, Digest.decode(PeerId.parse(peerId).toBytes()))
+      const keyCid = CID.createV1(0x72, Digest.decode(PeerId.parse(peerId.toString()).toBytes()))
       const resolvedPath = await last(ipfs.name.resolve(`/ipns/${keyCid}`))
 
       expect(resolvedPath).to.equal(`/ipfs/${cid}`)
