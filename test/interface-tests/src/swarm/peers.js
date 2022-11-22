@@ -32,7 +32,7 @@ export function testPeers (factory, options) {
     let ipfsBId
 
     before(async () => {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
@@ -51,14 +51,15 @@ export function testPeers (factory, options) {
 
       expect(peer).to.have.a.property('addr')
       expect(isMultiaddr(peer.addr)).to.equal(true)
-      expect(peer).to.have.a.property('peer').that.is.a('string')
-      expect(PeerId.parse(peer.peer)).to.be.ok()
-      expect(peer).to.not.have.a.property('latency')
-
-      /* TODO: These assertions must be uncommented as soon as
-         https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
-      // expect(peer).to.have.a.property('muxer')
-      // expect(peer).to.not.have.a.property('streams')
+      /**
+       * Modified to get passing during https://github.com/ipfs/js-kubo-rpc-client/issues/56
+       */
+      expect(peer.peer.toString()).not.to.be.undefined()
+      expect(PeerId.parse(peer.peer.toString())).to.be.ok()
+      expect(isMultiaddr(peer.addr)).to.equal(true)
+      expect(peer).to.have.a.property('latency')
+      expect(peer).to.have.a.property('muxer')
+      expect(peer).to.have.a.property('streams')
     })
 
     it('should list peers this node is connected to with verbose option', async () => {
@@ -71,11 +72,8 @@ export function testPeers (factory, options) {
       expect(peer).to.have.a.property('peer')
       expect(peer).to.have.a.property('latency')
       expect(peer.latency).to.match(/n\/a|[0-9]+[mµ]?s/) // n/a or 3ms or 3µs or 3s
-
-      /* TODO: These assertions must be uncommented as soon as
-         https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
-      // expect(peer).to.have.a.property('muxer')
-      // expect(peer).to.have.a.property('streams')
+      expect(peer).to.have.a.property('muxer')
+      expect(peer).to.have.a.property('streams')
     })
 
     /**
@@ -101,7 +99,7 @@ export function testPeers (factory, options) {
     }
 
     it('should list peers only once', async () => {
-      const nodeA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      const nodeA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       const nodeB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       const nodeBId = await nodeB.id()
       await nodeA.swarm.connect(nodeBId.addresses[0])
@@ -128,7 +126,7 @@ export function testPeers (factory, options) {
         // browser nodes have webrtc-star addresses which can't be dialled by go so make the other
         // peer a js-ipfs node to get a tcp address that can be dialled. Also, webworkers are not
         // diable so don't use a in-proc node for webworkers
-        type: ((isBrowser && factory.opts.type === 'go') || isWebWorker) ? 'js' : 'proc',
+        type: 'go', // ((isBrowser && factory.opts.type === 'go') || isWebWorker) ? 'js' : 'proc',
         ipfsOptions
       })).api
       const nodeAId = await nodeA.id()
