@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.2...v1.0.3) (2022-11-23)
+
+
+### Bug Fixes
+
+* **docs:** package name ([#81](https://github.com/ipfs/js-kubo-rpc-client/issues/81)) ([a82dfcb](https://github.com/ipfs/js-kubo-rpc-client/commit/a82dfcb89966e0f7dc905fdfce83f033f5d69098))
+
 ## [1.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.1...v1.0.2) (2022-11-02)
 
 
