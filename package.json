@@ -197,7 +197,7 @@
     "did-jwt": "^6.8.0",
     "eslint-config-ipfs": "^3.1.0",
     "eslint-plugin-jsdoc": "^39.3.6",
-    "go-ipfs": "^0.16.0",
+    "go-ipfs": "^0.12.0",
     "go-ipfs-12": "npm:go-ipfs@^0.12.2",
     "go-ipfs-12.0": "npm:go-ipfs@^0.12.0",
     "go-ipfs-13": "npm:go-ipfs@^0.13.1",

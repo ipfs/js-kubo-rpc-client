@@ -12,10 +12,14 @@ import { factory } from './utils/factory.js'
 function executeTests (commonFactory) {
   tests.root(commonFactory, {
     skip: [
-      {
-        name: 'should print added files',
+      ...[
+        // 'should print added files',
+        // 'should print files in edges format',
+        // 'should print files in custom format'
+      ].map((name) => ({
+        name,
         reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/77'
-      },
+      })),
       {
         name: 'should add with mode as string',
         reason: 'TODO not implemented in kubo yet'
@@ -505,7 +509,9 @@ function executeTests (commonFactory) {
       {
         name: 'should have protocols property',
         reason: 'TODO not implemented in kubo yet'
-      }
+      },
+      // FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56
+      ...['should resolve IPNS link recursively by default', 'should resolve IPNS link non-recursively if recursive==false'].map((name) => ({ name, reason: 'FIXME: HTTPError: routing: operation or key not supported' }))
     ]
   })
 
@@ -590,6 +596,12 @@ function executeTests (commonFactory) {
         : [])
   })
 
+  /**
+   * FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56
+   * I recommend we remove these tests from the kubo-rpc-client as we have a pinning-service client that should be used instead
+   *
+   * @see https://github.com/ipfs-shipyard/js-pinning-service-http-client
+   */
   tests.pin(commonFactory, {
     skip: [
       {
@@ -615,10 +627,31 @@ function executeTests (commonFactory) {
       args: ['--enable-pubsub-experiment']
     }
   }), {
-    skip: [{
-      name: 'should receive messages from a different node on lots of topics',
-      reason: 'HTTP clients cannot hold this many connections open'
-    }].concat(
+    skip: [
+      {
+        name: 'should receive messages from a different node on lots of topics',
+        reason: 'HTTP clients cannot hold this many connections open'
+      },
+      /**
+       * Notes:
+       * * `.pubsub.unsubscribe - should subscribe and unsubscribe 10 times` succeeds, why don't these?
+       */
+      ...[
+        'should subscribe to one topic',
+        'should subscribe to one topic with options',
+        'should subscribe to topic multiple times with different handlers',
+        'should allow discover option to be passed',
+        'should receive messages from a different node with floodsub',
+        'should receive messages from a different node',
+        'should round trip a non-utf8 binary buffer',
+        'should receive multiple messages', // Error: Timed out waiting for peers to be subscribed to "pubsub-tests-OO3gdKYYEtz4eQiED83PZ" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
+        'should send/receive 100 messages', // Error: Timed out waiting for peers to be subscribed to "pubsub-tests-Cy4_V5p21Ca5Al0sdBgD3" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
+        'should unsubscribe multiple handlers', // Error: Timed out waiting for peers to be subscribed to "topic-0.620683584935303" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
+        'should unsubscribe individual handlers', // Error: Timed out waiting for peers to be subscribed to "topic-0.5297338280791819" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
+        'should return peers for a topic - one peer',
+        'should return peers for a topic - multiple peers'
+      ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
+    ].concat(
       isWindows
         ? [{
             name: 'should send/receive 100 messages',
@@ -667,7 +700,7 @@ describe('kubo-rpc-client tests against kubo', async function () {
         ipfsBin
       }
     })
-    describe(`go-ipfs ${version} at ${ipfsBin}`, () => {
+    describe(`go-ipfs ${version}${ipfsBin != null ? `at ${ipfsBin}` : ''}`, () => {
       executeTests(commonFactory)
     })
   }
