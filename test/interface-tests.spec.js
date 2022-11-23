@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+import { isBrowser } from 'ipfs-utils/src/env.js'
 import { isWindows, isFirefox } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
@@ -87,7 +88,15 @@ function executeTests (commonFactory) {
           name: 'should add big files',
           reason: 'https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602'
         }]
-      : [])
+      : []
+    ).concat(isBrowser
+      ? [
+          'should get a directory', // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
+          'should get a nested directory', // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
+          'should compress a directory as a tarball' // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
+        ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
+      : []
+    )
   })
 
   tests.bitswap(commonFactory, {
