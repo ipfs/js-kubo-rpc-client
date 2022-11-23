@@ -31,7 +31,7 @@ export function testAddrs (factory, options) {
     let ipfsBId
 
     before(async () => {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
@@ -46,7 +46,7 @@ export function testAddrs (factory, options) {
       expect(peers).to.be.an('array')
 
       for (const peer of peers) {
-        expect(PeerId.parse(peer.id)).to.be.ok()
+        expect(PeerId.parse(peer.id.toString())).to.be.ok()
         expect(peer).to.have.a.property('addrs').that.is.an('array')
 
         for (const ma of peer.addrs) {
