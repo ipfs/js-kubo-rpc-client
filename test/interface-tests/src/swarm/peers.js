@@ -126,7 +126,7 @@ export function testPeers (factory, options) {
         // browser nodes have webrtc-star addresses which can't be dialled by go so make the other
         // peer a js-ipfs node to get a tcp address that can be dialled. Also, webworkers are not
         // diable so don't use a in-proc node for webworkers
-        type: 'go', // ((isBrowser && factory.opts.type === 'go') || isWebWorker) ? 'js' : 'proc',
+        type: 'go',
         ipfsOptions
       })).api
       const nodeAId = await nodeA.id()

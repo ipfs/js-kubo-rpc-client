@@ -33,6 +33,9 @@ export function testLocalAddrs (factory, options) {
 
       expect(multiaddrs).to.be.an.instanceOf(Array)
 
+      /**
+       * Conditional tests are bad, mmmkay.
+       */
       if (isWebWorker && factory.opts.type === 'proc') {
         expect(multiaddrs).to.have.lengthOf(0)
       } else {
