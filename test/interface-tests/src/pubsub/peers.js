@@ -39,8 +39,8 @@ export function testPeers (factory, options) {
     before(async () => {
       ipfs1 = (await factory.spawn({ ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
-      ipfs2 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
-      ipfs3 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
+      ipfs2 = (await factory.spawn({ type: 'go', ipfsOptions })).api
+      ipfs3 = (await factory.spawn({ type: 'go', ipfsOptions })).api
 
       ipfs2Id = await ipfs2.id()
       ipfs3Id = await ipfs3.id()

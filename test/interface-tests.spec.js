@@ -617,7 +617,11 @@ function executeTests (commonFactory) {
         name: 'should list pins with metadata',
         reason: 'not implemented in kubo'
       }
-    ]
+    ].concat(isWebWorker
+      ? [
+          'should pin dag-cbor' // only seems to fail when running all tests together.
+        ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
+      : [])
   })
 
   tests.ping(commonFactory, {

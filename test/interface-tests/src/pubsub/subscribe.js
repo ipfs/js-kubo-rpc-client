@@ -47,7 +47,7 @@ export function testSubscribe (factory, options) {
       ipfs1 = (await factory.spawn({ ipfsOptions })).api
 
       // webworkers are not dialable because webrtc is not available
-      ipfs2 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
+      ipfs2 = (await factory.spawn({ type: undefined, ipfsOptions })).api
 
       ipfs1Id = await ipfs1.id()
       ipfs2Id = await ipfs2.id()
