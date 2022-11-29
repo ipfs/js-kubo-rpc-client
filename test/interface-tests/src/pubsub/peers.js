@@ -4,7 +4,6 @@ import { waitForPeers, getTopic } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
-import { isWebWorker } from 'ipfs-utils/src/env.js'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 
 /**

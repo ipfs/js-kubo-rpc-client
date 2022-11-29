@@ -13,14 +13,6 @@ import { factory } from './utils/factory.js'
 function executeTests (commonFactory) {
   tests.root(commonFactory, {
     skip: [
-      ...[
-        // 'should print added files',
-        // 'should print files in edges format',
-        // 'should print files in custom format'
-      ].map((name) => ({
-        name,
-        reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/77'
-      })),
       {
         name: 'should add with mode as string',
         reason: 'TODO not implemented in kubo yet'
