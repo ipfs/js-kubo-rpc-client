@@ -84,8 +84,7 @@ function executeTests (commonFactory) {
     ).concat(isBrowser || isWebWorker
       ? [
           'should get a directory', // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
-          'should get a nested directory', // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
-          'should compress a directory as a tarball' // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
+          'should get a nested directory' // [mocha] output truncated to 8192 characters, see "maxDiffSize" reporter-option
         ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
       : []
     )
