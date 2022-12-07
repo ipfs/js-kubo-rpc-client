@@ -106,7 +106,7 @@ export function testGet (factory, options) {
       return all(source)
     }
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
 
       await Promise.all([
@@ -115,7 +115,7 @@ export function testGet (factory, options) {
       ])
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when getting files', () => {
       return testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {

@@ -20,11 +20,11 @@ export function testApply (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should apply a config profile', async () => {
       const diff = await ipfs.config.profiles.apply('lowpower')

@@ -103,11 +103,11 @@ export function testWrite (factory, options) {
       expect(stats).to.have.deep.property('mtime', expectedMtime)
     }
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('explodes if it cannot convert content to a source', async () => {
       // @ts-expect-error invalid arg

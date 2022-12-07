@@ -36,9 +36,9 @@ export function testAddAll (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should add a File as array of tuples', async function () {
       if (!supportsFileReader) {

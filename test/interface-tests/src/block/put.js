@@ -25,11 +25,11 @@ export function testPut (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should put a buffer, using defaults', async () => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'

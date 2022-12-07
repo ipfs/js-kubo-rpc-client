@@ -28,7 +28,7 @@ export function testWantlistForPeer (factory, options) {
     let ipfsB
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
@@ -40,7 +40,7 @@ export function testWantlistForPeer (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should get the wantlist by peer ID for a different node', async () => {
       const ipfsBId = await ipfsB.id()

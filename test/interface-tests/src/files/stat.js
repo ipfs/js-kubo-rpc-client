@@ -32,15 +32,15 @@ export function testStat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         args: factory.opts.type === 'go' ? [] : ['--enable-sharding-experiment']
       })).api
     })
 
-    before(async () => { await ipfs.add(fixtures.smallFile.data) })
+    before(async function () { await ipfs.add(fixtures.smallFile.data) })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('refuses to stat files with an empty path', async () => {
       await expect(ipfs.files.stat('')).to.eventually.be.rejected()

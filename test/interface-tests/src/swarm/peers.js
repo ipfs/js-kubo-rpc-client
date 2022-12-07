@@ -31,7 +31,7 @@ export function testPeers (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsBId
 
-    before(async () => {
+    before(async function () {
       ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
@@ -41,7 +41,7 @@ export function testPeers (factory, options) {
       // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should list peers this node is connected to', async () => {
       const peers = await ipfsA.swarm.peers()

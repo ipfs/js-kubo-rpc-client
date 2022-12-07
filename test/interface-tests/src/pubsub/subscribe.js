@@ -152,7 +152,7 @@ export function testSubscribe (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs2Id
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       daemon1 = await factory.spawn({ ipfsOptions, test: true, args: ['--enable-pubsub-experiment'] })
       ipfs1 = daemon1.api
 
@@ -174,7 +174,7 @@ export function testSubscribe (factory, options) {
       topic = getTopic()
     })
 
-    afterEach(async () => factory.clean())
+    afterEach(async function () { return factory.clean() })
 
     describe('single node', () => {
       it('should subscribe to one topic', async () => {

@@ -20,7 +20,20 @@
   "rules": {
     "no-return-await": "off",
     "no-undef-init": "off",
-    "no-warning-comments": "off"
+    "no-warning-comments": "off",
+    "mocha/max-top-level-suites": "off",
+    "mocha/no-setup-in-describe": "off"
   },
-  "ignorePatterns": [ "gists/", "vendor/", "test/fixtures/", "test/interface-tests/fixtures/"]
+  "ignorePatterns": [ "gists/", "vendor/", "test/fixtures/", "test/interface-tests/fixtures/"],
+  "overrides": [
+    {
+      "files": ["./test/interface-tests/src/**"],
+      "rules": {
+        "mocha/no-exports": "off",
+        "mocha/max-top-level-suites": "off",
+        "mocha/no-sibling-hooks": "warn",
+        "mocha/no-setup-in-describe": "off"
+      }
+    }
+  ]
 }

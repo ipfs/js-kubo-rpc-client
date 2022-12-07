@@ -20,11 +20,11 @@ export function testStop (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    afterEach(() => {
+    afterEach(function () {
       // reset the list of controlled nodes - we've already shut down the
       // nodes started in this test but the references hang around and the
       // next test will call `factory.clean()` which will explode when it

@@ -27,7 +27,7 @@ export function testResolve (factory, options) {
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         ipfsOptions: {
           config: {
@@ -41,7 +41,7 @@ export function testResolve (factory, options) {
       nodeId = peerInfo.id
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should resolve a record default options', async function () {
       // @ts-ignore this is mocha
@@ -154,11 +154,11 @@ export function testResolve (factory, options) {
     let ipfs
     this.retries(5)
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should resolve /ipns/ipfs.io', async () => {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io')))

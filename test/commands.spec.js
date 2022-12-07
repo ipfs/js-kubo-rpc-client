@@ -10,13 +10,13 @@ describe('.commands', function () {
   /** @type {import('../src/types').IPFS} */
   let ipfs
 
-  before(async () => {
+  before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
-  it('lists commands', async () => {
+  it('lists commands', async function () {
     const res = await ipfs.commands()
 
     expect(res).to.exist()

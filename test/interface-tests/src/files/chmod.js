@@ -45,11 +45,11 @@ export function testChmod (factory, options) {
       expect(updatedMode).to.equal(parseInt(expectedFinalMode, 8))
     }
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should update the mode for a file', async () => {
       const path = `/foo-${Math.random()}`

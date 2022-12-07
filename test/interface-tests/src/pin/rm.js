@@ -22,7 +22,7 @@ export function testRm (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    beforeEach(async () => {
+    beforeEach(async function () {
       ipfs = (await factory.spawn()).api
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
       await all(ipfs.addAll(dir, { pin: false, cidVersion: 0 }))
@@ -31,9 +31,9 @@ export function testRm (factory, options) {
       await ipfs.add(fixtures.files[1].data, { pin: false })
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
-    beforeEach(() => {
+    beforeEach(function () {
       return clearPins(ipfs)
     })
 

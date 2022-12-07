@@ -9,7 +9,7 @@ const f = factory()
 
 describe('.pubsub', function () {
   this.timeout(20 * 1000)
-  describe('.subscribe', () => {
+  describe('.subscribe', function () {
     /** @type {import('../src/types.js').IPFS} */
     let ipfs
     /** @type {any} */
@@ -25,9 +25,9 @@ describe('.pubsub', function () {
       ipfs = ctl.api
     })
 
-    afterEach(() => f.clean())
+    afterEach(function () { return f.clean() })
 
-    it('.onError when connection is closed', async () => {
+    it('.onError when connection is closed', async function () {
       const topic = 'gossipboom'
       let messageCount = 0
       const onError = defer()
@@ -49,7 +49,7 @@ describe('.pubsub', function () {
       await expect(onError.promise).to.eventually.be.fulfilled().and.to.be.instanceOf(Error)
     })
 
-    it('does not call onError when aborted', async () => {
+    it('does not call onError when aborted', async function () {
       const controller = new AbortController()
       const topic = 'gossipabort'
       const messages = []

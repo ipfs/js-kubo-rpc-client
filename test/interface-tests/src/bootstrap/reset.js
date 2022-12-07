@@ -22,11 +22,11 @@ export function testReset (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should return a list of bootstrap peers when resetting the bootstrap nodes', async () => {
       const res = await ipfs.bootstrap.reset()

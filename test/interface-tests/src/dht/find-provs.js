@@ -29,7 +29,7 @@ export function testFindProvs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeC
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
       nodeC = (await factory.spawn()).api
@@ -38,7 +38,7 @@ export function testFindProvs (factory, options) {
       await ensureReachable(nodeC, nodeB)
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     /**
      * @type {import('multiformats/cid').CID}

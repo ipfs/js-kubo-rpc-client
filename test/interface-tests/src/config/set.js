@@ -21,11 +21,11 @@ export function testSet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should set a new key', async () => {
       await ipfs.config.set('Fruit', 'banana')

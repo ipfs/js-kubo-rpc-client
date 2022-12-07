@@ -64,11 +64,11 @@ export function testImport (factory, options) {
   describe('.dag.import', () => {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should import a car file', async () => {
       const blocks = await createBlocks(5)

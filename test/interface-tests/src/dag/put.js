@@ -23,9 +23,9 @@ export function testPut (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     const pbNode = {
       Data: uint8ArrayFromString('some data'),
@@ -111,7 +111,5 @@ export function testPut (factory, options) {
       expect(cid.code).to.equal(dagCBOR.code)
       expect(cid.multihash.code).to.equal(sha512.code)
     })
-
-    it.skip('should put by passing the cid instead of format and hashAlg', (done) => {})
   })
 }

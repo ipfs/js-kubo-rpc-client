@@ -35,7 +35,7 @@ export function testPeers (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs3Id
 
-    before(async () => {
+    before(async function () {
       ipfs1 = (await factory.spawn({ ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfs2 = (await factory.spawn({ type: 'go', ipfsOptions })).api
@@ -58,7 +58,7 @@ export function testPeers (factory, options) {
       await ipfs2.swarm.connect(ipfs3Addr)
     })
 
-    afterEach(async () => {
+    afterEach(async function () {
       const nodes = [ipfs1, ipfs2, ipfs3]
       for (let i = 0; i < subscribedTopics.length; i++) {
         const topic = subscribedTopics[i]
@@ -68,7 +68,7 @@ export function testPeers (factory, options) {
       await delay(100)
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should not error when not subscribed to a topic', async () => {
       const topic = getTopic()

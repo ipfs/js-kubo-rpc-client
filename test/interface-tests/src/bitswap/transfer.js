@@ -27,7 +27,7 @@ export function testTransfer (factory, options) {
   describe('transfer blocks', function () {
     this.timeout(60 * 1000)
 
-    afterEach(() => factory.clean())
+    afterEach(function () { return factory.clean() })
 
     describe('transfer a block between', () => {
       it('2 peers', async function () {

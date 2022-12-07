@@ -26,12 +26,12 @@ export function testGet (factory, options) {
     /** @type {CID} */
     let cid
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when getting a block', () => {
       return testTimeout(() => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {

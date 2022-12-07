@@ -38,11 +38,11 @@ export function testGen (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     keyTypes.forEach((kt) => {
       it(`should generate a new ${kt.opts.type || 'default'} key`, async function () {

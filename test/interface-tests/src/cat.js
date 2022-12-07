@@ -31,14 +31,16 @@ export function testCat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
-    before(() => Promise.all([
-      all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),
-      all(importer({ content: fixtures.bigFile.data }, blockstore(ipfs)))
-    ]))
+    before(function () {
+      return Promise.all([
+        all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),
+        all(importer({ content: fixtures.bigFile.data }, blockstore(ipfs)))
+      ])
+    })
 
     it('should respect timeout option when catting files', () => {
       return testTimeout(() => drain(ipfs.cat(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {

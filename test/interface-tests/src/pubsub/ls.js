@@ -24,11 +24,11 @@ export function testLs (factory, options) {
     let ipfs
     /** @type {string[]} */
     let subscribedTopics = []
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    afterEach(async () => {
+    afterEach(async function () {
       for (let i = 0; i < subscribedTopics.length; i++) {
         await ipfs.pubsub.unsubscribe(subscribedTopics[i])
       }
@@ -36,7 +36,7 @@ export function testLs (factory, options) {
       await delay(100)
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should return an empty list when no topics are subscribed', async () => {
       const topics = await ipfs.pubsub.ls()

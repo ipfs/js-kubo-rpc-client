@@ -24,7 +24,7 @@ export function testDisabled (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeB
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn({
         ipfsOptions: {
           config: {
@@ -39,7 +39,7 @@ export function testDisabled (factory, options) {
       await nodeA.swarm.connect(nodeBId.addresses[0])
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should error when DHT not available', async () => {
       const events = await all(nodeA.dht.get('/ipns/12D3KooWQMSMXmsBvs5YDEQ6tXsaFv9tjuzmDmEvusaiQSFdrJdN'))

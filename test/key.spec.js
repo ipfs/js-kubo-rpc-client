@@ -9,28 +9,28 @@ describe('.key', function () {
 
   let ipfs
 
-  before(async () => {
+  before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
-  describe('.gen', () => {
-    it('create a new rsa key', async () => {
+  describe('.gen', function () {
+    it('create a new rsa key', async function () {
       const res = await ipfs.key.gen('foobarsa', { type: 'rsa', size: 2048 })
 
       expect(res).to.exist()
     })
 
-    it('create a new ed25519 key', async () => {
+    it('create a new ed25519 key', async function () {
       const res = await ipfs.key.gen('bazed', { type: 'ed25519' })
 
       expect(res).to.exist()
     })
   })
 
-  describe('.list', () => {
-    it('both keys show up + self', async () => {
+  describe('.list', function () {
+    it('both keys show up + self', async function () {
       const res = await ipfs.key.list()
 
       expect(res).to.exist()

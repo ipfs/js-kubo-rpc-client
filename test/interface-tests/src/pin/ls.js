@@ -23,7 +23,7 @@ export function testLs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       // two files wrapped in directories, only root CID pinned recursively
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
@@ -37,7 +37,7 @@ export function testLs (factory, options) {
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     // 1st, because ipfs.add pins automatically
     it('should list all recursive pins', async () => {

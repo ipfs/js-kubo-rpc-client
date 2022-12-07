@@ -31,7 +31,7 @@ export function testResolve (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         type: 'go',
         ipfsOptions: merge(ipfsOptions, {
@@ -45,7 +45,7 @@ export function testResolve (factory, options) {
       ipfsId = await ipfs.id()
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should resolve an IPFS hash', async () => {
       const content = uint8ArrayFromString('Hello world')

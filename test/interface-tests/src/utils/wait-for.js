@@ -15,6 +15,7 @@ export default async function waitFor (test, options) {
   const start = Date.now()
 
   while (true) {
+    // eslint-disable-next-line mocha/no-empty-description
     if (await test()) {
       return
     }

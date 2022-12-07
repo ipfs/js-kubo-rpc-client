@@ -54,9 +54,9 @@ export function testMkdir (factory, options) {
       expect(stats).to.have.deep.property('mtime', expectedMtime)
     }
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('requires a directory', async () => {
       await expect(ipfs.files.mkdir('')).to.eventually.be.rejected()

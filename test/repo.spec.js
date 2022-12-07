@@ -9,19 +9,19 @@ describe('.repo', function () {
 
   let ipfs
 
-  before(async () => {
+  before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
-  it('.repo.gc', async () => {
+  it('.repo.gc', async function () {
     const res = await ipfs.repo.gc()
 
     expect(res).to.exist()
   })
 
-  it('.repo.stat', async () => {
+  it('.repo.stat', async function () {
     const res = await ipfs.repo.stat()
 
     expect(res).to.exist()
@@ -29,7 +29,7 @@ describe('.repo', function () {
     expect(res).to.have.a.property('repoSize')
   })
 
-  it('.repo.version', async () => {
+  it('.repo.version', async function () {
     const res = await ipfs.repo.version()
 
     expect(res).to.exist()

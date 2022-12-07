@@ -38,13 +38,13 @@ describe('agent', function () {
   /** @type {Agent} */
   let agent
 
-  before(() => {
+  before(function () {
     agent = new Agent({
       maxSockets: 2
     })
   })
 
-  it('restricts the number of concurrent connections', async () => {
+  it('restricts the number of concurrent connections', async function () {
     /** @type {((arg: any) => void)[]} */
     const responses = []
 

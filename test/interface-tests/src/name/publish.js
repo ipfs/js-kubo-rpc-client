@@ -27,7 +27,7 @@ export function testPublish (factory, options) {
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         ipfsOptions: {
           config: {
@@ -42,7 +42,7 @@ export function testPublish (factory, options) {
       await ipfs.add(fixture.data, { pin: false })
     })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should publish an IPNS record with the default params', async function () {
       // @ts-ignore this is mocha

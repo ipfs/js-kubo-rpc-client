@@ -21,9 +21,9 @@ export function testResolve (factory, options) {
   describe('.dag.resolve', () => {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when resolving a path within a DAG node', async () => {
       const cid = await ipfs.dag.put({}, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })

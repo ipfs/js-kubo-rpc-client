@@ -33,9 +33,9 @@ export function testGet (factory, options) {
   describe('.dag.get', () => {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     /**
      * @type {dagPB.PBNode}
@@ -74,7 +74,7 @@ export function testGet (factory, options) {
      */
     let cidJose
 
-    before(async () => {
+    before(async function () {
       const someData = uint8ArrayFromString('some other data')
       pbNode = {
         Data: someData,
@@ -159,9 +159,6 @@ export function testGet (factory, options) {
       expect(result.value).to.eql(uint8ArrayFromString('I am inside a Protobuf'))
     })
 
-    it.skip('should get a dag-pb node value one level deep', (done) => {})
-    it.skip('should get a dag-pb node value two levels deep', (done) => {})
-
     it('should get a dag-cbor node with path', async () => {
       const result = await ipfs.dag.get(cidCbor, {
         path: '/'
@@ -179,10 +176,6 @@ export function testGet (factory, options) {
       })
       expect(result.value).to.eql('I am inside a Cbor object')
     })
-
-    it.skip('should get dag-cbor node value one level deep', (done) => {})
-    it.skip('should get dag-cbor node value two levels deep', (done) => {})
-    it.skip('should get dag-cbor value via dag-pb node', (done) => {})
 
     it('should get only a CID, due to resolving locally only', async function () {
       const result = await ipfs.dag.get(cidCbor, {
@@ -202,14 +195,6 @@ export function testGet (factory, options) {
     it('should get by CID with path option', async function () {
       const result = await ipfs.dag.get(cidCbor, { path: '/pb/Data' })
       expect(result.value).to.eql(uint8ArrayFromString('I am inside a Protobuf'))
-    })
-
-    it('should get only a CID, due to resolving locally only', async function () {
-      const result = await ipfs.dag.get(cidCbor, {
-        path: 'pb/Data',
-        localResolve: true
-      })
-      expect(result.value.equals(cidPb)).to.be.true()
     })
 
     it('should get with options and no path', async function () {

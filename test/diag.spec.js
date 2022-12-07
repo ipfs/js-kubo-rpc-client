@@ -11,21 +11,14 @@ describe('.diag', function () {
   if (global.process && global.process.platform === 'win32') { return }
   let ipfs
 
-  before(async () => {
+  before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
-  describe('api API', () => {
-    // Disabled in go-ipfs 0.4.10
-    it.skip('.diag.net', async () => {
-      const res = await ipfs.diag.net()
-
-      expect(res).to.exist()
-    })
-
-    it('.diag.sys', async () => {
+  describe('api API', function () {
+    it('.diag.sys', async function () {
       const res = await ipfs.diag.sys()
 
       expect(res).to.exist()
@@ -33,7 +26,7 @@ describe('.diag', function () {
       expect(res).to.have.a.property('diskinfo')
     })
 
-    it('.diag.cmds', async () => {
+    it('.diag.cmds', async function () {
       const res = await ipfs.diag.cmds()
 
       expect(res).to.exist()

@@ -22,9 +22,9 @@ export function testFlush (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async () => await factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should not flush not found file/dir, expect error', async () => {
       const testDir = `/test-${nanoid()}`
