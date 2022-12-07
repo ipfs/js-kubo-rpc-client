@@ -632,42 +632,16 @@ function executeTests (commonFactory) {
       args: ['--enable-pubsub-experiment']
     }
   }), {
-    skip: [
-      {
-        name: 'should receive messages from a different node on lots of topics',
-        reason: 'HTTP clients cannot hold this many connections open'
-      },
-      /**
-       * Notes:
-       * * `.pubsub.unsubscribe - should subscribe and unsubscribe 10 times` succeeds, why don't these?
-       */
-      ...[
-        'should subscribe to one topic',
-        'should subscribe to one topic with options',
-        'should subscribe to topic multiple times with different handlers',
-        'should allow discover option to be passed',
-        'should receive messages from a different node with floodsub',
-        'should receive messages from a different node',
-        'should round trip a non-utf8 binary buffer',
-        'should receive multiple messages', // Error: Timed out waiting for peers to be subscribed to "pubsub-tests-OO3gdKYYEtz4eQiED83PZ" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
-        'should send/receive 100 messages', // Error: Timed out waiting for peers to be subscribed to "pubsub-tests-Cy4_V5p21Ca5Al0sdBgD3" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
-        'should unsubscribe multiple handlers', // Error: Timed out waiting for peers to be subscribed to "topic-0.620683584935303" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
-        'should unsubscribe individual handlers', // Error: Timed out waiting for peers to be subscribed to "topic-0.5297338280791819" at waitForPeers (file:///Users/sgtpooki/code/work/protocol.ai/ipfs/js-kubo-rpc-client/test/interface-tests/src/pubsub/utils.js:23:13)
-        'should return peers for a topic - one peer',
-        'should return peers for a topic - multiple peers'
-      ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
-    ].concat(
-      isWindows
-        ? [{
-            name: 'should send/receive 100 messages',
-            reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/kubo/issues/4778'
-          },
-          {
-            name: 'should receive multiple messages',
-            reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/kubo/issues/4778'
-          }]
-        : []
-    )
+    skip: isWindows
+      ? [{
+          name: 'should send/receive 100 messages',
+          reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/kubo/issues/4778'
+        },
+        {
+          name: 'should receive multiple messages',
+          reason: 'FIXME https://github.com/ipfs/interface-ipfs-core/pull/188#issuecomment-354673246 and https://github.com/ipfs/kubo/issues/4778'
+        }]
+      : []
   })
 
   tests.repo(commonFactory)
@@ -699,7 +673,8 @@ describe('kubo-rpc-client tests against kubo', async function () {
 
     const commonFactory = factory({
       type: 'go',
-      ipfsBin
+      ipfsBin,
+      test: true
     }, {
       go: {
         ipfsBin
