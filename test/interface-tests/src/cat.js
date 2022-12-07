@@ -12,7 +12,6 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import testTimeout from './utils/test-timeout.js'
 import { importer } from 'ipfs-unixfs-importer'
 import blockstore from './utils/blockstore-adapter.js'
-import { notImplemented } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -168,17 +167,6 @@ export function testCat (factory, options) {
 
       const err = await expect(drain(ipfs.cat(dir.cid))).to.eventually.be.rejected()
       expect(err.message).to.contain('this dag node is a directory')
-    })
-
-    it('should export a chunk of a file', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const offset = 1
-      const length = 3
-
-      const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.smallFile.cid, { offset, length })))
-      expect(uint8ArrayToString(data)).to.equal('lz ')
     })
   })
 }

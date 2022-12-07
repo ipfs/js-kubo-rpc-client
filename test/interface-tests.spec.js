@@ -14,54 +14,6 @@ function executeTests (commonFactory) {
   tests.root(commonFactory, {
     skip: [
       {
-        name: 'should add with mode as string',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should add with mode as number',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should add with mtime as Date',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should add with mtime as { nsecs, secs }',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should add with mtime as timespec',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should add with mtime as hrtime',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should export a chunk of a file',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should ls with metadata',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should ls single file with metadata',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should ls single file without containing directory with metadata',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should override raw leaves when file is smaller than one block and metadata is present',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
-        name: 'should add directories with metadata',
-        reason: 'TODO not implemented in kubo yet'
-      },
-      {
         name: 'should support bidirectional streaming',
         reason: 'Not supported by http'
       },
