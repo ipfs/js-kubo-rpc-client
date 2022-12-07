@@ -54,18 +54,6 @@
       "require": "./dist/src/index.js"
     }
   },
-  "eslintConfig": {
-    "extends": [
-      "ipfs",
-      "plugin:jsdoc/recommended"
-    ],
-    "parserOptions": {
-      "sourceType": "module"
-    },
-    "plugins": [
-      "jsdoc"
-    ]
-  },
   "release": {
     "branches": [
       "master"
@@ -199,6 +187,7 @@
     "did-jwt": "^6.8.0",
     "eslint-config-ipfs": "^3.1.0",
     "eslint-plugin-jsdoc": "^39.3.6",
+    "eslint-plugin-mocha": "^10.1.0",
     "go-ipfs": "^0.17.0",
     "go-ipfs-12": "npm:go-ipfs@^0.12.2",
     "go-ipfs-12.0": "npm:go-ipfs@^0.12.0",

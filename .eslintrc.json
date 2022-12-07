@@ -1,6 +1,12 @@
 
 {
+  "plugins": [
+    "jsdoc",
+    "mocha"
+  ],
   "extends": [
+    "plugin:jsdoc/recommended",
+    "plugin:mocha/recommended",
     "ipfs"
   ],
   "env": {
