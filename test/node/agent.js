@@ -8,6 +8,7 @@ import http, { Agent } from 'http'
 /**
  *
  * @param {(message: import('http').IncomingMessage) => Promise<any>} handler
+ * @returns {Promise<{port: number, close: (...args: Parameters<http.Server['close']) => ReturnType<http.Server['close']}}
  */
 function startServer (handler) {
   return new Promise((resolve) => {
@@ -28,7 +29,7 @@ function startServer (handler) {
 
       resolve({
         port: addressInfo && (typeof addressInfo === 'string' ? addressInfo : addressInfo.port),
-        close: () => server.close()
+        close: (...args) => server.close(...args)
       })
     })
   })
@@ -117,6 +118,6 @@ describe('agent', function () {
     expect(results).to.include(1)
     expect(results).to.include(2)
 
-    server.close()
+    return new Promise((resolve, reject) => server.close((err) => err != null ? reject(err) : resolve()))
   })
 })
