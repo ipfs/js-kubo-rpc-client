@@ -161,6 +161,7 @@
     "test:firefox": "aegir test -t browser -- --browser firefox",
     "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
     "lint": "aegir lint",
+    "lint:fix": "aegir lint --fix",
     "clean": "aegir clean",
     "dep-check": "aegir dep-check",
     "release": "aegir release"
