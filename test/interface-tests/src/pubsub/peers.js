@@ -68,7 +68,7 @@ export function testPeers (factory, options) {
       await delay(100)
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should not error when not subscribed to a topic', async () => {
       const topic = getTopic()

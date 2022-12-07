@@ -28,7 +28,7 @@ export function testRm (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${nanoid()}`

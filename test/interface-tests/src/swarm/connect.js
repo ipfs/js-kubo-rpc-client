@@ -34,7 +34,7 @@ export function testConnect (factory, options) {
       ipfsBId = await ipfsB.id()
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should connect to a peer', async () => {
       let peers

@@ -24,7 +24,7 @@ export function testApply (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should apply a config profile', async () => {
       const diff = await ipfs.config.profiles.apply('lowpower')

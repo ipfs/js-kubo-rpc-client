@@ -24,7 +24,7 @@ export function testRm (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should rm a key', async function () {
       // @ts-ignore this is mocha

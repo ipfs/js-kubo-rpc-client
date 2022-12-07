@@ -24,7 +24,7 @@ export function testReplace (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     const config = {
       Addresses: {

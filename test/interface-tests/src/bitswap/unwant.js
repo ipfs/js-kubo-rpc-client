@@ -29,7 +29,7 @@ export function testUnwant (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should throw error for invalid CID input', async function () {
       if (notImplemented()) {

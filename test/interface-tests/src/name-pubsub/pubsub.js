@@ -70,7 +70,7 @@ export function testPubsub (factory, options) {
       await nodeA.swarm.connect(idB.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should publish and then resolve correctly', async function () {
       // @ts-ignore this is mocha

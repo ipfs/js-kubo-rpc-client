@@ -29,7 +29,7 @@ export function testPut (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should put a buffer, using defaults', async () => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'

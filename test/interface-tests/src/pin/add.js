@@ -47,7 +47,7 @@ export function testAdd (factory, options) {
       )
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     beforeEach(() => {
       return clearPins(ipfs)

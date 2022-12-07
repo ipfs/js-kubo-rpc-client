@@ -24,7 +24,7 @@ export function testRename (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should rename a key', async function () {
       // @ts-ignore this is mocha

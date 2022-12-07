@@ -36,7 +36,7 @@ export function testLs (factory, options) {
       await delay(100)
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should return an empty list when no topics are subscribed', async () => {
       const topics = await ipfs.pubsub.ls()

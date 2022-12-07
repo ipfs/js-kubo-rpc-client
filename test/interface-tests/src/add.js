@@ -70,7 +70,7 @@ export function testAdd (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should add a File', async function () {
       if (!supportsFileReader) {

@@ -40,7 +40,7 @@ export function testWantlistForPeer (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should get the wantlist by peer ID for a different node', async () => {
       const ipfsBId = await ipfsB.id()

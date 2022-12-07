@@ -23,7 +23,7 @@ export function testStat (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should get repo stats', async () => {
       const res = await ipfs.repo.stat()

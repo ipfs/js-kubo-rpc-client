@@ -24,7 +24,7 @@ export function testSubs (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should get an empty array as a result of subscriptions before any resolve', async function () {
       // @ts-ignore this is mocha

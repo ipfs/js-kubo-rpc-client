@@ -33,7 +33,7 @@ export function testCp (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('refuses to copy files without a source', async () => {
       // @ts-expect-error invalid args

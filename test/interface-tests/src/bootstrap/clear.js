@@ -26,7 +26,7 @@ export function testClear (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should return a list containing the peer removed when called with a valid arg (ip4)', async () => {
       await ipfs.bootstrap.clear()

@@ -28,7 +28,7 @@ export function testId (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should get the node ID', async () => {
       const res = await ipfs.id()

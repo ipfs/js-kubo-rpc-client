@@ -39,7 +39,7 @@ export function testDisconnect (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should disconnect from a peer', async () => {
       let peers

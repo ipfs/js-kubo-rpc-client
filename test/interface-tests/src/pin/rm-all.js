@@ -33,7 +33,7 @@ export function testRmAll (factory, options) {
       await ipfs.add(fixtures.files[1].data, { pin: false })
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     beforeEach(() => {
       return clearPins(ipfs)

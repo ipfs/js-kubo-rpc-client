@@ -24,7 +24,7 @@ export function testList (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should list all the keys', async function () {
       // @ts-ignore this is mocha

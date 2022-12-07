@@ -30,7 +30,7 @@ export function testLinks (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should get empty links by multihash', async () => {
       const testObj = {

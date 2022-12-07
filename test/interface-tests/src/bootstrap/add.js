@@ -29,7 +29,7 @@ export function testAdd (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should return an error when called with an invalid arg', () => {
       // @ts-expect-error invalid input

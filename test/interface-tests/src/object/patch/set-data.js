@@ -26,7 +26,7 @@ export function testSetData (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should set data for an existing node', async () => {
       const obj = {

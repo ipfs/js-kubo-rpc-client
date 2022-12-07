@@ -42,7 +42,7 @@ export function testGen (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     keyTypes.forEach((kt) => {
       it(`should generate a new ${kt.opts.type || 'default'} key`, async function () {

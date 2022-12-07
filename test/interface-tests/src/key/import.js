@@ -25,7 +25,7 @@ export function testImport (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should import an exported key', async () => {
       const password = nanoid()

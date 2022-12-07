@@ -29,7 +29,7 @@ export function testExport (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should export a car file', async () => {
       const child = dagPB.encode({

@@ -24,7 +24,7 @@ export function testList (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should return a list of peers', async () => {
       const res = await ipfs.bootstrap.list()

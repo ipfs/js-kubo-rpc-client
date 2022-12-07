@@ -35,7 +35,7 @@ export function testGet (factory, options) {
     let ipfs
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     /**
      * @type {dagPB.PBNode}

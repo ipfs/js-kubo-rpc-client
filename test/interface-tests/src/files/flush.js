@@ -24,7 +24,7 @@ export function testFlush (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should not flush not found file/dir, expect error', async () => {
       const testDir = `/test-${nanoid()}`

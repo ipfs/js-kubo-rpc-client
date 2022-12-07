@@ -38,7 +38,7 @@ export function testAddrs (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should get a list of node addresses', async () => {
       const peers = await ipfsA.swarm.addrs()

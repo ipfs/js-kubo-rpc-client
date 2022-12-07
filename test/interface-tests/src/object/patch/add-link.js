@@ -29,7 +29,7 @@ export function testAddLink (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should add a link to an existing node', async () => {
       const obj = {

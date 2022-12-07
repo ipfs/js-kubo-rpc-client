@@ -34,7 +34,7 @@ export function testCat (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     before(() => Promise.all([
       all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),

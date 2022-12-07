@@ -40,7 +40,7 @@ export function testStat (factory, options) {
 
     before(async () => { await ipfs.add(fixtures.smallFile.data) })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('refuses to stat files with an empty path', async () => {
       await expect(ipfs.files.stat('')).to.eventually.be.rejected()

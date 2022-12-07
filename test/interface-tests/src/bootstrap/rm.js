@@ -27,7 +27,7 @@ export function testRm (factory, options) {
 
     before(async () => { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should return an error when called with an invalid arg', () => {
       // @ts-expect-error invalid input

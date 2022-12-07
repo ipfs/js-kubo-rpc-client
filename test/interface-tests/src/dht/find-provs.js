@@ -38,7 +38,7 @@ export function testFindProvs (factory, options) {
       await ensureReachable(nodeC, nodeB)
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     /**
      * @type {import('multiformats/cid').CID}

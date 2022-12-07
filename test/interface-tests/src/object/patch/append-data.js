@@ -26,7 +26,7 @@ export function testAppendData (factory, options) {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should append data to an existing node', async () => {
       const obj = {

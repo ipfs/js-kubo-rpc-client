@@ -45,7 +45,7 @@ export function testResolve (factory, options) {
       ipfsId = await ipfs.id()
     })
 
-    after(() => factory.clean())
+    after(async () => await factory.clean())
 
     it('should resolve an IPFS hash', async () => {
       const content = uint8ArrayFromString('Hello world')
