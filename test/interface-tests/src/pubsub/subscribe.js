@@ -111,8 +111,8 @@ const getPublisherFn = (publisher, subscriber, topic, data) => async () => {
 
 /**
  *
- * @param {ReturnType<typeof getSubscriberFn>} subscriberFn
  * @param {ReturnType<typeof getPublisherFn>} publisherFn
+ * @param {ReturnType<typeof getSubscriberFn>} subscriberFn
  * @param {number} timeout
  * @returns {Promise<SubscribeMessage> | Promise<SubscribeMessage[]>}
  */
