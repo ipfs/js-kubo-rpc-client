@@ -188,6 +188,7 @@
   },
   "devDependencies": {
     "@ipld/car": "^5.0.0",
+    "@libp2p/interface-peer-id": "^1.0.6",
     "@libp2p/interface-peer-info": "^1.0.2",
     "@libp2p/interface-pubsub": "^3.0.0",
     "@libp2p/interfaces": "^3.0.3",
@@ -228,6 +229,7 @@
     "p-defer": "^4.0.0",
     "p-map": "^5.5.0",
     "p-retry": "^5.1.1",
+    "p-timeout": "^4.1.0",
     "pako": "^2.0.4",
     "peer-id": "^0.16.0",
     "readable-stream": "^4.2.0",
