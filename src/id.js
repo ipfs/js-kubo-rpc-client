@@ -4,19 +4,20 @@ import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
 
-export const createId = configure(api => {
+export const createId = configure((api, configuredOptions) => {
   /**
-   * @type {import('./types').RootAPI["id"]}
+   * @type {import('ipfs-core-types/src/root').API<import('./types').HTTPClientExtraOptions>['id']}
    */
   async function id (options = {}) {
-    const res = await api.post('id', {
+    const res = await api.post('id', /** @type {import('./types').ActualHttpOptions} */({
+      ...configuredOptions,
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: options.peerId ? options.peerId.toString() : undefined,
         ...options
       }),
       headers: options.headers
-    })
+    }))
     const data = await res.json()
 
     const output = {

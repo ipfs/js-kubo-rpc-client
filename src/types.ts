@@ -7,6 +7,7 @@ import type { MultihashHasher } from 'multiformats/hashes/interface'
 import type { IPFS } from 'ipfs-core-types'
 import type { Message } from '@libp2p/interface-pubsub'
 import type IpfsUtilsHttp from 'ipfs-utils/src/http.js'
+import type { HTTPOptions } from 'ipfs-utils/src/types.js'
 
 export interface Options {
   host?: string
@@ -36,6 +37,7 @@ export interface IPLDOptions {
 export interface HTTPClientExtraOptions {
   headers?: Record<string, string>
   searchParams?: URLSearchParams
+  agent?: HttpAgent | HttpsAgent
   // pubsub: IPFS<HTTPClientExtraOptions>['pubsub']
 }
 
@@ -84,7 +86,7 @@ export type { Multicodecs } from 'ipfs-core-utils/multicodecs'
 export type { QueryEvent } from 'ipfs-core-types/src/dht'
 export type { Query, Status, Pin, AddOptions } from 'ipfs-core-types/src/pin/remote'
 export type { RmResult } from 'ipfs-core-types/src/block'
-export type { HTTPOptions, ProgressFn as IPFSUtilsHttpUploadProgressFn, ExtendedResponse } from 'ipfs-utils/src/types'
+export type { ProgressFn as IPFSUtilsHttpUploadProgressFn, ExtendedResponse } from 'ipfs-utils/src/types'
 export type { CID } from 'multiformats/cid'
 export type {
   RemotePinServiceWithStat,
@@ -121,4 +123,7 @@ export type StatsAPI = import('ipfs-core-types/src/stats').API<HTTPClientExtraOp
 export type SwarmAPI = import('ipfs-core-types/src/swarm').API<HTTPClientExtraOptions>
 
 export type MultibaseCodec<Prefix extends string = any> = import('multiformats/bases/interface').MultibaseCodec<Prefix>
-export type { Message, MultihashHasher }
+
+export type ActualHttpOptions = HTTPOptions & { agent?: HttpAgent | HttpsAgent }
+export type { IDResult } from 'ipfs-core-types/src/root.js'
+export type { Message, MultihashHasher, HTTPOptions }
