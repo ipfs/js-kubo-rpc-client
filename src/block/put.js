@@ -4,9 +4,10 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { abortSignal } from '../lib/abort-signal.js'
 
-export const createPut = configure(api => {
+export const createPut = configure((api, configOptions) => {
   /**
    * @type {import('../types').BlockAPI["put"]}
+   * @see https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-block-put
    */
   async function put (data, options = {}) {
     // allow aborting requests on body errors
