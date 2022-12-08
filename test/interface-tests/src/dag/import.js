@@ -147,10 +147,10 @@ export function testImport (factory, options) {
         expect(result).to.have.lengthOf(2)
         expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
         expect(result[0].root.pinErrorMsg).to.a('string')
-        expect(result[0].root.pinErrorMsg).to.not.be.empty()
+        expect(result[0].root.pinErrorMsg).to.not.be.empty(`result[0].root.pinErrorMsg should not be empty but contains ${result[0].root.pinErrorMsg}`)
         expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
         expect(result[1].root.pinErrorMsg).to.a('string')
-        expect(result[1].root.pinErrorMsg).to.not.be.empty()
+        expect(result[1].root.pinErrorMsg).to.not.be.empty(`result[1].root.pinErrorMsg should not be empty but contains ${result[1].root.pinErrorMsg}`)
       })
 
       it('have some of the blocks now, should be able to pin one root', async function () {
@@ -163,7 +163,7 @@ export function testImport (factory, options) {
         expect(result[0].root.pinErrorMsg).to.be.empty()
         expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
         expect(result[1].root.pinErrorMsg).to.a('string')
-        expect(result[1].root.pinErrorMsg).to.not.be.empty()
+        expect(result[1].root.pinErrorMsg).to.not.be.empty(`result[1].root.pinErrorMsg should not be empty but contains ${result[1].root.pinErrorMsg}`)
       })
 
       it('have all of the blocks now, should be able to pin both', async function () {
