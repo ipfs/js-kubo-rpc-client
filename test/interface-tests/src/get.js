@@ -115,307 +115,311 @@ export function testGet (factory, options) {
 
     after(async function () { return await factory.clean() })
 
-    it('should respect timeout option when getting files', async function () {
-      await testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
-        timeout: 1
-      })))
+    describe('files', function () {
+      it('should respect timeout option when getting files', async function () {
+        await testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
+          timeout: 1
+        })))
+      })
+
+      it('should get with a base58 encoded multihash', async () => {
+        const output = await pipe(
+          ipfs.get(fixtures.smallFile.cid),
+          tarballed,
+          collect
+        )
+        expect(output).to.have.lengthOf(1)
+        expect(output).to.have.nested.property('[0].header.name', fixtures.smallFile.cid.toString())
+        expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.smallFile.data)
+      })
+
+      it('should get a file added as CIDv0 with a CIDv1', async () => {
+        const input = uint8ArrayFromString(`TEST${Math.random()}`)
+        const res = await all(importer({ content: input }, blockstore(ipfs)))
+
+        const cidv0 = res[0].cid
+        expect(cidv0.version).to.equal(0)
+
+        const cidv1 = cidv0.toV1()
+
+        const output = await pipe(
+          ipfs.get(cidv1),
+          tarballed,
+          collect
+        )
+        expect(output).to.have.lengthOf(1)
+        expect(output).to.have.nested.property('[0].header.name', cidv1.toString())
+        expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
+      })
+
+      it('should get a file added as CIDv1 with a CIDv0', async () => {
+        const input = uint8ArrayFromString(`TEST${Math.random()}`)
+        const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: false }))
+
+        const cidv1 = res[0].cid
+        expect(cidv1.version).to.equal(1)
+
+        const cidv0 = cidv1.toV0()
+
+        const output = await pipe(
+          ipfs.get(cidv0),
+          tarballed,
+          collect
+        )
+        expect(output).to.have.lengthOf(1)
+        expect(output).to.have.nested.property('[0].header.name', cidv0.toString())
+        expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
+      })
+
+      it('should get a file added as CIDv1 with rawLeaves', async () => {
+        const input = uint8ArrayFromString(`TEST${Math.random()}`)
+        const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: true }))
+
+        const cidv1 = res[0].cid
+        expect(cidv1.version).to.equal(1)
+
+        const output = await pipe(
+          ipfs.get(cidv1),
+          tarballed,
+          collect
+        )
+        expect(output).to.have.lengthOf(1)
+        expect(output).to.have.nested.property('[0].header.name', cidv1.toString())
+        expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
+      })
+
+      it('should get a BIG file', async () => {
+        const output = await pipe(
+          ipfs.get(fixtures.bigFile.cid),
+          tarballed,
+          collect
+        )
+        expect(output).to.have.lengthOf(1)
+        expect(output).to.have.nested.property('[0].header.name', fixtures.bigFile.cid.toString())
+        expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.bigFile.data)
+      })
+
+      it('should get with ipfs path, as object and nested value', async () => {
+        const file = {
+          path: 'a/testfile.txt',
+          content: fixtures.smallFile.data
+        }
+
+        const fileAdded = await last(importer([file], blockstore(ipfs)))
+
+        if (!fileAdded) {
+          throw new Error('No file was added')
+        }
+
+        expect(fileAdded).to.have.property('path', 'a')
+
+        const output = await pipe(
+          ipfs.get(`/ipfs/${fileAdded.cid}/testfile.txt`),
+          tarballed,
+          collect
+        )
+        expect(output).to.be.length(1)
+
+        expect(uint8ArrayToString(output[0].body)).to.equal('Plz add me!\n')
+      })
+
+      it('should compress a file directly', async () => {
+        const output = await pipe(
+          ipfs.get(fixtures.smallFile.cid, {
+            compress: true,
+            compressionLevel: 5
+          }),
+          gzipped,
+          collect
+        )
+        expect(uint8ArrayConcat(output)).to.equalBytes(fixtures.smallFile.data)
+      })
+
+      it('should compress a file as a tarball', async () => {
+        const output = await pipe(
+          ipfs.get(fixtures.smallFile.cid, {
+            archive: true,
+            compress: true,
+            compressionLevel: 5
+          }),
+          gzipped,
+          tarballed,
+          collect
+        )
+        expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.smallFile.data)
+      })
+
+      it('should compress a file with invalid compression level', async () => {
+        await expect(drain(ipfs.get(fixtures.smallFile.cid, {
+          compress: true,
+          compressionLevel: 10
+        }))).to.eventually.be.rejected()
+      })
+
+      it('should error on invalid key', async () => {
+        const invalidCid = 'somethingNotMultihash'
+
+        await expect(all(ipfs.get(invalidCid))).to.eventually.be.rejected()
+      })
+
+      it('get path containing "+"s', async () => {
+        const filename = 'ti,c64x+mega++mod-pic.txt'
+        const subdir = 'tmp/c++files'
+        const expectedCid = 'QmPkmARcqjo5fqK1V1o8cFsuaXxWYsnwCNLJUYS4KeZyff'
+        const path = `${subdir}/${filename}`
+        const files = await all(ipfs.addAll([{
+          path,
+          content: path
+        }]))
+
+        expect(files[2].cid.toString()).to.equal(expectedCid)
+
+        const cid = 'QmPkmARcqjo5fqK1V1o8cFsuaXxWYsnwCNLJUYS4KeZyff'
+
+        const output = await pipe(
+          ipfs.get(CID.parse(cid)),
+          tarballed,
+          collect
+        )
+
+        expect(output).to.be.an('array').with.lengthOf(3)
+        expect(output).to.have.nested.property('[0].header.name', cid)
+        expect(output).to.have.nested.property('[1].header.name', `${cid}/c++files`)
+        expect(output).to.have.nested.property('[2].header.name', `${cid}/c++files/ti,c64x+mega++mod-pic.txt`)
+      })
     })
 
-    it('should get with a base58 encoded multihash', async () => {
-      const output = await pipe(
-        ipfs.get(fixtures.smallFile.cid),
-        tarballed,
-        collect
-      )
-      expect(output).to.have.lengthOf(1)
-      expect(output).to.have.nested.property('[0].header.name', fixtures.smallFile.cid.toString())
-      expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.smallFile.data)
-    })
+    describe('directories', function () {
+      it('should get a directory', async function () {
+        const dirs = [
+          content('pp.txt'),
+          content('holmes.txt'),
+          content('jungle.txt'),
+          content('alice.txt'),
+          emptyDir('empty-folder'),
+          content('files/hello.txt'),
+          content('files/ipfs.txt'),
+          emptyDir('files/empty')
+        ]
 
-    it('should get a file added as CIDv0 with a CIDv1', async () => {
-      const input = uint8ArrayFromString(`TEST${Math.random()}`)
-      const res = await all(importer({ content: input }, blockstore(ipfs)))
+        const root = await last(ipfs.addAll(dirs))
+        const { cid } = root
+        expect(`${cid}`).to.equal(fixtures.directory.cid.toString())
+        const output = await pipe(
+          ipfs.get(cid),
+          tarballed,
+          collect
+        )
 
-      const cidv0 = res[0].cid
-      expect(cidv0.version).to.equal(0)
+        // Check paths
+        const paths = output.map((file) => { return file.header.name })
+        expect(paths).to.include.members([
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/empty-folder',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/empty',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/hello.txt',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/ipfs.txt',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/holmes.txt',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/jungle.txt',
+          'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt'
+        ])
 
-      const cidv1 = cidv0.toV1()
+        // Check contents
+        expect(output.map(f => uint8ArrayToString(f.body))).to.include.members([
+          fixtures.directory.files['alice.txt'].toString(),
+          fixtures.directory.files['files/hello.txt'].toString(),
+          fixtures.directory.files['files/ipfs.txt'].toString(),
+          fixtures.directory.files['holmes.txt'].toString(),
+          fixtures.directory.files['jungle.txt'].toString(),
+          fixtures.directory.files['pp.txt'].toString()
+        ])
+      })
 
-      const output = await pipe(
-        ipfs.get(cidv1),
-        tarballed,
-        collect
-      )
-      expect(output).to.have.lengthOf(1)
-      expect(output).to.have.nested.property('[0].header.name', cidv1.toString())
-      expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
-    })
+      it('should get a nested directory', async function () {
+        const dirs = [
+          content('pp.txt', 'pp.txt'),
+          content('holmes.txt', 'foo/holmes.txt'),
+          content('jungle.txt', 'foo/bar/jungle.txt')
+        ]
 
-    it('should get a file added as CIDv1 with a CIDv0', async () => {
-      const input = uint8ArrayFromString(`TEST${Math.random()}`)
-      const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: false }))
+        const res = await all(importer(dirs, blockstore(ipfs)))
+        const { cid } = res[res.length - 1]
+        expect(`${cid}`).to.equal('QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g')
+        const output = await pipe(
+          ipfs.get(cid),
+          tarballed,
+          collect
+        )
 
-      const cidv1 = res[0].cid
-      expect(cidv1.version).to.equal(1)
+        // Check paths
+        expect(output.map((file) => { return file.header.name })).to.include.members([
+          'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g',
+          'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g/pp.txt',
+          'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g/foo/holmes.txt',
+          'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g/foo/bar/jungle.txt'
+        ])
 
-      const cidv0 = cidv1.toV0()
+        // Check contents
+        expect(output.map(f => uint8ArrayToString(f.body))).to.include.members([
+          fixtures.directory.files['pp.txt'].toString(),
+          fixtures.directory.files['holmes.txt'].toString(),
+          fixtures.directory.files['jungle.txt'].toString()
+        ])
+      })
 
-      const output = await pipe(
-        ipfs.get(cidv0),
-        tarballed,
-        collect
-      )
-      expect(output).to.have.lengthOf(1)
-      expect(output).to.have.nested.property('[0].header.name', cidv0.toString())
-      expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
-    })
+      it('should compress a directory as a tarball', async () => {
+        const dirs = [
+          content('pp.txt'),
+          emptyDir('empty-folder'),
+          content('files/hello.txt')
+        ]
 
-    it('should get a file added as CIDv1 with rawLeaves', async () => {
-      const input = uint8ArrayFromString(`TEST${Math.random()}`)
-      const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: true }))
+        const res = await all(importer(dirs, blockstore(ipfs)))
+        const { cid } = res[res.length - 1]
+        const output = await pipe(
+          ipfs.get(cid, {
+            archive: true,
+            compress: true,
+            compressionLevel: 5
+          }),
+          gzipped,
+          tarballed,
+          collect
+        )
 
-      const cidv1 = res[0].cid
-      expect(cidv1.version).to.equal(1)
+        // Check paths
+        const paths = output.map((file) => { return file.header.name })
+        expect(paths).to.include.members([
+          'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU',
+          'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU/empty-folder',
+          'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU/files/hello.txt',
+          'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU/pp.txt'
+        ])
 
-      const output = await pipe(
-        ipfs.get(cidv1),
-        tarballed,
-        collect
-      )
-      expect(output).to.have.lengthOf(1)
-      expect(output).to.have.nested.property('[0].header.name', cidv1.toString())
-      expect(output).to.have.nested.property('[0].body').that.equalBytes(input)
-    })
+        // Check contents
+        expect(output.map(f => uint8ArrayToString(f.body))).to.include.members([
+          fixtures.directory.files['files/hello.txt'].toString(),
+          fixtures.directory.files['pp.txt'].toString()
+        ])
+      })
 
-    it('should get a BIG file', async () => {
-      const output = await pipe(
-        ipfs.get(fixtures.bigFile.cid),
-        tarballed,
-        collect
-      )
-      expect(output).to.have.lengthOf(1)
-      expect(output).to.have.nested.property('[0].header.name', fixtures.bigFile.cid.toString())
-      expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.bigFile.data)
-    })
+      it('should not compress a directory', async () => {
+        const dirs = [
+          content('pp.txt'),
+          emptyDir('empty-folder'),
+          content('files/hello.txt')
+        ]
 
-    it('should get a directory', async function () {
-      const dirs = [
-        content('pp.txt'),
-        content('holmes.txt'),
-        content('jungle.txt'),
-        content('alice.txt'),
-        emptyDir('empty-folder'),
-        content('files/hello.txt'),
-        content('files/ipfs.txt'),
-        emptyDir('files/empty')
-      ]
+        const res = await all(importer(dirs, blockstore(ipfs)))
+        const { cid } = res[res.length - 1]
 
-      const res = await all(importer(dirs, blockstore(ipfs)))
-      const { cid } = res[res.length - 1]
-      expect(`${cid}`).to.equal(fixtures.directory.cid.toString())
-      const output = await pipe(
-        ipfs.get(cid),
-        tarballed,
-        collect
-      )
-
-      // Check paths
-      const paths = output.map((file) => { return file.header.name })
-      expect(paths).to.include.members([
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/alice.txt',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/empty-folder',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/empty',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/hello.txt',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/files/ipfs.txt',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/holmes.txt',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/jungle.txt',
-        'QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP/pp.txt'
-      ])
-
-      // Check contents
-      expect(output.map(f => uint8ArrayToString(f.body))).to.include.members([
-        fixtures.directory.files['alice.txt'].toString(),
-        fixtures.directory.files['files/hello.txt'].toString(),
-        fixtures.directory.files['files/ipfs.txt'].toString(),
-        fixtures.directory.files['holmes.txt'].toString(),
-        fixtures.directory.files['jungle.txt'].toString(),
-        fixtures.directory.files['pp.txt'].toString()
-      ])
-    })
-
-    it('should get a nested directory', async function () {
-      const dirs = [
-        content('pp.txt', 'pp.txt'),
-        content('holmes.txt', 'foo/holmes.txt'),
-        content('jungle.txt', 'foo/bar/jungle.txt')
-      ]
-
-      const res = await all(importer(dirs, blockstore(ipfs)))
-      const { cid } = res[res.length - 1]
-      expect(`${cid}`).to.equal('QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g')
-      const output = await pipe(
-        ipfs.get(cid),
-        tarballed,
-        collect
-      )
-
-      // Check paths
-      expect(output.map((file) => { return file.header.name })).to.include.members([
-        'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g',
-        'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g/pp.txt',
-        'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g/foo/holmes.txt',
-        'QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g/foo/bar/jungle.txt'
-      ])
-
-      // Check contents
-      expect(output.map(f => uint8ArrayToString(f.body))).to.include.members([
-        fixtures.directory.files['pp.txt'].toString(),
-        fixtures.directory.files['holmes.txt'].toString(),
-        fixtures.directory.files['jungle.txt'].toString()
-      ])
-    })
-
-    it('should get with ipfs path, as object and nested value', async () => {
-      const file = {
-        path: 'a/testfile.txt',
-        content: fixtures.smallFile.data
-      }
-
-      const fileAdded = await last(importer([file], blockstore(ipfs)))
-
-      if (!fileAdded) {
-        throw new Error('No file was added')
-      }
-
-      expect(fileAdded).to.have.property('path', 'a')
-
-      const output = await pipe(
-        ipfs.get(`/ipfs/${fileAdded.cid}/testfile.txt`),
-        tarballed,
-        collect
-      )
-      expect(output).to.be.length(1)
-
-      expect(uint8ArrayToString(output[0].body)).to.equal('Plz add me!\n')
-    })
-
-    it('should compress a file directly', async () => {
-      const output = await pipe(
-        ipfs.get(fixtures.smallFile.cid, {
+        await expect(drain(ipfs.get(cid, {
           compress: true,
           compressionLevel: 5
-        }),
-        gzipped,
-        collect
-      )
-      expect(uint8ArrayConcat(output)).to.equalBytes(fixtures.smallFile.data)
-    })
-
-    it('should compress a file as a tarball', async () => {
-      const output = await pipe(
-        ipfs.get(fixtures.smallFile.cid, {
-          archive: true,
-          compress: true,
-          compressionLevel: 5
-        }),
-        gzipped,
-        tarballed,
-        collect
-      )
-      expect(output).to.have.nested.property('[0].body').that.equalBytes(fixtures.smallFile.data)
-    })
-
-    it('should not compress a directory', async () => {
-      const dirs = [
-        content('pp.txt'),
-        emptyDir('empty-folder'),
-        content('files/hello.txt')
-      ]
-
-      const res = await all(importer(dirs, blockstore(ipfs)))
-      const { cid } = res[res.length - 1]
-
-      await expect(drain(ipfs.get(cid, {
-        compress: true,
-        compressionLevel: 5
-      }))).to.eventually.be.rejectedWith(/file is not regular/)
-    })
-
-    it('should compress a file with invalid compression level', async () => {
-      await expect(drain(ipfs.get(fixtures.smallFile.cid, {
-        compress: true,
-        compressionLevel: 10
-      }))).to.eventually.be.rejected()
-    })
-
-    it('should compress a directory as a tarball', async () => {
-      const dirs = [
-        content('pp.txt'),
-        emptyDir('empty-folder'),
-        content('files/hello.txt')
-      ]
-
-      const res = await all(importer(dirs, blockstore(ipfs)))
-      const { cid } = res[res.length - 1]
-      const output = await pipe(
-        ipfs.get(cid, {
-          archive: true,
-          compress: true,
-          compressionLevel: 5
-        }),
-        gzipped,
-        tarballed,
-        collect
-      )
-
-      // Check paths
-      const paths = output.map((file) => { return file.header.name })
-      expect(paths).to.include.members([
-        'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU',
-        'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU/empty-folder',
-        'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU/files/hello.txt',
-        'QmXpbhYKheGs5sopefFjsABsjr363QkRaJT4miRsN88ABU/pp.txt'
-      ])
-
-      // Check contents
-      expect(output.map(f => uint8ArrayToString(f.body))).to.include.members([
-        fixtures.directory.files['files/hello.txt'].toString(),
-        fixtures.directory.files['pp.txt'].toString()
-      ])
-    })
-
-    it('should error on invalid key', async () => {
-      const invalidCid = 'somethingNotMultihash'
-
-      await expect(all(ipfs.get(invalidCid))).to.eventually.be.rejected()
-    })
-
-    it('get path containing "+"s', async () => {
-      const filename = 'ti,c64x+mega++mod-pic.txt'
-      const subdir = 'tmp/c++files'
-      const expectedCid = 'QmPkmARcqjo5fqK1V1o8cFsuaXxWYsnwCNLJUYS4KeZyff'
-      const path = `${subdir}/${filename}`
-      const files = await all(ipfs.addAll([{
-        path,
-        content: path
-      }]))
-
-      expect(files[2].cid.toString()).to.equal(expectedCid)
-
-      const cid = 'QmPkmARcqjo5fqK1V1o8cFsuaXxWYsnwCNLJUYS4KeZyff'
-
-      const output = await pipe(
-        ipfs.get(CID.parse(cid)),
-        tarballed,
-        collect
-      )
-
-      expect(output).to.be.an('array').with.lengthOf(3)
-      expect(output).to.have.nested.property('[0].header.name', cid)
-      expect(output).to.have.nested.property('[1].header.name', `${cid}/c++files`)
-      expect(output).to.have.nested.property('[2].header.name', `${cid}/c++files/ti,c64x+mega++mod-pic.txt`)
+        }))).to.eventually.be.rejectedWith(/file is not regular/)
+      })
     })
   })
 }
