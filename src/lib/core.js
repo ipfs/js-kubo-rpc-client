@@ -10,7 +10,7 @@ import mergeOpts from 'merge-options'
 import { toUrlString } from 'ipfs-core-utils/to-url-string'
 import getAgent from 'ipfs-core-utils/agent'
 
-const log = logger('ipfs-http-client:lib:error-handler')
+const log = logger('js-kubo-rpc-client:lib:error-handler')
 const merge = mergeOpts.bind({ ignoreUndefined: true })
 
 const DEFAULT_PROTOCOL = isBrowser || isWebWorker ? location.protocol : 'http'
