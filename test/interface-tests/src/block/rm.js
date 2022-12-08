@@ -97,7 +97,7 @@ export function testRm (factory, options) {
       const result = await all(ipfs.block.rm(cid))
 
       expect(result).to.be.an('array').and.to.have.lengthOf(1)
-      expect(result).to.have.nested.property('[0].error.message').that.includes('block not found')
+      expect(result).to.have.nested.property('[0].error.message').that.is.not.empty()
     })
 
     it('should not error when force removing non-existent blocks', async () => {
