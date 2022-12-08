@@ -30,6 +30,7 @@ export default {
         echoServer,
         pinningService,
         env: {
+          NODE_OPTIONS: '--no-experimental-fetch',
           IPFSD_SERVER: `http://${server.host}:${server.server.info.port}`,
           PINNING_SERVICE_ENDPOINT: pinningService.endpoint,
           PINNING_SERVICE_KEY: 'secret',
