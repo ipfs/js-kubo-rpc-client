@@ -31,10 +31,14 @@ export function testRm (factory, options) {
 
     after(async function () { return await factory.clean() })
 
-    it('should respect timeout option when removing a block', () => {
-      return testTimeout(() => drain(ipfs.block.rm(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
+    it('should respect timeout option when removing a block', async function () {
+      const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
+        storeCodec: 'raw',
+        hashAlg: 'sha2-256'
+      })
+      await testTimeout(async () => await ipfs.block.rm(CID.parse(cid.toString()), {
         timeout: 1
-      })))
+      }))
     })
 
     it('should remove by CID object', async () => {
