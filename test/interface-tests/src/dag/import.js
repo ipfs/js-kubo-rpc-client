@@ -119,31 +119,61 @@ export function testImport (factory, options) {
       }
     })
 
-    it('should import car with roots but no blocks', async () => {
+    /**
+     * Tests inside this describe function are required to run in order.
+     */
+    describe('should import car with roots but no blocks', function () {
       const input = loadFixture('test/interface-tests/fixtures/car/combined_naked_roots_genesis_and_128.car')
-      const reader = await CarReader.fromBytes(input)
-      const cids = await reader.getRoots()
+      /**
+       * @type {CarReader}
+       */
+      let reader
+      /**
+       * @type {CID<unknown, number, number, Version>[]}
+       */
+      let cids
 
-      expect(cids).to.have.lengthOf(2)
+      before(async function () {
+        reader = await CarReader.fromBytes(input)
+        cids = await reader.getRoots()
+      })
+      it('has the correct number of cids', function () {
+        expect(cids).to.have.lengthOf(2)
+      })
 
-      // naked roots car does not contain blocks
-      const result1 = await all(ipfs.dag.import(async function * () { yield input }()))
-      expect(result1).to.deep.include({ root: { cid: cids[0], pinErrorMsg: 'blockstore: block not found' } })
-      expect(result1).to.deep.include({ root: { cid: cids[1], pinErrorMsg: 'blockstore: block not found' } })
+      it('naked roots car does not contain blocks', async function () {
+        const result = await all(ipfs.dag.import(async function * () { yield input }()))
 
-      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
+        expect(result).to.have.lengthOf(2)
+        expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
+        expect(result[0].root.pinErrorMsg).to.a('string')
+        expect(result[0].root.pinErrorMsg).to.not.be.empty()
+        expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
+        expect(result[1].root.pinErrorMsg).to.a('string')
+        expect(result[1].root.pinErrorMsg).to.not.be.empty()
+      })
 
-      // have some of the blocks now, should be able to pin one root
-      const result2 = await all(ipfs.dag.import(async function * () { yield input }()))
-      expect(result2).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
-      expect(result2).to.deep.include({ root: { cid: cids[1], pinErrorMsg: 'blockstore: block not found' } })
+      it('have some of the blocks now, should be able to pin one root', async function () {
+        await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
+        const result = await all(ipfs.dag.import(async function * () { yield input }()))
 
-      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
+        expect(result).to.have.lengthOf(2)
+        expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
+        expect(result[0].root.pinErrorMsg).to.a('string')
+        expect(result[0].root.pinErrorMsg).to.be.empty()
+        expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
+        expect(result[1].root.pinErrorMsg).to.a('string')
+        expect(result[1].root.pinErrorMsg).to.not.be.empty()
+      })
 
-      // have all of the blocks now, should be able to pin both
-      const result3 = await all(ipfs.dag.import(async function * () { yield input }()))
-      expect(result3).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
-      expect(result3).to.deep.include({ root: { cid: cids[1], pinErrorMsg: '' } })
+      it('have all of the blocks now, should be able to pin both', async function () {
+        await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
+
+        // have all of the blocks now, should be able to pin both
+        const result3 = await all(ipfs.dag.import(async function * () { yield input }()))
+        expect(result3).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
+        expect(result3).to.deep.include({ root: { cid: cids[1], pinErrorMsg: '' } })
+      })
     })
 
     it('should import lotus devnet genesis shuffled nulroot', async () => {
@@ -155,7 +185,6 @@ export function testImport (factory, options) {
       expect(cids[0].toString()).to.equal('bafkqaaa')
 
       const result = await all(ipfs.dag.import(async function * () { yield input }()))
-      // @ts-ignore chai types are messed up
       expect(result).to.have.nested.deep.property('[0].root.cid', cids[0])
     })
   })
