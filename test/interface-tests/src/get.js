@@ -109,16 +109,14 @@ export function testGet (factory, options) {
     before(async function () {
       ipfs = (await factory.spawn()).api
 
-      await Promise.all([
-        all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),
-        all(importer({ content: fixtures.bigFile.data }, blockstore(ipfs)))
-      ])
+      await ipfs.add({ content: fixtures.smallFile.data })
+      await ipfs.add({ content: fixtures.bigFile.data })
     })
 
     after(async function () { return await factory.clean() })
 
-    it('should respect timeout option when getting files', () => {
-      return testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
+    it('should respect timeout option when getting files', async function () {
+      await testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
         timeout: 1
       })))
     })
