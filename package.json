@@ -150,6 +150,8 @@
     "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
     "lint": "aegir lint",
     "lint:fix": "aegir lint --fix",
+    "check:push": "npm run dep-check && npm run lint && npm run build",
+    "check:push:deep": "npm run check:push && npm run docs && npm run test",
     "clean": "aegir clean",
     "dep-check": "aegir dep-check",
     "release": "aegir release"
