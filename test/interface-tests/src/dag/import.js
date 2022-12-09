@@ -133,7 +133,11 @@ export function testImport (factory, options) {
        */
       let cids
 
+      /** @type {import('ipfs-core-types').IPFS} */
+      let ipfs2
+
       before(async function () {
+        ipfs2 = (await factory.spawn()).api
         reader = await CarReader.fromBytes(input)
         cids = await reader.getRoots()
       })
@@ -142,7 +146,7 @@ export function testImport (factory, options) {
       })
 
       it('naked roots car does not contain blocks', async function () {
-        const result = await all(ipfs.dag.import(async function * () { yield input }()))
+        const result = await all(ipfs2.dag.import(async function * () { yield input }()))
 
         expect(result).to.have.lengthOf(2)
         expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
@@ -154,8 +158,8 @@ export function testImport (factory, options) {
       })
 
       it('have some of the blocks now, should be able to pin one root', async function () {
-        await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
-        const result = await all(ipfs.dag.import(async function * () { yield input }()))
+        await drain(ipfs2.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
+        const result = await all(ipfs2.dag.import(async function * () { yield input }()))
 
         expect(result).to.have.lengthOf(2)
         expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
@@ -167,10 +171,10 @@ export function testImport (factory, options) {
       })
 
       it('have all of the blocks now, should be able to pin both', async function () {
-        await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
+        await drain(ipfs2.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
 
         // have all of the blocks now, should be able to pin both
-        const result3 = await all(ipfs.dag.import(async function * () { yield input }()))
+        const result3 = await all(ipfs2.dag.import(async function * () { yield input }()))
         expect(result3).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
         expect(result3).to.deep.include({ root: { cid: cids[1], pinErrorMsg: '' } })
       })
