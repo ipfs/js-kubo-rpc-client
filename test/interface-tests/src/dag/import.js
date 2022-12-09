@@ -119,65 +119,46 @@ export function testImport (factory, options) {
       }
     })
 
-    /**
-     * Tests inside this describe function are required to run in order.
-     */
-    describe('should import car with roots but no blocks', function () {
+    it('should import car with roots but no blocks', async function () {
       const input = loadFixture('test/interface-tests/fixtures/car/combined_naked_roots_genesis_and_128.car')
-      /**
-       * @type {CarReader}
-       */
-      let reader
-      /**
-       * @type {CID<unknown, number, number, Version>[]}
-       */
-      let cids
 
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs2
+      const reader = await CarReader.fromBytes(input)
+      const cids = await reader.getRoots()
 
-      before(async function () {
-        ipfs2 = (await factory.spawn()).api
-        reader = await CarReader.fromBytes(input)
-        cids = await reader.getRoots()
-      })
-      it('has the correct number of cids', function () {
-        expect(cids).to.have.lengthOf(2)
-      })
+      expect(cids).to.have.lengthOf(2)
 
-      it('naked roots car does not contain blocks', async function () {
-        const result = await all(ipfs2.dag.import(async function * () { yield input }()))
+      let result = await all(ipfs.dag.import((async function * () { yield input }())))
 
-        expect(result).to.have.lengthOf(2)
-        expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
-        expect(result[0].root.pinErrorMsg).to.a('string')
-        expect(result[0].root.pinErrorMsg).to.not.be.empty(`result[0].root.pinErrorMsg should not be empty but contains ${result[0].root.pinErrorMsg}`)
-        expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
-        expect(result[1].root.pinErrorMsg).to.a('string')
-        expect(result[1].root.pinErrorMsg).to.not.be.empty(`result[1].root.pinErrorMsg should not be empty but contains ${result[1].root.pinErrorMsg}`)
-      })
+      expect(result).to.have.lengthOf(2)
+      // naked roots car does not contain blocks
+      expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
+      expect(result[0].root.pinErrorMsg).to.be.a('string')
+      expect(result[0].root.pinErrorMsg).to.not.be.empty(`result[0].root.pinErrorMsg should not be empty but contains ${result[0].root.pinErrorMsg}`)
+      expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
+      expect(result[1].root.pinErrorMsg).to.be.a('string')
+      expect(result[1].root.pinErrorMsg).to.not.be.empty(`result[1].root.pinErrorMsg should not be empty but contains ${result[1].root.pinErrorMsg}`)
 
-      it('have some of the blocks now, should be able to pin one root', async function () {
-        await drain(ipfs2.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
-        const result = await all(ipfs2.dag.import(async function * () { yield input }()))
+      await drain(ipfs.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis_shuffled_nulroot.car') }()))
+      result = await all(ipfs.dag.import((async function * () { yield input }())))
 
-        expect(result).to.have.lengthOf(2)
-        expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
-        expect(result[0].root.pinErrorMsg).to.a('string')
-        expect(result[0].root.pinErrorMsg).to.be.empty()
-        expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
-        expect(result[1].root.pinErrorMsg).to.a('string')
-        expect(result[1].root.pinErrorMsg).to.not.be.empty(`result[1].root.pinErrorMsg should not be empty but contains ${result[1].root.pinErrorMsg}`)
-      })
+      expect(result).to.have.lengthOf(2)
+      expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
+      expect(result[0].root.pinErrorMsg).to.be.a('string')
+      expect(result[0].root.pinErrorMsg).to.be.empty()
+      expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
+      expect(result[1].root.pinErrorMsg).to.be.a('string')
+      expect(result[1].root.pinErrorMsg).to.not.be.empty(`result[1].root.pinErrorMsg should not be empty but contains ${result[1].root.pinErrorMsg}`)
 
-      it('have all of the blocks now, should be able to pin both', async function () {
-        await drain(ipfs2.dag.import(async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }()))
+      await drain(ipfs.dag.import((async function * () { yield loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car') }())))
 
-        // have all of the blocks now, should be able to pin both
-        const result3 = await all(ipfs2.dag.import(async function * () { yield input }()))
-        expect(result3).to.deep.include({ root: { cid: cids[0], pinErrorMsg: '' } })
-        expect(result3).to.deep.include({ root: { cid: cids[1], pinErrorMsg: '' } })
-      })
+      result = await all(ipfs.dag.import((async function * () { yield input }())))
+      // have all of the blocks now, should be able to pin both
+      expect(result[0].root.cid.toString()).to.equal(cids[0].toString())
+      expect(result[0].root.pinErrorMsg).to.be.a('string')
+      expect(result[0].root.pinErrorMsg).to.be.empty()
+      expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
+      expect(result[1].root.pinErrorMsg).to.be.a('string')
+      expect(result[1].root.pinErrorMsg).to.be.empty()
     })
 
     it('should import lotus devnet genesis shuffled nulroot', async () => {

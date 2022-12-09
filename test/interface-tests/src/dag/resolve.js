@@ -25,10 +25,10 @@ export function testResolve (factory, options) {
 
     after(async function () { return await factory.clean() })
 
-    it('should respect timeout option when resolving a path within a DAG node', async () => {
+    it('should respect timeout option when resolving a path within a DAG node', async function () {
       const cid = await ipfs.dag.put({}, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
 
-      return testTimeout(() => ipfs.dag.resolve(cid, {
+      await testTimeout(async () => await ipfs.dag.resolve(cid, {
         timeout: 1
       }))
     })
