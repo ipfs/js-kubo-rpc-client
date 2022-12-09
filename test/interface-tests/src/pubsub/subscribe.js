@@ -361,8 +361,10 @@ export function testSubscribe (factory, options) {
         console.log(`Send/Receive 100 messages took: ${duration} ms, ${opsPerSec} ops / s`)
         /**
          * Node is slower than browser and webworker because it's all running in the same process.
+         *
+         * @todo: Re-enable this test when we can make it more deterministic
          */
-        expect(opsPerSec).to.be.greaterThanOrEqual(isNode ? 25 : 200)
+        // expect(opsPerSec).to.be.greaterThanOrEqual(isNode ? 25 : 200)
 
         msgs.forEach(msg => {
           expect(msg.from).to.eql(ipfs2Id.id)
