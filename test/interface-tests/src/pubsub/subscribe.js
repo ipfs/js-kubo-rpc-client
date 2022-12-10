@@ -479,33 +479,43 @@ export function testSubscribe (factory, options) {
 
         const topic = `topic-${Math.random()}`
 
-        const handler1 = sinon.stub()
-        const handler2 = sinon.stub()
+        const stub1 = sinon.stub()
+        const stub2 = sinon.stub()
 
-        const subscriberFn = async () => await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sinon.stub()),
-          ipfs2.pubsub.subscribe(topic, handler1),
+        let handler1
+        const subscribePromise1 = new Promise((resolve, reject) => {
+          handler1 = (msg) => {
+            stub1(msg)
+            resolve(msg)
+            setTimeout(reject, 15000)
+          }
+          ipfs2.pubsub.subscribe(topic, handler1)
+        })
+        let handler2
+        const subscribePromise2 = new Promise((resolve, reject) => {
+          handler2 = (msg) => {
+            stub2(msg)
+            resolve(msg)
+            setTimeout(reject, 15000)
+          }
           ipfs2.pubsub.subscribe(topic, handler2)
-        ])
+        })
 
-        expect(handler1).to.have.property('callCount', 0)
-        expect(handler2).to.have.property('callCount', 0)
+        expect(stub1).to.have.property('callCount', 0)
+        expect(stub2).to.have.property('callCount', 0)
+        const publisherFn = getPublisherFn(daemon1, daemon2, topic, uint8ArrayFromString('hello world 1'))
 
-        const publisherFn = async () => await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
-        await waitForPubSub(publisherFn, subscriberFn)
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 1)
+        await waitForPubSub(publisherFn, () => Promise.all([subscribePromise1, subscribePromise2]))
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
 
         await ipfs2.pubsub.unsubscribe(topic, handler1)
         await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
 
         await delay(1000)
 
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 2)
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 2)
       })
     })
   })
