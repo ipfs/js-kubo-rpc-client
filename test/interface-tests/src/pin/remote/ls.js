@@ -75,7 +75,6 @@ export function testLs (factory, options) {
         endpoint: ENDPOINT,
         key: KEY
       })
-      await clearPins(ipfs)
     })
     after(async function () {
       await clearServices(ipfs)
@@ -96,6 +95,9 @@ export function testLs (factory, options) {
     describe('after adding pins', function () {
       this.timeout(200 * 1000)
       before(async function () {
+        // another pin is being added somewhere when full test suite is ran
+        // and not being cleared out.
+        await clearPins(ipfs)
         await addRemotePins(ipfs, SERVICE, getTestCIDsAsObject('one', 'pinned-two', 'pinning-three', 'failed-four'))
       })
 
