@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { waitForPeers, getTopic, waitForTopicPeer } from './utils.js'
+import { getTopic, waitForTopicPeer } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
