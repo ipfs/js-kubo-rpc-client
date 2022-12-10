@@ -14,7 +14,6 @@ import pTimeout from 'p-timeout'
 import pRetry from 'p-retry'
 import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import { isPeerId } from '@libp2p/interface-peer-id'
-
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
  */
@@ -31,22 +30,33 @@ import { isPeerId } from '@libp2p/interface-peer-id'
  */
 
 const retryOptions = {
-  retries: 5
+  retries: 5,
+  onFailedAttempt: async ({ attemptNumber }) => {
+    await delay(1000 * attemptNumber)
+  },
+  maxRetryTime: 10000
 }
 
 /**
  * @param {string} topic
  * @param {import('ipfsd-ctl').Controller["peer"]} peer
  * @param {import('ipfsd-ctl').Controller} daemon
+ * @param {Parameters<typeof pRetry>[1]} rOpts
  */
-const waitForTopicPeer = (topic, peer, daemon) => {
+const waitForTopicPeer = (topic, peer, daemon, rOpts = {}) => {
   return pRetry(async () => {
+    // console.log(`waiting for topic ${topic} from peer ${peer.id.toString()} on ${daemon.peer.id.toString()}`)
     const peers = await daemon.api.pubsub.peers(topic)
 
     if (!peers.map(p => p.toString()).includes(peer.id.toString())) {
       throw new Error(`Could not find peer ${peer.id}`)
+    } else {
+      // console.log(`Peer found for topic ${topic}`)
     }
-  }, retryOptions)
+  }, {
+    retryOptions,
+    ...rOpts
+  })
 }
 
 /**
@@ -394,30 +404,39 @@ export function testSubscribe (factory, options) {
         if (!isNode) {
           return this.skip()
         }
+        const d1 = daemon1
+        const d2 = daemon2
 
         const numTopics = 20
-        const expectedStrings = []
-        const subscriberFns = []
-        const publisherFns = []
-
-        for (let i = 0; i < numTopics; i++) {
-          const topic = `pubsub-topic-${i}`
-
+        const resultingMsgs = []
+        const topicTestFn = async (topic) => {
           const expectedString = `hello pubsub ${Math.random().toString(32).slice(2)}`
-          expectedStrings.push(expectedString)
           const data = uint8ArrayFromString(expectedString)
-          subscriberFns.push(getSubscriberFn(daemon1, topic))
-          publisherFns.push(getPublisherFn(daemon2, daemon1, topic, data))
+          return new Promise((resolve, reject) => {
+            (async () => {
+              const subscriptionHandler = async (msg) => {
+                if (msg.type !== 'signed') {
+                  reject(new Error('Message was unsigned'))
+                }
+                validateSubscriptionMessage(d2, topic, msg, data)
+                resultingMsgs.push(msg)
+                // required to unsubscribe if there are more than 6 subscribed topics otherwise it just hangs
+                await d1.api.pubsub.unsubscribe(topic, subscriptionHandler)
+                resolve()
+              }
+              await d1.api.pubsub.subscribe(topic, subscriptionHandler)
+              await waitForTopicPeer(topic, d1.peer, d2, { retries: 15 })
+              await d2.api.pubsub.publish(topic, data)
+            })()
+          })
         }
-        const msgs = await waitForPubSub(
-          () => Promise.all(publisherFns.map(fn => fn())),
-          () => Promise.all(subscriberFns.map(fn => fn()))
-        )
 
-        for (let i = 0; i < numTopics; i++) {
-          expect(uint8ArrayToString(msgs[i].data)).to.equal(expectedStrings[i])
-          expect(msgs[i].from).to.eql(ipfs2Id.id)
-        }
+        const topics = Array(numTopics).fill(0)
+          .map((v, i) => `pubsub-topic-${i}`)
+          .map(topicTestFn)
+        await Promise.all(topics)
+
+        expect(resultingMsgs).to.have.length(numTopics)
       })
 
       it('should unsubscribe multiple handlers', async function () {
