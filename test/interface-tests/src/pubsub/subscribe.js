@@ -3,7 +3,7 @@
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { nanoid } from 'nanoid'
-import { getTopic } from './utils.js'
+import { getTopic, waitForTopicPeer } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
@@ -11,9 +11,9 @@ import { isNode } from 'ipfs-utils/src/env.js'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import sinon from 'sinon'
 import pTimeout from 'p-timeout'
-import pRetry from 'p-retry'
 import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import { isPeerId } from '@libp2p/interface-peer-id'
+
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
  */
@@ -28,36 +28,6 @@ import { isPeerId } from '@libp2p/interface-peer-id'
  * @property {Uint8Array} key
  * @property {Uint8Array} signature
  */
-
-const retryOptions = {
-  retries: 5,
-  onFailedAttempt: async ({ attemptNumber }) => {
-    await delay(1000 * attemptNumber)
-  },
-  maxRetryTime: 10000
-}
-
-/**
- * @param {string} topic
- * @param {import('ipfsd-ctl').Controller["peer"]} peer
- * @param {import('ipfsd-ctl').Controller} daemon
- * @param {Parameters<typeof pRetry>[1]} rOpts
- */
-const waitForTopicPeer = (topic, peer, daemon, rOpts = {}) => {
-  return pRetry(async () => {
-    // console.log(`waiting for topic ${topic} from peer ${peer.id.toString()} on ${daemon.peer.id.toString()}`)
-    const peers = await daemon.api.pubsub.peers(topic)
-
-    if (!peers.map(p => p.toString()).includes(peer.id.toString())) {
-      throw new Error(`Could not find peer ${peer.id}`)
-    } else {
-      // console.log(`Peer found for topic ${topic}`)
-    }
-  }, {
-    retryOptions,
-    ...rOpts
-  })
-}
 
 /**
  *

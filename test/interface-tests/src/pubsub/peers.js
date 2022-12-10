@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { waitForPeers, getTopic } from './utils.js'
+import { waitForPeers, getTopic, waitForTopicPeer } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
@@ -35,11 +35,21 @@ export function testPeers (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs3Id
 
+    /** @type {import('ipfsd-ctl').Controller} */
+    let daemon1
+    /** @type {import('ipfsd-ctl').Controller} */
+    let daemon2
+    /** @type {import('ipfsd-ctl').Controller} */
+    let daemon3
+
     before(async function () {
-      ipfs1 = (await factory.spawn({ ipfsOptions })).api
+      daemon1 = (await factory.spawn({ ipfsOptions }))
+      ipfs1 = daemon1.api
       // webworkers are not dialable because webrtc is not available
-      ipfs2 = (await factory.spawn({ type: 'go', ipfsOptions })).api
-      ipfs3 = (await factory.spawn({ type: 'go', ipfsOptions })).api
+      daemon2 = (await factory.spawn({ type: 'go', ipfsOptions }))
+      ipfs2 = daemon2.api
+      daemon3 = (await factory.spawn({ type: 'go', ipfsOptions }))
+      ipfs3 = daemon3.api
 
       ipfs2Id = await ipfs2.id()
       ipfs3Id = await ipfs3.id()
@@ -74,13 +84,10 @@ export function testPeers (factory, options) {
       const topic = getTopic()
       const peers = await ipfs1.pubsub.peers(topic)
       expect(peers).to.exist()
-      // Should be empty() but as mentioned below go-ipfs returns more than it should
-      // expect(peers).to.be.empty()
+      expect(peers).to.be.empty()
     })
 
     it('should not return extra peers', async () => {
-      // Currently go-ipfs returns peers that have not been
-      // subscribed to the topic. Enable when go-ipfs has been fixed
       const sub1 = () => {}
       const sub2 = () => {}
       const sub3 = () => {}
@@ -99,8 +106,6 @@ export function testPeers (factory, options) {
     })
 
     it('should return peers for a topic - one peer', async () => {
-      // Currently go-ipfs returns peers that have not been
-      // subscribed to the topic. Enable when go-ipfs has been fixed
       const sub1 = () => {}
       const sub2 = () => {}
       const sub3 = () => {}
@@ -112,7 +117,7 @@ export function testPeers (factory, options) {
       await ipfs2.pubsub.subscribe(topic, sub2)
       await ipfs3.pubsub.subscribe(topic, sub3)
 
-      await waitForPeers(ipfs1, topic, [ipfs2Id.id], 30000)
+      await waitForTopicPeer(topic, daemon2.peer, daemon1, { maxRetryTime: 30000 })
     })
 
     it('should return peers for a topic - multiple peers', async () => {
@@ -127,7 +132,8 @@ export function testPeers (factory, options) {
       await ipfs2.pubsub.subscribe(topic, sub2)
       await ipfs3.pubsub.subscribe(topic, sub3)
 
-      await waitForPeers(ipfs1, topic, [ipfs2Id.id, ipfs3Id.id], 30000)
+      await waitForTopicPeer(topic, daemon2.peer, daemon1, { maxRetryTime: 30000 })
+      await waitForTopicPeer(topic, daemon3.peer, daemon1, { maxRetryTime: 30000 })
     })
   })
 }
