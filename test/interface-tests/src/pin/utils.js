@@ -4,6 +4,11 @@ import { CID } from 'multiformats/cid'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import first from 'it-first'
+import { bytes } from 'multiformats'
+import { code, encode } from 'multiformats/codecs/raw'
+import { sha256 } from 'multiformats/hashes/sha2'
+
+const { fromString } = bytes
 
 export const pinTypes = {
   direct: 'direct',
@@ -78,7 +83,22 @@ export const addRemotePins = async (ipfs, service, pins) => {
       background: true
     }))
   }
-  await Promise.all(requests)
+  const settledResults = await Promise.allSettled(requests)
+  const values = []
+  const failures = []
+  settledResults.forEach((settled) => {
+    if (settled.status === 'fulfilled') {
+      values.push(settled.value)
+    } else {
+      failures.push(settled.reason)
+    }
+  })
+
+  if (failures.length > 0) {
+    // eslint-disable-next-line no-console
+    console.error('addRemotePins failures: ', failures)
+  }
+  return values
 }
 
 /**
@@ -126,5 +146,27 @@ export async function isPinnedWithType (ipfs, cid, type) {
     return Boolean(res)
   } catch (/** @type {any} */ err) {
     return false
+  }
+}
+
+/**
+ *
+ * @param {string} value
+ * @returns {Promise<CID<string, 85, 18, 1>>}
+ */
+export async function getInlineCid (value = process.hrtime().toString()) {
+  const inlineUint8Array = fromString(value)
+  try {
+    const bytes = encode(inlineUint8Array)
+    const hash = await sha256.digest(bytes)
+    /**
+     * @type {CID<string, 85, 18, 1>}
+     */
+    const cid = CID.create(1, code, hash)
+    return cid
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Problem creating an inline CID', err)
+    throw err
   }
 }
