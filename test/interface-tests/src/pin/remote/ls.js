@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { addRemotePins, clearServices } from '../utils.js'
+import { addRemotePins, clearServices, clearPins } from '../utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 import all from 'it-all'
@@ -75,6 +75,7 @@ export function testLs (factory, options) {
         endpoint: ENDPOINT,
         key: KEY
       })
+      await clearPins(ipfs)
     })
     after(async function () {
       await clearServices(ipfs)
