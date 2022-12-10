@@ -362,7 +362,7 @@ export function testSubscribe (factory, options) {
         /**
          * Node is slower than browser and webworker because it's all running in the same process.
          *
-         * @todo: Re-enable this test when we can make it more deterministic
+         * TODO: Re-enable this test when we can make it more deterministic
          */
         // expect(opsPerSec).to.be.greaterThanOrEqual(isNode ? 25 : 200)
 
