@@ -143,7 +143,7 @@
     "build": "aegir build",
     "test": "aegir test",
     "docs": "typedoc src/index.js",
-    "test:node": "aegir test -t node --cov",
+    "test:node": "aegir test -t node --cov --bail=false",
     "test:chrome": "aegir test -t browser --cov",
     "test:chrome-webworker": "aegir test -t webworker",
     "test:firefox": "aegir test -t browser -- --browser firefox",
