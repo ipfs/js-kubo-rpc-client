@@ -233,6 +233,7 @@ export function testSubscribe (factory, options) {
     })
 
     describe('multiple connected nodes', () => {
+      this.timeout(120 * 1000)
       it('should receive messages from a different node with floodsub', async function () {
         if (!isNode) {
           return this.skip()
@@ -317,19 +318,36 @@ export function testSubscribe (factory, options) {
 
       it('should receive multiple messages', async () => {
         const outbox = ['hello', 'world', 'this', 'is', 'pubsub']
-        const data = outbox.map((str) => uint8ArrayFromString(str))
 
-        const subscriber1 = getSubscriberFn(daemon2, topic, undefined, data.length)
-        const publisherFn = async () => {
-          for (let i = 0; i < outbox.length; i++) {
-            await daemon1.api.pubsub.publish(topic, data[i])
-          }
-          return Promise.resolve()
-        }
+        const subscriberFn = getSubscriberFn(daemon2, topic, undefined, outbox.length)
+        /**
+         * ensure the subscription is kicked off early, and first.
+         * Its promise does not return until it receives the data
+         */
+        const subscribedPromise = subscriberFn()
 
-        const sub1Msgs = await waitForPubSub(publisherFn, subscriber1, 30000)
+        // collect publish promises to wait on later.
+        const publishPromises = []
+        const validationMap = new Map()
+        outbox.forEach((string, i) => {
+          const dataItem = uint8ArrayFromString(string)
+          const publisherFn = getPublisherFn(daemon1, daemon2, topic, dataItem)
+          // publish early so subscription doesn't timeout
+          publishPromises.push(publisherFn())
+          // keep a map of the string value to the validation function because we can't depend on ordering.
+          validationMap.set(string, (msg) => validateSubscriptionMessage(daemon1, topic, msg, dataItem))
+        })
 
-        sub1Msgs.forEach((msg, i) => validateSubscriptionMessage(daemon1, topic, msg, data[i]))
+        // create a promise function to use with waitForPubSub that waits on all the publish promises
+        const multiplePublisherFns = () => Promise.all(publishPromises)
+        // wait for pubsub between ALL publishings and single subscriber.
+        const sub1Msgs = await waitForPubSub(multiplePublisherFns, () => subscribedPromise)
+
+        expect(sub1Msgs).to.have.length(outbox.length)
+        sub1Msgs.forEach((msg, i) => {
+          const validationFn = validationMap.get(uint8ArrayToString(msg.data))
+          validationFn(msg)
+        })
       })
 
       it('should send/receive 100 messages', async function () {
