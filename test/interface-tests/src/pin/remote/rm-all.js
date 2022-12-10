@@ -28,7 +28,7 @@ export function testRmAll (factory, options) {
   const cid4 = CID.parse('QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu')
 
   describe('.pin.remote.rmAll', function () {
-    this.timeout(50 * 1000)
+    this.timeout(120 * 1000)
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
