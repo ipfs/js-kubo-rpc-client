@@ -122,3 +122,13 @@ export type SwarmAPI = import('ipfs-core-types/src/swarm').API<HTTPClientExtraOp
 
 export type MultibaseCodec<Prefix extends string = any> = import('multiformats/bases/interface').MultibaseCodec<Prefix>
 export type { Message, MultihashHasher }
+
+export interface SubscribeMessage {
+  from: import('ipfsd-ctl').Controller['peer']
+  type: string
+  data: Uint8Array
+  sequenceNumber: BigInt
+  topic: string
+  key: Uint8Array
+  signature: Uint8Array
+}

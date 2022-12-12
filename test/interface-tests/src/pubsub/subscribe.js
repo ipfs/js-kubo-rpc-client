@@ -3,7 +3,7 @@
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { nanoid } from 'nanoid'
-import { getTopic, waitForTopicPeer } from './utils.js'
+import { getTopic, waitForTopicPeer, getSubscriptionTestObject } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
@@ -13,20 +13,12 @@ import sinon from 'sinon'
 import pTimeout from 'p-timeout'
 import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import { isPeerId } from '@libp2p/interface-peer-id'
+import { logger } from '@libp2p/logger'
+const log = logger('js-kubo-rpc-client:pubsub:subscribe:test')
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @typedef SubscribeMessage
- * @property {string} type
- * @property {import('ipfsd-ctl').Controller["peer"]} from
- * @property {Uint8Array} data
- * @property {bigint} sequenceNumber
- * @property {string} topic
- * @property {Uint8Array} key
- * @property {Uint8Array} signature
+ * @typedef {import('../../../../src/types').SubscribeMessage} SubscribeMessage
  */
 
 /**
@@ -46,65 +38,6 @@ const validateSubscriptionMessage = (publisher, topic, msg, data) => {
   expect(msg.from.toString()).to.equal(publisher.peer.id.toString())
 }
 
-/**
- *
- * @param {import('ipfsd-ctl').Controller} subscriber
- * @param {string} topic
- * @param {Parameters<import('ipfsd-ctl').Controller['api']['pubsub']['subscribe']>[2]} [options]
- * @param {number} [totalMessages=1]
- * @returns {() => Promise<SubscribeMessage>}
- */
-const getSubscriberFn = (subscriber, topic, options, totalMessages = 1) => () => new Promise((resolve, reject) => {
-  const allMessages = []
-  subscriber.api.pubsub.subscribe(topic, (msg) => {
-    try {
-      if (msg.type !== 'signed') {
-        throw new Error('Message was unsigned')
-      }
-      allMessages.push(msg)
-
-      if (totalMessages === 1) {
-        return resolve(msg)
-      }
-      if (allMessages.length === totalMessages) {
-        return resolve(allMessages)
-      }
-    } catch (err) {
-      reject(err)
-    }
-  }, options)
-})
-
-/**
- *
- * @param {import('ipfsd-ctl').Controller} publisher
- * @param {import('ipfsd-ctl').Controller} subscriber
- * @param {string} topic
- * @param {Uint8Array} data
- * @returns {() => Promise<void>}
- */
-const getPublisherFn = (publisher, subscriber, topic, data) => async () => {
-  await waitForTopicPeer(topic, subscriber.peer, publisher)
-  await delay(1000) // gossipsub needs this delay https://github.com/libp2p/go-libp2p-pubsub/issues/331
-  await publisher.api.pubsub.publish(topic, data)
-}
-
-/**
- *
- * @param {ReturnType<typeof getPublisherFn>} publisherFn
- * @param {ReturnType<typeof getSubscriberFn>} subscriberFn
- * @param {number} timeout
- * @returns {Promise<SubscribeMessage> | Promise<SubscribeMessage[]>}
- */
-const waitForPubSub = async (publisherFn, subscriberFn, timeout = 200000) => {
-  const result = await Promise.all([
-    pTimeout(subscriberFn(), timeout, 'subscriber timed out'),
-    pTimeout(publisherFn(), timeout, 'publisher timed out')
-  ])
-  return result[0]
-}
-
-// const timeout = 20000
 /**
  * @param {Factory} factory
  * @param {object} options
@@ -133,6 +66,7 @@ export function testSubscribe (factory, options) {
     let ipfs2Id
 
     beforeEach(async function () {
+      log('beforeEach start')
       daemon1 = await factory.spawn({ ipfsOptions, test: true, args: ['--enable-pubsub-experiment'] })
       ipfs1 = daemon1.api
 
@@ -152,63 +86,107 @@ export function testSubscribe (factory, options) {
       expect(peers[0].map((p) => p.peer.toString())).to.include(daemon2.peer.id.toString())
       expect(peers[1].map((p) => p.peer.toString())).to.include(daemon1.peer.id.toString())
       topic = getTopic()
+      log('beforeEach done')
     })
 
-    afterEach(async function () { return factory.clean() })
+    afterEach(async function () {
+      log('afterEach start')
 
-    describe('single node', () => {
+      await daemon1.api.pubsub.unsubscribe()
+      await daemon2.api.pubsub.unsubscribe()
+      await factory.clean()
+
+      log('afterEach done')
+    })
+
+    describe('single node', function () {
       it('should subscribe to one topic', async () => {
         const data = uint8ArrayFromString('hi')
 
-        const subscriber = getSubscriberFn(daemon1, topic)
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          timeout: 5000
+        })
 
-        const msg = await waitForPubSub(
-          () => daemon1.api.pubsub.publish(topic, data),
-          subscriber
-        )
+        await subscriptionTestObj.publishMessage(data)
+        const [msg] = await subscriptionTestObj.waitForMessages()
 
         validateSubscriptionMessage(daemon1, topic, msg, data)
+        await subscriptionTestObj.unsubscribe()
       })
 
       it('should subscribe to one topic with options', async () => {
         const data = uint8ArrayFromString('hi')
 
-        const subscriber = getSubscriberFn(daemon1, topic, {})
-        const publisher = () => daemon1.api.pubsub.publish(topic, data, {})
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          timeout: 5000,
+          options: {}
+        })
 
-        const msg = await waitForPubSub(
-          publisher,
-          subscriber
-        )
+        await subscriptionTestObj.publishMessage(data)
+        const [msg] = await subscriptionTestObj.waitForMessages()
 
         validateSubscriptionMessage(daemon1, topic, msg, data)
+        await subscriptionTestObj.unsubscribe()
       })
 
       it('should subscribe to topic multiple times with different handlers', async () => {
         const expectedString = 'hello'
         const data = uint8ArrayFromString(expectedString)
-        const subscriberFn1 = getSubscriberFn(daemon1, topic)
-        const subscriberFn2 = getSubscriberFn(daemon1, topic)
+        const stub1 = sinon.stub()
+        const stub2 = sinon.stub()
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          subscriptionListener: stub1,
+          timeout: 5000
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          subscriptionListener: stub2,
+          timeout: 5000
+        })
 
-        const [msg1, msg2] = await waitForPubSub(
-          async () => await ipfs1.pubsub.publish(topic, data),
-          () => Promise.all([subscriberFn1(), subscriberFn2()])
-        )
+        expect(stub1).to.have.property('callCount', 0)
+        expect(stub2).to.have.property('callCount', 0)
+        await subscriptionTestObj1.publishMessage(data)
+
+        const [msg1] = await subscriptionTestObj1.waitForMessages()
+        const [msg2] = await subscriptionTestObj2.waitForMessages()
+
         validateSubscriptionMessage(daemon1, topic, msg1, data)
         validateSubscriptionMessage(daemon1, topic, msg2, data)
+
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
+        await subscriptionTestObj1.unsubscribe()
+        await subscriptionTestObj2.unsubscribe()
       })
 
       it('should allow discover option to be passed', async () => {
         const data = uint8ArrayFromString('hi')
 
-        const subscriber = getSubscriberFn(daemon1, topic, { discover: true })
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          timeout: 5000,
+          options: { discover: true }
+        })
 
-        const msg = await waitForPubSub(
-          () => daemon1.api.pubsub.publish(topic, data),
-          subscriber
-        )
+        await subscriptionTestObj.publishMessage(data)
+        const [msg] = await subscriptionTestObj.waitForMessages()
 
         validateSubscriptionMessage(daemon1, topic, msg, data)
+        await subscriptionTestObj.unsubscribe()
       })
     })
 
@@ -246,88 +224,114 @@ export function testSubscribe (factory, options) {
 
         const abort1 = new AbortController()
         const abort2 = new AbortController()
-        const subscriber1 = getSubscriberFn(daemon1, topic, { signal: abort1.signal })
-        const subscriber2 = getSubscriberFn(daemon2, topic, { signal: abort2.signal })
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon2,
+          topic,
+          timeout: 5000,
+          options: { signal: abort1.signal }
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon2,
+          topic,
+          timeout: 5000,
+          options: { signal: abort2.signal }
+        })
 
-        const publisher = getPublisherFn(daemon2, daemon1, topic, data)
-        const [sub1Msg, sub2Msg] = await waitForPubSub(publisher, () => Promise.all([subscriber1(), subscriber2()]))
+        await subscriptionTestObj1.publishMessage(data)
+        const [sub1Msg] = await subscriptionTestObj1.waitForMessages()
+        const [sub2Msg] = await subscriptionTestObj2.waitForMessages()
 
         validateSubscriptionMessage(daemon2, topic, sub1Msg, data)
         validateSubscriptionMessage(daemon2, topic, sub2Msg, data)
         abort1.abort()
         abort2.abort()
+        await subscriptionTestObj1.unsubscribe()
+        await subscriptionTestObj2.unsubscribe()
       })
 
       it('should receive messages from a different node', async () => {
         const expectedString = 'hello from the other side'
         const data = uint8ArrayFromString(expectedString)
 
-        const subscriber1 = getSubscriberFn(daemon2, topic)
-        const publisher1 = getPublisherFn(daemon1, daemon2, topic, data)
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          topic,
+          timeout: 5000
+        })
 
-        let msg = await waitForPubSub(publisher1, subscriber1)
+        await subscriptionTestObj1.publishMessage(data)
+        let [msg] = await subscriptionTestObj1.waitForMessages()
+        await subscriptionTestObj1.unsubscribe()
+
         validateSubscriptionMessage(daemon1, topic, msg, data)
 
-        const subscriber2 = getSubscriberFn(daemon1, topic)
-        const publisher2 = getPublisherFn(daemon2, daemon1, topic, data)
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon2,
+          topic,
+          timeout: 5000
+        })
 
-        msg = await waitForPubSub(publisher2, subscriber2)
+        await subscriptionTestObj2.publishMessage(data);
+        [msg] = await subscriptionTestObj2.waitForMessages()
         validateSubscriptionMessage(daemon2, topic, msg, data)
+        await subscriptionTestObj2.unsubscribe()
       })
 
       it('should round trip a non-utf8 binary buffer', async () => {
         const expectedHex = 'a36161636179656162830103056164a16466666666f4'
         const buffer = uint8ArrayFromString(expectedHex, 'base16')
 
-        const subscriber1 = getSubscriberFn(daemon2, topic)
-        const publisher1 = getPublisherFn(daemon1, daemon2, topic, buffer)
-        const subscriber2 = getSubscriberFn(daemon1, topic)
-        const publisher2 = getPublisherFn(daemon2, daemon1, topic, buffer)
-
-        const sub1Msg = await waitForPubSub(publisher1, subscriber1)
-        const sub2Msg = await waitForPubSub(publisher2, subscriber2)
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          topic,
+          timeout: 5000
+        })
+        await subscriptionTestObj.publishMessage(buffer)
+        const [sub1Msg] = await subscriptionTestObj.waitForMessages()
 
         expect(uint8ArrayToString(sub1Msg.data, 'base16')).to.be.eql(expectedHex)
         expect(sub1Msg.from.toString()).to.eql(ipfs1Id.id.toString())
         validateSubscriptionMessage(daemon1, topic, sub1Msg, buffer)
-
-        expect(uint8ArrayToString(sub2Msg.data, 'base16')).to.be.eql(expectedHex)
-        expect(sub2Msg.from.toString()).to.eql(ipfs2Id.id.toString())
-        validateSubscriptionMessage(daemon2, topic, sub2Msg, buffer)
+        await subscriptionTestObj.unsubscribe()
       })
 
-      it('should receive multiple messages', async () => {
+      it('.pubsub.subscribe - should receive multiple messages', async () => {
         const outbox = ['hello', 'world', 'this', 'is', 'pubsub']
 
-        const subscriberFn = getSubscriberFn(daemon2, topic, undefined, outbox.length)
         /**
          * ensure the subscription is kicked off early, and first.
          * Its promise does not return until it receives the data
          */
-        const subscribedPromise = subscriberFn()
-
-        // collect publish promises to wait on later.
-        const publishPromises = []
-        const validationMap = new Map()
-        outbox.forEach((string, i) => {
-          const dataItem = uint8ArrayFromString(string)
-          const publisherFn = getPublisherFn(daemon1, daemon2, topic, dataItem)
-          // publish early so subscription doesn't timeout
-          publishPromises.push(publisherFn())
-          // keep a map of the string value to the validation function because we can't depend on ordering.
-          validationMap.set(string, (msg) => validateSubscriptionMessage(daemon1, topic, msg, dataItem))
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          topic,
+          timeout: 15000
         })
 
-        // create a promise function to use with waitForPubSub that waits on all the publish promises
-        const multiplePublisherFns = () => Promise.all(publishPromises)
-        // wait for pubsub between ALL publishings and single subscriber.
-        const sub1Msgs = await waitForPubSub(multiplePublisherFns, () => subscribedPromise)
+        const validationMap = new Map()
+        const publishPromises = outbox.map(async (string, i) => {
+          const dataItem = uint8ArrayFromString(string)
+          // keep a map of the string value to the validation function because we can't depend on ordering.
+          // eslint-disable-next-line max-nested-callbacks
+          validationMap.set(string, (msg) => validateSubscriptionMessage(daemon1, topic, msg, dataItem))
+          return await subscriptionTestObj.publishMessage(dataItem)
+        })
+        await Promise.all(publishPromises)
+
+        const sub1Msgs = await subscriptionTestObj.waitForMessages(outbox.length)
 
         expect(sub1Msgs).to.have.length(outbox.length)
         sub1Msgs.forEach((msg, i) => {
           const validationFn = validationMap.get(uint8ArrayToString(msg.data))
           validationFn(msg)
         })
+        await subscriptionTestObj.unsubscribe()
       })
 
       it('should send/receive 100 messages', async function () {
@@ -335,22 +339,22 @@ export function testSubscribe (factory, options) {
 
         const msgBase = 'msg - '
         const count = 100
-        const subscriberFn = getSubscriberFn(daemon1, topic, undefined, count)
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon2,
+          topic,
+          timeout: 15000
+        })
 
         /**
          * @type {number}
          */
-        let startTime
-        const publisherFn = async () => {
-          startTime = startTime ?? new Date().getTime()
-          for (let i = 0; i < count; i++) {
-            const msgData = uint8ArrayFromString(msgBase + i)
-            await ipfs2.pubsub.publish(topic, msgData)
-          }
-          return Promise.resolve()
+        const startTime = new Date().getTime()
+        for (let i = 0; i < count; i++) {
+          const data = uint8ArrayFromString(msgBase + i)
+          await subscriptionTestObj.publishMessage(data)
         }
-
-        const msgs = await waitForPubSub(publisherFn, subscriberFn)
+        const msgs = await subscriptionTestObj.waitForMessages(count)
 
         const duration = new Date().getTime() - startTime
         const opsPerSec = Math.floor(count / (duration / 1000))
@@ -371,40 +375,31 @@ export function testSubscribe (factory, options) {
       })
 
       it('should receive messages from a different node on lots of topics', async function () {
-        if (!isNode) {
-          return this.skip()
-        }
-        const d1 = daemon1
-        const d2 = daemon2
-
-        const numTopics = 20
+        // we can only currently have 6 topics subscribed at a time
+        const numTopics = 6
         const resultingMsgs = []
-        const topicTestFn = async (topic) => {
+        const msgPromises = []
+        for (let i = 0; i < numTopics; i++) {
+          const topic = `pubsub-topic-${i}`
+          // const topicTestFn = async (topic) => {
           const expectedString = `hello pubsub ${Math.random().toString(32).slice(2)}`
           const data = uint8ArrayFromString(expectedString)
-          return new Promise((resolve, reject) => {
-            (async () => {
-              const subscriptionHandler = async (msg) => {
-                if (msg.type !== 'signed') {
-                  reject(new Error('Message was unsigned'))
-                }
-                validateSubscriptionMessage(d2, topic, msg, data)
-                resultingMsgs.push(msg)
-                // required to unsubscribe if there are more than 6 subscribed topics otherwise it just hangs
-                await d1.api.pubsub.unsubscribe(topic, subscriptionHandler)
-                resolve()
-              }
-              await d1.api.pubsub.subscribe(topic, subscriptionHandler)
-              await waitForTopicPeer(topic, d1.peer, d2, { retries: 15 })
-              await d2.api.pubsub.publish(topic, data)
-            })()
+          const subscriptionTestObj = await getSubscriptionTestObject({
+            subscriber: daemon1,
+            publisher: daemon2,
+            subscriptionListener: async (msg) => {
+              // required to unsubscribe if there are more than 6 subscribed topics otherwise we get ERR_STREAM_PREMATURE_CLOSE
+              // await subscriptionTestObj.unsubscribe()
+              resultingMsgs.push(msg)
+            },
+            topic,
+            timeout: 2000
           })
+          await subscriptionTestObj.publishMessage(data)
+          // const [msg] = await
+          msgPromises.push(subscriptionTestObj.waitForMessages(1, { retries: 30, maxRetryTime: 40000 }))
         }
-
-        const topics = Array(numTopics).fill(0)
-          .map((v, i) => `pubsub-topic-${i}`)
-          .map(topicTestFn)
-        await Promise.all(topics)
+        await Promise.all(msgPromises)
 
         expect(resultingMsgs).to.have.length(numTopics)
       })
@@ -414,34 +409,45 @@ export function testSubscribe (factory, options) {
 
         const topic = `topic-${Math.random()}`
 
-        const handler1 = sinon.stub()
-        const handler2 = sinon.stub()
+        const stub1 = sinon.stub()
+        const stub2 = sinon.stub()
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub1,
+          topic,
+          timeout: 5000
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub2,
+          topic,
+          timeout: 5000
+        })
 
-        const subscriberFn = async () => await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sinon.stub()),
-          ipfs2.pubsub.subscribe(topic, handler1),
-          ipfs2.pubsub.subscribe(topic, handler2)
+        expect(stub1).to.have.property('callCount', 0)
+        expect(stub2).to.have.property('callCount', 0)
+
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
+
+        await subscriptionTestObj1.waitForMessages()
+        await subscriptionTestObj2.waitForMessages()
+
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
+
+        await daemon2.api.pubsub.unsubscribe(topic)
+
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
+
+        await Promise.all([
+          expect(subscriptionTestObj1.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1'),
+          expect(subscriptionTestObj2.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1')
         ])
 
-        expect(handler1).to.have.property('callCount', 0)
-        expect(handler2).to.have.property('callCount', 0)
-
-        const publisherFn = async () => await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
-        await waitForPubSub(publisherFn, subscriberFn)
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 1)
-
-        await ipfs2.pubsub.unsubscribe(topic)
-
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 1)
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
       })
 
       it('should unsubscribe individual handlers', async function () {
@@ -451,38 +457,39 @@ export function testSubscribe (factory, options) {
 
         const stub1 = sinon.stub()
         const stub2 = sinon.stub()
-
-        let handler1
-        const subscribePromise1 = new Promise((resolve, reject) => {
-          handler1 = (msg) => {
-            stub1(msg)
-            resolve(msg)
-            setTimeout(reject, 15000)
-          }
-          ipfs2.pubsub.subscribe(topic, handler1)
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub1,
+          topic,
+          timeout: 5000
         })
-        let handler2
-        const subscribePromise2 = new Promise((resolve, reject) => {
-          handler2 = (msg) => {
-            stub2(msg)
-            resolve(msg)
-            setTimeout(reject, 15000)
-          }
-          ipfs2.pubsub.subscribe(topic, handler2)
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub2,
+          topic,
+          timeout: 5000
         })
 
         expect(stub1).to.have.property('callCount', 0)
         expect(stub2).to.have.property('callCount', 0)
-        const publisherFn = getPublisherFn(daemon1, daemon2, topic, uint8ArrayFromString('hello world 1'))
 
-        await waitForPubSub(publisherFn, () => Promise.all([subscribePromise1, subscribePromise2]))
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
+        await subscriptionTestObj1.waitForMessages()
+        await subscriptionTestObj2.waitForMessages()
+
         expect(stub1).to.have.property('callCount', 1)
         expect(stub2).to.have.property('callCount', 1)
 
-        await ipfs2.pubsub.unsubscribe(topic, handler1)
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
+        await subscriptionTestObj1.unsubscribe()
 
-        await delay(1000)
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
+
+        await Promise.all([
+          expect(subscriptionTestObj1.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1'),
+          expect(subscriptionTestObj2.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.eventually.have.lengthOf(2)
+        ])
 
         expect(stub1).to.have.property('callCount', 1)
         expect(stub2).to.have.property('callCount', 2)
