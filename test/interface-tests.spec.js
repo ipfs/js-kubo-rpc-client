@@ -168,12 +168,7 @@ function executeTests (commonFactory) {
     ]
   })
 
-  tests.miscellaneous(commonFactory, {
-    skip: [
-      // FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56
-      ...['should resolve IPNS link recursively by default', 'should resolve IPNS link non-recursively if recursive==false'].map((name) => ({ name, reason: 'FIXME: HTTPError: routing: operation or key not supported' }))
-    ]
-  })
+  tests.miscellaneous(commonFactory)
 
   tests.name(factory({
     type: 'go',
