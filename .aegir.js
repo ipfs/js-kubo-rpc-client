@@ -1,7 +1,13 @@
 import { createServer } from 'ipfsd-ctl'
-import getPort from 'aegir/get-port'
 import EchoServer from 'aegir/echo-server'
 
+/**
+ * @typedef {object} BeforeType
+ * @property {import('ipfsd-ctl').Controller} server
+ * @property {EchoServer} echoServer
+ * @property {typeof import('./test/utils/mock-pinning-service.js')} pinningService
+ * @property {Record<string, string>} env
+ */
 /** @type {import('aegir').PartialOptions} */
 export default {
   build: {
@@ -9,11 +15,15 @@ export default {
   },
   test: {
     bail: false,
+    /**
+     *
+     * @param {Parameters<import('aegir').Options['test']['before']>[0]} options
+     * @returns {Promise<BeforeType>}
+     */
     async before (options) {
       const { PinningService } = await import('./test/utils/mock-pinning-service.js')
       const pinningService = await PinningService.start()
       const server = createServer({
-        host: '127.0.0.1',
         port: 0
       }, {
         type: 'go',
@@ -25,6 +35,9 @@ export default {
       await echoServer.start()
 
       await server.start()
+      /**
+       * @type {BeforeType}
+       */
       return {
         server,
         echoServer,
