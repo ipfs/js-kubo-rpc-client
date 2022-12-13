@@ -11,7 +11,7 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import last from 'it-last'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { brokenDuringKuboRpcClientMigration, isFirefox } from '../../constants.js'
+import { isFirefox } from '../../constants.js'
 
 const echoUrl = (/** @type {string} */ text) => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
 const redirectUrl = (/** @type {string} */ url) => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
@@ -185,9 +185,6 @@ export function testAdd (factory, options) {
     })
 
     it('should add readable stream', async function () {
-      if (brokenDuringKuboRpcClientMigration()) {
-        return this.skip('Skipping due to time constraints. See https://github.com/ipfs/js-kubo-rpc-client/issues/5')
-      }
       if (!isNode) {
         // @ts-ignore this is mocha
         this.skip()

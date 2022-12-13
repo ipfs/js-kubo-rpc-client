@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 
-import { nanoid } from 'nanoid'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { sha512 } from 'multiformats/hashes/sha2'
@@ -25,34 +24,6 @@ export function testMkdir (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-
-    /**
-     * @param {number | string | undefined} mode
-     * @param {number} expectedMode
-     */
-    async function testMode (mode, expectedMode) {
-      const testPath = `/test-${nanoid()}`
-      await ipfs.files.mkdir(testPath, {
-        mode
-      })
-
-      const stats = await ipfs.files.stat(testPath)
-      expect(stats).to.have.property('mode', expectedMode)
-    }
-
-    /**
-     * @param {import('ipfs-unixfs').MtimeLike} mtime
-     * @param {import('ipfs-unixfs').MtimeLike} expectedMtime
-     */
-    async function testMtime (mtime, expectedMtime) {
-      const testPath = `/test-${nanoid()}`
-      await ipfs.files.mkdir(testPath, {
-        mtime
-      })
-
-      const stats = await ipfs.files.stat(testPath)
-      expect(stats).to.have.deep.property('mtime', expectedMtime)
-    }
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
@@ -173,54 +144,6 @@ export function testMkdir (factory, options) {
       })
 
       await expect(ipfs.files.stat(subDirectoryPath)).to.eventually.have.nested.property('cid.multihash.code', sha512.code)
-    })
-
-    it('should make directory and have default mode', async function () {
-      await testMode(undefined, parseInt('0755', 8))
-    })
-
-    it('should make directory and specify mode as string', async function () {
-      const mode = '0321'
-      await testMode(mode, parseInt(mode, 8))
-    })
-
-    it('should make directory and specify mode as number', async function () {
-      const mode = parseInt('0321', 8)
-      await testMode(mode, mode)
-    })
-
-    it('should make directory and specify mtime as Date', async function () {
-      const mtime = new Date(5000)
-      await testMtime(mtime, {
-        secs: 5,
-        nsecs: 0
-      })
-    })
-
-    it('should make directory and specify mtime as { nsecs, secs }', async function () {
-      const mtime = {
-        secs: 5,
-        nsecs: 0
-      }
-      await testMtime(mtime, mtime)
-    })
-
-    it('should make directory and specify mtime as timespec', async function () {
-      await testMtime({
-        Seconds: 5,
-        FractionalNanoseconds: 0
-      }, {
-        secs: 5,
-        nsecs: 0
-      })
-    })
-
-    it('should make directory and specify mtime as hrtime', async function () {
-      const mtime = process.hrtime()
-      await testMtime(mtime, {
-        secs: mtime[0],
-        nsecs: mtime[1]
-      })
     })
 
     describe('with sharding', () => {

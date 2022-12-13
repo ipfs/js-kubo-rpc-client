@@ -9,6 +9,12 @@ import { createRm } from './rm.js'
  */
 export function createBootstrap (config) {
   return {
+    /**
+     * TODO: Add bootstrap.add.default
+     * TODO: Remove bootstrap.clear
+     * TODO: Remove bootstrap.reset
+     * TODO: Add bootstrap.rmAll
+     */
     add: createAdd(config),
     clear: createClear(config),
     list: createList(config),

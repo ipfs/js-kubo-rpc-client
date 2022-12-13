@@ -34,16 +34,6 @@ export function testApply (factory, options) {
       expect(newConfig.Swarm?.ConnMgr?.LowWater).to.equal(diff.updated.Swarm?.ConnMgr?.LowWater)
     })
 
-    it('should strip private key from diff output', async () => {
-      const originalConfig = await ipfs.config.getAll()
-      const diff = await ipfs.config.profiles.apply('default-networking', { dryRun: true })
-
-      // should have stripped private key from diff output
-      expect(originalConfig).to.have.nested.property('Identity.PrivKey')
-      expect(diff).to.not.have.nested.property('original.Identity.PrivKey')
-      expect(diff).to.not.have.nested.property('updated.Identity.PrivKey')
-    })
-
     it('should not apply a config profile in dry-run mode', async () => {
       const originalConfig = await ipfs.config.getAll()
 

@@ -15,7 +15,7 @@ import bufferStream from 'it-buffer-stream'
 import * as raw from 'multiformats/codecs/raw'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { isFirefox, notImplemented } from '../../constants.js'
+import { isFirefox } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -416,68 +416,6 @@ export function testAddAll (factory, options) {
       expect(files[0].cid.toString()).to.equal('bafkreifojmzibzlof6xyh5auu3r5vpu5l67brf3fitaf73isdlglqw2t7q')
       expect(files[0].cid.code).to.equal(raw.code)
       expect(files[0].size).to.equal(3)
-    })
-
-    it('should support bidirectional streaming', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      let progressInvoked = false
-
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      const handler = (bytes, path) => {
-        progressInvoked = true
-      }
-
-      const source = async function * () {
-        yield {
-          content: 'hello',
-          path: '/file'
-        }
-
-        await new Promise((resolve) => {
-          const interval = setInterval(() => {
-            // we've received a progress result, that means we've received some
-            // data from the server before we're done sending data to the server
-            // so the streaming is bidirectional and we can finish up
-            if (progressInvoked) {
-              clearInterval(interval)
-              resolve(null)
-            }
-          }, 10)
-        })
-      }
-
-      await drain(ipfs.addAll(source(), {
-        progress: handler,
-        fileImportConcurrency: 1
-      }))
-
-      expect(progressInvoked).to.be.true()
-    })
-
-    it('should error during add-all stream', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const source = async function * () {
-        yield {
-          content: 'hello',
-          path: '/file'
-        }
-
-        yield {
-          content: 'hello',
-          path: '/file'
-        }
-      }
-
-      await expect(drain(ipfs.addAll(source(), {
-        fileImportConcurrency: 1,
-        chunker: 'rabin-2048--50' // invalid chunker parameters, validated after the stream starts moving
-      }))).to.eventually.be.rejectedWith(/Chunker parameter avg must be an integer/)
     })
 
     it('should add big files', async function () {

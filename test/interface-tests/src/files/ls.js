@@ -6,8 +6,6 @@ import { getDescribe, getIt } from '../utils/mocha.js'
 import { CID } from 'multiformats/cid'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import all from 'it-all'
-import { randomBytes } from 'iso-random-stream'
-import * as raw from 'multiformats/codecs/raw'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -20,7 +18,6 @@ import * as raw from 'multiformats/codecs/raw'
 export function testLs (factory, options) {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const largeFile = randomBytes(490668)
 
   describe('.files.ls', function () {
     this.timeout(120 * 1000)
@@ -103,63 +100,6 @@ export function testLs (factory, options) {
 
     it('fails to list non-existent file', async () => {
       await expect(all(ipfs.files.ls('/i-do-not-exist'))).to.eventually.be.rejected()
-    })
-
-    it('lists a raw node', async () => {
-      const filePath = '/stat/large-file.txt'
-
-      await ipfs.files.write(filePath, largeFile, {
-        create: true,
-        parents: true,
-        rawLeaves: true
-      })
-
-      const stats = await ipfs.files.stat(filePath)
-      const { value: node } = await ipfs.dag.get(stats.cid)
-
-      expect(node).to.have.nested.property('Links[0].Hash.code', raw.code)
-
-      const child = node.Links[0]
-      const files = await all(ipfs.files.ls(`/ipfs/${child.Hash}`))
-
-      expect(files).to.have.lengthOf(1).and.to.containSubset([{
-        cid: child.Hash,
-        name: child.Hash.toString(),
-        size: 262144,
-        type: 'file'
-      }])
-    })
-
-    it('lists a raw node in an mfs directory', async () => {
-      const filePath = '/stat/large-file.txt'
-
-      await ipfs.files.write(filePath, largeFile, {
-        create: true,
-        parents: true,
-        rawLeaves: true
-      })
-
-      const stats = await ipfs.files.stat(filePath)
-      const cid = stats.cid
-      const { value: node } = await ipfs.dag.get(cid)
-
-      expect(node).to.have.nested.property('Links[0].Hash.code', raw.code)
-
-      const child = node.Links[0]
-      const dir = `/dir-with-raw-${Math.random()}`
-      const path = `${dir}/raw-${Math.random()}`
-
-      await ipfs.files.mkdir(dir)
-      await ipfs.files.cp(`/ipfs/${child.Hash}`, path)
-
-      const files = await all(ipfs.files.ls(`/ipfs/${child.Hash}`))
-
-      expect(files).to.have.lengthOf(1).and.to.containSubset([{
-        cid: child.Hash,
-        name: child.Hash.toString(),
-        size: 262144,
-        type: 'file'
-      }])
     })
 
     describe('with sharding', () => {

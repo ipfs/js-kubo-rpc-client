@@ -177,14 +177,6 @@ export function testGet (factory, options) {
       expect(result.value).to.eql('I am inside a Cbor object')
     })
 
-    it('should get only a CID, due to resolving locally only', async function () {
-      const result = await ipfs.dag.get(cidCbor, {
-        path: 'pb/Data',
-        localResolve: true
-      })
-      expect(result.value.equals(cidPb)).to.be.true()
-    })
-
     it('should get dag-pb value via dag-cbor node', async function () {
       const result = await ipfs.dag.get(cidCbor, {
         path: 'pb/Data'
@@ -200,27 +192,6 @@ export function testGet (factory, options) {
     it('should get with options and no path', async function () {
       const result = await ipfs.dag.get(cidCbor, { localResolve: true })
       expect(result.value).to.deep.equal(nodeCbor)
-    })
-
-    it('should get a node added as CIDv0 with a CIDv1', async () => {
-      const input = uint8ArrayFromString(`TEST${Math.random()}`)
-
-      const node = {
-        Data: input,
-        Links: []
-      }
-
-      const cid = await ipfs.dag.put(node, {
-        storeCodec: 'dag-pb',
-        hashAlg: 'sha2-256',
-        version: 0
-      })
-      expect(cid.version).to.equal(0)
-
-      const cidv1 = cid.toV1()
-
-      const output = await ipfs.dag.get(cidv1)
-      expect(output.value.Data).to.eql(input)
     })
 
     it('should get a node added as CIDv1 with a CIDv0', async () => {

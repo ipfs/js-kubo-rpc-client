@@ -192,38 +192,5 @@ export function testLs (factory, options) {
         // TODO: go-ipfs does not return error codes
         // .with.property('code').that.equals('ERR_INVALID_PIN_TYPE')
     })
-
-    it('should list pins with metadata', async () => {
-      const { cid } = await ipfs.add(`data-${Math.random()}`, {
-        pin: false
-      })
-
-      const metadata = {
-        key: 'value',
-        one: 2,
-        array: [{
-          thing: 'subthing'
-        }],
-        obj: {
-          foo: 'bar',
-          baz: ['qux']
-        }
-      }
-
-      await ipfs.pin.add(cid, {
-        recursive: false,
-        metadata
-      })
-
-      const pinset = await all(ipfs.pin.ls({
-        paths: cid
-      }))
-
-      expect(pinset).to.have.deep.members([{
-        type: 'direct',
-        cid,
-        metadata
-      }])
-    })
   })
 }

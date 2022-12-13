@@ -1,4 +1,3 @@
-import { createChmod } from './chmod.js'
 import { createCp } from './cp.js'
 import { createFlush } from './flush.js'
 import { createLs } from './ls.js'
@@ -7,7 +6,6 @@ import { createMv } from './mv.js'
 import { createRead } from './read.js'
 import { createRm } from './rm.js'
 import { createStat } from './stat.js'
-import { createTouch } from './touch.js'
 import { createWrite } from './write.js'
 
 /**
@@ -15,7 +13,6 @@ import { createWrite } from './write.js'
  */
 export function createFiles (config) {
   return {
-    chmod: createChmod(config),
     cp: createCp(config),
     flush: createFlush(config),
     ls: createLs(config),
@@ -24,7 +21,6 @@ export function createFiles (config) {
     read: createRead(config),
     rm: createRm(config),
     stat: createStat(config),
-    touch: createTouch(config),
     write: createWrite(config)
   }
 }

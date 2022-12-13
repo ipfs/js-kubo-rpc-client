@@ -6,10 +6,7 @@ import { fixtures } from '../utils/index.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import { CID } from 'multiformats/cid'
-import { identity } from 'multiformats/hashes/identity'
 import { randomBytes } from 'iso-random-stream'
-import isShardAtPath from '../utils/is-shard-at-path.js'
 import * as raw from 'multiformats/codecs/raw'
 
 /**
@@ -36,9 +33,8 @@ export function testStat (factory, options) {
       ipfs = (await factory.spawn({
         args: factory.opts.type === 'go' ? [] : ['--enable-sharding-experiment']
       })).api
+      await ipfs.add(fixtures.smallFile.data)
     })
-
-    before(async function () { await ipfs.add(fixtures.smallFile.data) })
 
     after(async function () { return await factory.clean() })
 
@@ -65,10 +61,6 @@ export function testStat (factory, options) {
         blocks: 0,
         type: 'directory'
       })
-    })
-
-    it.skip('computes how much of the DAG is local', async () => {
-
     })
 
     it('stats a small file', async () => {
@@ -152,73 +144,6 @@ export function testStat (factory, options) {
       expect(rawNodeStats.type).to.equal('file') // this is what go does
     })
 
-    it('stats a dag-cbor node', async () => {
-      const path = '/cbor.node'
-      const node = {}
-      const cid = await ipfs.dag.put(node, {
-        storeCodec: 'dag-cbor',
-        hashAlg: 'sha2-256'
-      })
-      await ipfs.files.cp(`/ipfs/${cid}`, path)
-
-      const stats = await ipfs.files.stat(path)
-
-      expect(stats.cid.toString()).to.equal(cid.toString())
-    })
-
-    it('stats an identity CID', async () => {
-      const data = uint8ArrayFromString('derp')
-      const path = `/test-${nanoid()}/identity.node`
-      const hash = await identity.digest(data)
-      const cid = CID.createV1(identity.code, hash)
-      await ipfs.block.put(data, {
-        mhtype: 'identity'
-      })
-      await ipfs.files.cp(`/ipfs/${cid}`, path, {
-        parents: true
-      })
-
-      const stats = await ipfs.files.stat(path)
-
-      expect(stats.cid.toString()).to.equal(cid.toString())
-      expect(stats).to.have.property('size', data.length)
-    })
-
-    it('should stat file with mode', async function () {
-      const testDir = `/test-${nanoid()}`
-
-      await ipfs.files.mkdir(testDir, { parents: true })
-      await ipfs.files.write(`${testDir}/b`, uint8ArrayFromString('Hello, world!'), { create: true })
-
-      const stat = await ipfs.files.stat(`${testDir}/b`)
-
-      expect(stat).to.include({
-        mode: 0o644
-      })
-    })
-
-    it('should stat file with mtime', async function () {
-      const testDir = `/test-${nanoid()}`
-
-      await ipfs.files.mkdir(testDir, { parents: true })
-      await ipfs.files.write(`${testDir}/b`, uint8ArrayFromString('Hello, world!'), {
-        create: true,
-        mtime: {
-          secs: 5,
-          nsecs: 0
-        }
-      })
-
-      const stat = await ipfs.files.stat(`${testDir}/b`)
-
-      expect(stat).to.deep.include({
-        mtime: {
-          secs: 5,
-          nsecs: 0
-        }
-      })
-    })
-
     it('should stat dir', async function () {
       const testDir = `/test-${nanoid()}`
 
@@ -235,121 +160,6 @@ export function testStat (factory, options) {
       })
       expect(stat.local).to.be.undefined()
       expect(stat.sizeLocal).to.be.undefined()
-    })
-
-    it('should stat dir with mode', async function () {
-      const testDir = `/test-${nanoid()}`
-
-      await ipfs.files.mkdir(testDir, { parents: true })
-      const stat = await ipfs.files.stat(testDir)
-
-      expect(stat).to.include({
-        mode: 0o755
-      })
-    })
-
-    it('should stat dir with mtime', async function () {
-      const testDir = `/test-${nanoid()}`
-
-      await ipfs.files.mkdir(testDir, {
-        parents: true,
-        mtime: {
-          secs: 5,
-          nsecs: 0
-        }
-      })
-
-      const stat = await ipfs.files.stat(testDir)
-
-      expect(stat).to.deep.include({
-        mtime: {
-          secs: 5,
-          nsecs: 0
-        }
-      })
-    })
-
-    it('should stat sharded dir with mode', async function () {
-      const testDir = `/test-${nanoid()}`
-
-      await ipfs.files.mkdir(testDir, { parents: true })
-      await ipfs.files.write(`${testDir}/a`, uint8ArrayFromString('Hello, world!'), {
-        create: true,
-        shardSplitThreshold: 0
-      })
-
-      const stat = await ipfs.files.stat(testDir)
-
-      await expect(isShardAtPath(testDir, ipfs)).to.eventually.be.true()
-      expect(stat).to.have.property('type', 'directory')
-      expect(stat).to.include({
-        mode: 0o755
-      })
-    })
-
-    it('should stat sharded dir with mtime', async function () {
-      const testDir = `/test-${nanoid()}`
-
-      await ipfs.files.mkdir(testDir, {
-        parents: true,
-        mtime: {
-          secs: 5,
-          nsecs: 0
-        }
-      })
-      await ipfs.files.write(`${testDir}/a`, uint8ArrayFromString('Hello, world!'), {
-        create: true,
-        shardSplitThreshold: 0
-      })
-
-      const stat = await ipfs.files.stat(testDir)
-
-      await expect(isShardAtPath(testDir, ipfs)).to.eventually.be.true()
-      expect(stat).to.have.property('type', 'directory')
-      expect(stat).to.deep.include({
-        mtime: {
-          secs: 5,
-          nsecs: 0
-        }
-      })
-    })
-
-    // TODO enable this test when this feature gets released on go-ipfs
-    it.skip('should stat withLocal file', async function () {
-      const stat = await ipfs.files.stat('/test/b', { withLocal: true })
-
-      expect({
-        ...stat,
-        cid: stat.cid.toString()
-      }).to.eql({
-        type: 'file',
-        blocks: 1,
-        size: 13,
-        cid: 'QmcZojhwragQr5qhTeFAmELik623Z21e3jBTpJXoQ9si1T',
-        cumulativeSize: 71,
-        withLocality: true,
-        local: true,
-        sizeLocal: 71
-      })
-    })
-
-    // TODO enable this test when this feature gets released on go-ipfs
-    it.skip('should stat withLocal dir', async function () {
-      const stat = await ipfs.files.stat('/test', { withLocal: true })
-
-      expect({
-        ...stat,
-        cid: stat.cid.toString()
-      }).to.eql({
-        type: 'directory',
-        blocks: 2,
-        size: 0,
-        cid: 'QmVrkkNurBCeJvPRohW5JTvJG4AxGrFg7FnmsZZUS6nJto',
-        cumulativeSize: 216,
-        withLocality: true,
-        local: true,
-        sizeLocal: 216
-      })
     })
 
     it('should stat outside of mfs', async () => {

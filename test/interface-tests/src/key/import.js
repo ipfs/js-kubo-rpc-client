@@ -18,7 +18,7 @@ export function testImport (factory, options) {
   const it = getIt(options)
 
   describe('.key.import', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
+    /** @type {import('../../../../src/types.js').IPFSHTTPClient} */
     let ipfs
 
     before(async function () {

@@ -50,8 +50,18 @@ export interface EndpointConfig {
 export interface IpfsUtilsHttpClient extends IpfsUtilsHttp {
 
 }
+type OldRpcClientConfigApi = IPFS<HTTPClientExtraOptions>['config']
+interface KuboRpcClientConfigApi extends Omit<OldRpcClientConfigApi, 'profiles'> {
+  profiles: Omit<OldRpcClientConfigApi['profiles'], 'list'>
+}
 
-export interface IPFSHTTPClient extends IPFS<HTTPClientExtraOptions> {
+export interface KuboRpcClientApi extends Omit<IPFS<HTTPClientExtraOptions>, 'files' | 'bitswap' | 'config'> {
+  bitswap: Omit<IPFS<HTTPClientExtraOptions>['bitswap'], 'unwant'>
+  config: KuboRpcClientConfigApi
+  files: Omit<IPFS<HTTPClientExtraOptions>['files'], 'chmod' | 'touch'>
+}
+
+export interface IPFSHTTPClient extends KuboRpcClientApi {
   getEndpointConfig: () => EndpointConfig
 }
 

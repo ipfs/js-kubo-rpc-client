@@ -1,16 +1,19 @@
 import { createWantlist } from './wantlist.js'
 import { createWantlistForPeer } from './wantlist-for-peer.js'
 import { createStat } from './stat.js'
-import { createUnwant } from './unwant.js'
 
 /**
  * @param {import('../types').Options} config
  */
 export function createBitswap (config) {
   return {
+    /**
+     * TODO: Add bitswap.ledger
+     * TODO: Add bitswap.reprovide
+     * TODO: Remove bitswap.wantlistForPeer
+     */
     wantlist: createWantlist(config),
     wantlistForPeer: createWantlistForPeer(config),
-    unwant: createUnwant(config),
     stat: createStat(config)
   }
 }
