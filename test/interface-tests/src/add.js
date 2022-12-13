@@ -368,7 +368,8 @@ export function testAdd (factory, options) {
       expect(cid.toString()).to.eql('QmWWM8ZV6GPhqJ46WtKcUaBPNHN5yQaFsKDSQ1RE73w94Q')
     })
 
-    describe('with sharding', () => {
+    describe('with sharding', function () {
+      this.timeout(200 * 1000)
       /** @type {import('ipfs-core-types').IPFS} */
       let ipfs
 
