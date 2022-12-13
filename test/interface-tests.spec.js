@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { isBrowser, isWebWorker } from 'ipfs-utils/src/env.js'
-import { isWindows, isFirefox } from './constants.js'
+import { isWindows, isFirefox, isChrome } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
 
@@ -251,6 +251,12 @@ function executeTests (commonFactory) {
           'should pin dag-cbor' // only seems to fail when running all tests together.
         ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
       : [])
+      .concat(isChrome
+        ? [{
+            name: 'should default to blocking pin',
+            reason: 'FIXME: intermittently failing. see https://github.com/ipfs/js-kubo-rpc-client/issues/56'
+          }]
+        : [])
   })
 
   tests.ping(commonFactory, {
