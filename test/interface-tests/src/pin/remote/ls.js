@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { addRemotePins, clearServices, clearPins } from '../utils.js'
+import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 import all from 'it-all'
@@ -59,7 +59,7 @@ export function testLs (factory, options) {
 
   const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
-  const SERVICE = 'pinbot'
+  const SERVICE = 'pinbot-pin.remote.ls'
 
   describe('.pin.remote.ls', function () {
     this.timeout(120 * 1000)
@@ -77,6 +77,7 @@ export function testLs (factory, options) {
       })
     })
     after(async function () {
+      await clearRemotePins(ipfs)
       await clearServices(ipfs)
       await factory.clean()
     })
@@ -97,7 +98,7 @@ export function testLs (factory, options) {
       before(async function () {
         // another pin is being added somewhere when full test suite is ran
         // and not being cleared out.
-        await clearPins(ipfs)
+        await clearRemotePins(ipfs)
         await addRemotePins(ipfs, SERVICE, getTestCIDsAsObject('one', 'pinned-two', 'pinning-three', 'failed-four'))
       })
 

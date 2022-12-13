@@ -20,7 +20,7 @@ export function testRmAll (factory, options) {
 
   const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
-  const SERVICE = 'pinbot'
+  const SERVICE = 'pinbot-pin.remote.rmAll'
 
   const cid1 = CID.parse('QmbKtKBrmeRHjNCwR4zAfCJdMVu6dgmwk9M9AE9pUM9RgG')
   const cid2 = CID.parse('QmdFyxZXsFiP4csgfM5uPu99AvFiKH62CSPDw5TP92nr7w')

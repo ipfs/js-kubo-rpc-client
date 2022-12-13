@@ -18,7 +18,7 @@ export function testAdd (factory, options) {
 
   const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
-  const SERVICE = 'pinbot'
+  const SERVICE = 'pinbot-pin.remote.add'
 
   describe('.pin.remote.add', function () {
     this.timeout(50 * 1000)
