@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { isBrowser, isWebWorker } from 'ipfs-utils/src/env.js'
+import { isWebWorker } from 'ipfs-utils/src/env.js'
 import { isWindows, isFirefox, isChrome } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
