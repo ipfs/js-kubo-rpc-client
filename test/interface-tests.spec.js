@@ -288,37 +288,21 @@ function executeTests (commonFactory) {
 }
 
 describe('kubo-rpc-client tests against kubo', function () {
-  const goVersionsToTest = ['current']
-  /**
-   * Enable running the tests across all go-ipfs versions listed below.
-   * Works best with `--bail=false` otherwise the tests will stop at the first
-   * failure.
-   */
-  if (process.env.GO_IPFS_GAMUT != null) {
-    goVersionsToTest.push(...['12.0', '12', '13', '14', '15', '16'])
-  }
   (async function () {
-    for (const version of goVersionsToTest) {
-      let ipfsBin
-      try {
-        const { path } = await import(`go-ipfs-${version}`)
-        ipfsBin = path()
-      } catch {
-        ipfsBin = undefined
-      }
+    const { path } = await import('go-ipfs')
+    const ipfsBin = path()
 
-      const commonFactory = factory({
-        type: 'go',
-        ipfsBin,
-        test: true
-      }, {
-        go: {
-          ipfsBin
-        }
-      })
-      describe(`go-ipfs ${version}${ipfsBin != null ? `at ${ipfsBin}` : ''}`, function () {
-        executeTests(commonFactory)
-      })
-    }
+    const commonFactory = factory({
+      type: 'go',
+      ipfsBin,
+      test: true
+    }, {
+      go: {
+        ipfsBin
+      }
+    })
+    describe('kubo RPC client interface tests', function () {
+      executeTests(commonFactory)
+    })
   })()
 })
