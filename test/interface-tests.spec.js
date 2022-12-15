@@ -290,7 +290,15 @@ function executeTests (commonFactory) {
 describe('kubo-rpc-client tests against kubo', function () {
   (async function () {
     const { path } = await import('go-ipfs')
-    const ipfsBin = path()
+    /**
+     * @type {string|undefined}
+     */
+    let ipfsBin
+    try {
+      ipfsBin = path()
+    } catch {
+      ipfsBin = undefined
+    }
 
     const commonFactory = factory({
       type: 'go',
