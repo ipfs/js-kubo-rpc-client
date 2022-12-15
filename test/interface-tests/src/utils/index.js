@@ -30,3 +30,9 @@ export const fixtures = Object.freeze({
     data: new Uint8Array(0)
   })
 })
+
+/**
+ * @param {{ cid: CID }} a
+ * @param {{ cid: CID }} b
+ */
+export const byCID = (a, b) => a.cid.toString() > b.cid.toString() ? 1 : -1

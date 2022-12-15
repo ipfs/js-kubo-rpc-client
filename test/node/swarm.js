@@ -10,7 +10,7 @@ describe('.swarm.peers', function () {
   const ipfs = httpClient('/ip4/127.0.0.1/tcp/5001')
   const apiUrl = 'http://127.0.0.1:5001'
 
-  it('handles a peer response', async () => {
+  it('handles a peer response', async function () {
     const response = { Peers: [{ Addr: '/ip4/104.131.131.82/tcp/4001', Peer: 'QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ', Latency: '', Muxer: '', Streams: null }] }
 
     const scope = nock(apiUrl)
@@ -28,7 +28,7 @@ describe('.swarm.peers', function () {
     expect(scope.isDone()).to.equal(true)
   })
 
-  it('handles an ip6 quic peer', async () => {
+  it('handles an ip6 quic peer', async function () {
     const response = { Peers: [{ Addr: '/ip6/2001:8a0:7ac5:4201:3ac9:86ff:fe31:7095/udp/4001/quic', Peer: 'QmcgpsyWgH8Y8ajJz1Cu72KnS5uo2Aa2LpzU7kinSupNKC', Latency: '', Muxer: '', Streams: null }] }
 
     const scope = nock(apiUrl)
@@ -46,7 +46,7 @@ describe('.swarm.peers', function () {
     expect(scope.isDone()).to.equal(true)
   })
 
-  it('handles an error response', async () => {
+  it('handles an error response', async function () {
     const scope = nock(apiUrl)
       .post('/api/v0/swarm/peers')
       .query(true)

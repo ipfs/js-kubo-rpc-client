@@ -44,9 +44,9 @@ describe('custom headers', function () {
 
   let ipfs
 
-  describe('supported in the constructor', () => {
+  describe('supported in the constructor', function () {
     // initialize ipfs with custom headers
-    before(() => {
+    before(function () {
       ipfs = httpClient({
         host: 'localhost',
         port: 6001,
@@ -57,13 +57,13 @@ describe('custom headers', function () {
       })
     })
 
-    it('regular API calls', async () => {
+    it('regular API calls', async function () {
       const headers = await startServer(() => ipfs.id())
 
       expect(headers.authorization).to.equal('Bearer YOLO')
     })
 
-    it('multipart API calls', async () => {
+    it('multipart API calls', async function () {
       const headers = await startServer(() => ipfs.files.write('/foo/bar', uint8ArrayFromString('derp'), {
         create: true
       }))
@@ -72,9 +72,9 @@ describe('custom headers', function () {
     })
   })
 
-  describe('supported as API call arguemnts', () => {
+  describe('supported as API call arguemnts', function () {
     // initialize ipfs with custom headers
-    before(() => {
+    before(function () {
       ipfs = httpClient({
         host: 'localhost',
         port: 6001,
@@ -82,7 +82,7 @@ describe('custom headers', function () {
       })
     })
 
-    it('regular API calls', async () => {
+    it('regular API calls', async function () {
       const headers = await startServer(() => ipfs.id({
         headers: {
           authorization: 'Bearer OLOY'
@@ -92,7 +92,7 @@ describe('custom headers', function () {
       expect(headers.authorization).to.equal('Bearer OLOY')
     })
 
-    it('multipart API calls', async () => {
+    it('multipart API calls', async function () {
       const headers = await startServer(() => ipfs.files.write('/foo/bar', uint8ArrayFromString('derp'), {
         create: true,
         headers: {

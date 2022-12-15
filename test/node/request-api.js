@@ -1,11 +1,10 @@
 /* eslint-env mocha */
-
+import http from 'http'
 import { expect } from 'aegir/chai'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { create as httpClient } from '../../src/index.js'
-import http from 'http'
 
-describe('\'deal with HTTP weirdness\' tests', () => {
+describe('\'deal with HTTP weirdness\' tests', function () {
   it('does not crash if no content-type header is provided', async function () {
     // go-ipfs always (currently) adds a content-type header, even if no content is present,
     // the standard behaviour for an http-api is to omit this header if no content is present
@@ -25,34 +24,41 @@ describe('\'deal with HTTP weirdness\' tests', () => {
   })
 })
 
-describe('trailer headers', () => {
-  // TODO: needs fixing https://github.com/ipfs/js-ipfs-http-client/pull/624#issuecomment-344181950
-  it.skip('should deal with trailer x-stream-error correctly', (done) => {
+describe('trailer headers', function () {
+  it('should deal with trailer x-stream-error correctly', async function () {
+    this.timeout(5 * 1000)
     const server = http.createServer((req, res) => {
       res.setHeader('x-chunked-output', '1')
       res.setHeader('content-type', 'application/json')
       res.setHeader('Trailer', 'X-Stream-Error')
-      res.addTrailers({ 'X-Stream-Error': JSON.stringify({ Message: 'ups, something went wrong', Code: 500 }) })
       res.write(JSON.stringify({ Bytes: 1 }))
+      res.addTrailers({ 'X-Stream-Error': JSON.stringify({ Message: 'ups, something went wrong', Code: 500 }) })
       res.end()
     })
 
-    server.listen(6001, () => {
-      const ipfs = httpClient('/ip4/127.0.0.1/tcp/6001')
-      /* eslint-disable */
-      ipfs.add(uint8ArrayFromString('Hello there!'), (err, res) => {
-        // TODO: error's are not being correctly
-        // propagated with Trailer headers yet
-        // expect(err).to.exist()
-        expect(res).to.not.equal(0)
-        server.close(done)
-      })
-      /* eslint-enable */
-    })
+    const ipfs = httpClient('/ip4/127.0.0.1/tcp/6001')
+
+    await server.listen(6001)
+
+    try {
+      const res = await ipfs.add(uint8ArrayFromString('Hello there!'))
+
+      expect(res).to.be.undefined()
+      /**
+       * TODO: We shouldn't have to close all connections.. X-Stream-Error should signal to the client that the connection should be closed
+       * Without this, the test will hang
+       */
+      await server.closeAllConnections()
+      await server.close()
+    } catch (err) {
+      // TODO: error's are not being correctly
+      // propagated with Trailer headers yet
+      // expect(err).to.exist()
+    }
   })
 })
 
-describe('error handling', () => {
+describe('error handling', function () {
   it('should handle plain text error response', async function () {
     const server = http.createServer((req, res) => {
       // Consume the entire request, before responding.

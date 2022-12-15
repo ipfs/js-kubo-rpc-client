@@ -54,18 +54,6 @@
       "require": "./dist/src/index.js"
     }
   },
-  "eslintConfig": {
-    "extends": [
-      "ipfs",
-      "plugin:jsdoc/recommended"
-    ],
-    "parserOptions": {
-      "sourceType": "module"
-    },
-    "plugins": [
-      "jsdoc"
-    ]
-  },
   "release": {
     "branches": [
       "master"
@@ -155,12 +143,15 @@
     "build": "aegir build",
     "test": "aegir test",
     "docs": "typedoc src/index.js",
-    "test:node": "aegir test -t node --cov",
+    "test:node": "aegir test -t node --cov --bail=false",
     "test:chrome": "aegir test -t browser --cov",
     "test:chrome-webworker": "aegir test -t webworker",
     "test:firefox": "aegir test -t browser -- --browser firefox",
     "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
     "lint": "aegir lint",
+    "lint:fix": "aegir lint --fix",
+    "check:push": "npm run dep-check && npm run lint && npm run build",
+    "check:push:deep": "npm run check:push && npm run test",
     "clean": "aegir clean",
     "dep-check": "aegir dep-check",
     "release": "aegir release"
@@ -188,6 +179,7 @@
   },
   "devDependencies": {
     "@ipld/car": "^5.0.0",
+    "@libp2p/interface-peer-id": "^1.0.6",
     "@libp2p/interface-peer-info": "^1.0.2",
     "@libp2p/interface-pubsub": "^3.0.0",
     "@libp2p/interfaces": "^3.0.3",
@@ -197,11 +189,12 @@
     "did-jwt": "^6.8.0",
     "eslint-config-ipfs": "^3.1.0",
     "eslint-plugin-jsdoc": "^39.3.6",
-    "go-ipfs": "^0.16.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "go-ipfs": "^0.17.0",
     "ipfs-core-types": "^0.13.0",
     "ipfs-unixfs": "^8.0.0",
     "ipfs-unixfs-importer": "^11.0.1",
-    "ipfsd-ctl": "^12.2.1",
+    "ipfsd-ctl": "^12.2.2",
     "ipns": "^4.0.0",
     "is-ipfs": "^7.0.2",
     "iso-random-stream": "^2.0.2",
@@ -222,6 +215,7 @@
     "p-defer": "^4.0.0",
     "p-map": "^5.5.0",
     "p-retry": "^5.1.1",
+    "p-timeout": "^4.1.0",
     "pako": "^2.0.4",
     "peer-id": "^0.16.0",
     "readable-stream": "^4.2.0",

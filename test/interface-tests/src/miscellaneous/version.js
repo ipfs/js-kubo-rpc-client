@@ -19,27 +19,17 @@ export function testVersion (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should get the node version', async () => {
       const result = await ipfs.version()
       expect(result).to.have.a.property('version')
       expect(result).to.have.a.property('commit')
       expect(result).to.have.a.property('repo')
-    })
-
-    it('should include the ipfs-http-client version', async () => {
-      const result = await ipfs.version()
-      expect(result).to.have.a.property('ipfs-http-client')
-    })
-
-    it('should include the interface-ipfs-core version', async () => {
-      const result = await ipfs.version()
-      expect(result).to.have.a.property('interface-ipfs-core')
     })
   })
 }

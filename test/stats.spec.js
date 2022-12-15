@@ -10,13 +10,13 @@ describe('stats', function () {
 
   let ipfs
 
-  before(async () => {
+  before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
-  it('.stats.bitswap', async () => {
+  it('.stats.bitswap', async function () {
     const res = await ipfs.stats.bitswap()
 
     expect(res).to.exist()
@@ -31,7 +31,7 @@ describe('stats', function () {
     expect(res).to.have.a.property('dupDataReceived')
   })
 
-  it('.stats.bw', async () => {
+  it('.stats.bw', async function () {
     const res = (await all(ipfs.stats.bw()))[0]
 
     expect(res).to.exist()
@@ -41,7 +41,7 @@ describe('stats', function () {
     expect(res).to.have.a.property('rateOut')
   })
 
-  it('.stats.repo', async () => {
+  it('.stats.repo', async function () {
     const res = await ipfs.stats.repo()
 
     expect(res).to.exist()

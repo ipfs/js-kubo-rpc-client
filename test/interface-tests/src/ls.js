@@ -6,7 +6,6 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
 import testTimeout from './utils/test-timeout.js'
-import { notImplemented } from '../../constants.js'
 
 /**
  * @param {string} prefix
@@ -31,11 +30,11 @@ export function testLs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when listing files', () => {
       return testTimeout(() => ipfs.ls(CID.parse('QmNonExistentCiD8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXg'), {
@@ -186,34 +185,6 @@ export function testLs (factory, options) {
       })
     })
 
-    it('should ls with metadata', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const dir = randomName('DIR')
-      const mtime = new Date()
-      const mode = '0532'
-      const expectedMode = parseInt(mode, 8)
-      const expectedMtime = {
-        secs: Math.floor(mtime.getTime() / 1000),
-        nsecs: (mtime.getTime() - (Math.floor(mtime.getTime() / 1000) * 1000)) * 1000
-      }
-
-      const input = [
-        { path: `${dir}/${randomName('F0')}`, content: randomName('D0'), mode, mtime },
-        { path: `${dir}/${randomName('F1')}`, content: randomName('D1'), mode, mtime }
-      ]
-
-      const res = await all(ipfs.addAll(input))
-      const output = await all(ipfs.ls(`/ipfs/${res[res.length - 1].cid}`))
-
-      expect(output).to.have.lengthOf(input.length)
-      expect(output[0].mtime).to.deep.equal(expectedMtime)
-      expect(output[0].mode).to.equal(expectedMode)
-      expect(output[1].mtime).to.deep.equal(expectedMtime)
-      expect(output[1].mode).to.equal(expectedMode)
-    })
-
     it('should ls files by subdir', async () => {
       const dir = randomName('DIR')
       const subdir = randomName('F0')
@@ -243,33 +214,6 @@ export function testLs (factory, options) {
       expect(output[0]).to.have.property('path', path)
     })
 
-    it('should ls single file with metadata', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const dir = randomName('DIR')
-      const file = randomName('F0')
-
-      const input = {
-        path: `${dir}/${file}`,
-        content: randomName('D1'),
-        mode: 0o631,
-        mtime: {
-          secs: 5000,
-          nsecs: 100
-        }
-      }
-
-      const res = await ipfs.add(input)
-      const path = `${res.cid}/${file}`
-      const output = await all(ipfs.ls(res.cid))
-
-      expect(output).to.have.lengthOf(1)
-      expect(output[0]).to.have.property('path', path)
-      expect(output[0]).to.have.property('mode', input.mode)
-      expect(output[0]).to.have.deep.property('mtime', input.mtime)
-    })
-
     it('should ls single file without containing directory', async () => {
       const input = { content: randomName('D1') }
 
@@ -278,28 +222,6 @@ export function testLs (factory, options) {
 
       expect(output).to.have.lengthOf(1)
       expect(output[0]).to.have.property('path', res.cid.toString())
-    })
-
-    it('should ls single file without containing directory with metadata', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const input = {
-        content: randomName('D1'),
-        mode: 0o631,
-        mtime: {
-          secs: 5000,
-          nsecs: 100
-        }
-      }
-
-      const res = await ipfs.add(input)
-      const output = await all(ipfs.ls(res.cid))
-
-      expect(output).to.have.lengthOf(1)
-      expect(output[0]).to.have.property('path', res.cid.toString())
-      expect(output[0]).to.have.property('mode', input.mode)
-      expect(output[0]).to.have.deep.property('mtime', input.mtime)
     })
   })
 }

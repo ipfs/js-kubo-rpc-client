@@ -22,17 +22,20 @@ export function testLocalAddrs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should list local addresses the node is listening on', async () => {
       const multiaddrs = await ipfs.swarm.localAddrs()
 
       expect(multiaddrs).to.be.an.instanceOf(Array)
 
+      /**
+       * Conditional tests are bad, mmmkay.
+       */
       if (isWebWorker && factory.opts.type === 'proc') {
         expect(multiaddrs).to.have.lengthOf(0)
       } else {

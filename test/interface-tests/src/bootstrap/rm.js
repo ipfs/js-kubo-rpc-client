@@ -25,9 +25,9 @@ export function testRm (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should return an error when called with an invalid arg', () => {
       // @ts-expect-error invalid input

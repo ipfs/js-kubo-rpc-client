@@ -30,15 +30,15 @@ export function testPing (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let nodeBId
 
-    before(async () => {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+    before(async function () {
+      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       nodeBId = await ipfsB.id()
       await ipfsA.swarm.connect(nodeBId.addresses[0])
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should send the specified number of packets', async () => {
       const count = 3

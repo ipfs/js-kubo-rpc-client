@@ -6,7 +6,6 @@ import { getDescribe, getIt } from '../utils/mocha.js'
 import { nanoid } from 'nanoid'
 import all from 'it-all'
 import last from 'it-last'
-import drain from 'it-drain'
 import { CID } from 'multiformats/cid'
 import * as raw from 'multiformats/codecs/raw'
 import testTimeout from '../utils/test-timeout.js'
@@ -27,14 +26,18 @@ export function testRm (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
-    it('should respect timeout option when removing a block', () => {
-      return testTimeout(() => drain(ipfs.block.rm(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
+    it('should respect timeout option when removing a block', async function () {
+      const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
+        storeCodec: 'raw',
+        hashAlg: 'sha2-256'
+      })
+      await testTimeout(async () => await ipfs.block.rm(CID.parse(cid.toString()), {
         timeout: 1
-      })))
+      }))
     })
 
     it('should remove by CID object', async () => {
@@ -97,7 +100,7 @@ export function testRm (factory, options) {
       const result = await all(ipfs.block.rm(cid))
 
       expect(result).to.be.an('array').and.to.have.lengthOf(1)
-      expect(result).to.have.nested.property('[0].error.message').that.includes('block not found')
+      expect(result).to.have.nested.property('[0].error.message').that.is.not.empty()
     })
 
     it('should not error when force removing non-existent blocks', async () => {

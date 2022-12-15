@@ -27,13 +27,13 @@ export function testMv (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
-
-    before(async () => {
+    before(async function () {
+      ipfs = (await factory.spawn()).api
       await ipfs.files.mkdir('/test/lv1/lv2', { parents: true })
       await ipfs.files.write('/test/a', uint8ArrayFromString('Hello, world!'), { create: true })
     })
-    after(() => factory.clean())
+
+    after(async function () { return await factory.clean() })
 
     it('refuses to move files without arguments', async () => {
       // @ts-expect-error invalid args

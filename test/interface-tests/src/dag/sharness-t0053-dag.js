@@ -21,9 +21,9 @@ export function testDagSharnessT0053 (factory, options) {
   describe('.dag (sharness-t0053-dag)', () => {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     /** @type {CID} */
     let hash1
@@ -46,7 +46,7 @@ export function testDagSharnessT0053 (factory, options) {
     const ipldDagJsonHash = 'baguqeerajwksxu3lxpomdwxvosl542zl3xknhjgxtq3277gafrhl6vdw5tcq'
     const ipldDagPbHash = 'bafybeibazl2z4vqp2tmwcfag6wirmtpnomxknqcgrauj7m2yisrz3qjbom'
 
-    before(async () => {
+    before(async function () {
       hash1 = (await ipfs.add({ content: 'foo\n', path: 'file1' })).cid
       hash2 = (await ipfs.add({ content: 'bar\n', path: 'file2' })).cid
       hash3 = (await ipfs.add({ content: 'baz\n', path: 'file3' })).cid

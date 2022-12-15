@@ -25,12 +25,12 @@ export function testStat (factory, options) {
     /** @type {CID} */
     let cid
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when statting a block', () => {
       return testTimeout(() => ipfs.block.stat(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {

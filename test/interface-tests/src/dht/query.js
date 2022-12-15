@@ -26,14 +26,14 @@ export function testQuery (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeB
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
 
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when querying the DHT', async () => {
       const nodeBId = await nodeB.id()
@@ -50,11 +50,11 @@ export function testQuery (factory, options) {
 
       for await (const event of nodeA.dht.query(nodeBId.id)) {
         if (event.name === 'PEER_RESPONSE') {
-          peers.push(...event.closer.map(data => data.id))
+          peers.push(...event.closer.map(data => data.id.toString()))
         }
       }
 
-      expect(peers).to.include(nodeBId.id)
+      expect(peers).to.include(nodeBId.id.toString())
     })
   })
 }

@@ -20,11 +20,11 @@ export function testApply (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should apply a config profile', async () => {
       const diff = await ipfs.config.profiles.apply('lowpower')
@@ -32,16 +32,6 @@ export function testApply (factory, options) {
 
       const newConfig = await ipfs.config.getAll()
       expect(newConfig.Swarm?.ConnMgr?.LowWater).to.equal(diff.updated.Swarm?.ConnMgr?.LowWater)
-    })
-
-    it('should strip private key from diff output', async () => {
-      const originalConfig = await ipfs.config.getAll()
-      const diff = await ipfs.config.profiles.apply('default-networking', { dryRun: true })
-
-      // should have stripped private key from diff output
-      expect(originalConfig).to.have.nested.property('Identity.PrivKey')
-      expect(diff).to.not.have.nested.property('original.Identity.PrivKey')
-      expect(diff).to.not.have.nested.property('updated.Identity.PrivKey')
     })
 
     it('should not apply a config profile in dry-run mode', async () => {

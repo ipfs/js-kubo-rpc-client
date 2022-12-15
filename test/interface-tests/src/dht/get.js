@@ -28,14 +28,14 @@ export function testGet (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeB
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
 
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when getting a value from the DHT', async () => {
       const data = await nodeA.add('should put a value to the DHT')

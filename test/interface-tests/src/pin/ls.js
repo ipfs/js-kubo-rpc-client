@@ -23,7 +23,7 @@ export function testLs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       // two files wrapped in directories, only root CID pinned recursively
       const dir = fixtures.directory.files.map((file) => ({ path: file.path, content: file.data }))
@@ -37,7 +37,7 @@ export function testLs (factory, options) {
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     // 1st, because ipfs.add pins automatically
     it('should list all recursive pins', async () => {
@@ -191,39 +191,6 @@ export function testLs (factory, options) {
         .to.eventually.be.rejected()
         // TODO: go-ipfs does not return error codes
         // .with.property('code').that.equals('ERR_INVALID_PIN_TYPE')
-    })
-
-    it('should list pins with metadata', async () => {
-      const { cid } = await ipfs.add(`data-${Math.random()}`, {
-        pin: false
-      })
-
-      const metadata = {
-        key: 'value',
-        one: 2,
-        array: [{
-          thing: 'subthing'
-        }],
-        obj: {
-          foo: 'bar',
-          baz: ['qux']
-        }
-      }
-
-      await ipfs.pin.add(cid, {
-        recursive: false,
-        metadata
-      })
-
-      const pinset = await all(ipfs.pin.ls({
-        paths: cid
-      }))
-
-      expect(pinset).to.have.deep.members([{
-        type: 'direct',
-        cid,
-        metadata
-      }])
     })
   })
 }

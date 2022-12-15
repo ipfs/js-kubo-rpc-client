@@ -27,7 +27,7 @@ export function testResolve (factory, options) {
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn({
         ipfsOptions: {
           config: {
@@ -41,7 +41,7 @@ export function testResolve (factory, options) {
       nodeId = peerInfo.id
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should resolve a record default options', async function () {
       // @ts-ignore this is mocha
@@ -66,7 +66,7 @@ export function testResolve (factory, options) {
 
       // Represent Peer ID as CIDv1 Base32
       // https://github.com/libp2p/specs/blob/master/RFC/0001-text-peerid-cid.md
-      const keyCid = CID.createV1(0x72, Digest.decode(PeerId.parse(peerId).toBytes()))
+      const keyCid = CID.createV1(0x72, Digest.decode(PeerId.parse(peerId.toString()).toBytes()))
       const resolvedPath = await last(ipfs.name.resolve(`/ipns/${keyCid}`))
 
       expect(resolvedPath).to.equal(`/ipfs/${cid}`)
@@ -154,11 +154,11 @@ export function testResolve (factory, options) {
     let ipfs
     this.retries(5)
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should resolve /ipns/ipfs.io', async () => {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io')))

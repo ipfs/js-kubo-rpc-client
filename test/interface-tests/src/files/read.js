@@ -3,7 +3,6 @@
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import drain from 'it-drain'
 import all from 'it-all'
-import { fixtures } from '../utils/index.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
@@ -28,9 +27,9 @@ export function testRead (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('reads a small file', async () => {
       const filePath = '/small-file.txt'
@@ -104,12 +103,6 @@ export function testRead (factory, options) {
       const path = `/file-${Math.random()}.txt`
 
       await expect(drain(ipfs.files.read(path))).to.eventually.be.rejectedWith(/does not exist/)
-    })
-
-    it('should read from outside of mfs', async () => {
-      const { cid } = await ipfs.add(fixtures.smallFile.data)
-      const testFileData = uint8ArrayConcat(await all(ipfs.files.read(`/ipfs/${cid}`)))
-      expect(testFileData).to.eql(fixtures.smallFile.data)
     })
 
     describe('with sharding', () => {

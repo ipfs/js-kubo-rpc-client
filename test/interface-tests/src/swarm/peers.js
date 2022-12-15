@@ -31,8 +31,8 @@ export function testPeers (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsBId
 
-    before(async () => {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+    before(async function () {
+      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
@@ -41,7 +41,7 @@ export function testPeers (factory, options) {
       // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should list peers this node is connected to', async () => {
       const peers = await ipfsA.swarm.peers()
@@ -51,14 +51,22 @@ export function testPeers (factory, options) {
 
       expect(peer).to.have.a.property('addr')
       expect(isMultiaddr(peer.addr)).to.equal(true)
-      expect(peer).to.have.a.property('peer').that.is.a('string')
-      expect(PeerId.parse(peer.peer)).to.be.ok()
-      expect(peer).to.not.have.a.property('latency')
-
-      /* TODO: These assertions must be uncommented as soon as
-         https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
-      // expect(peer).to.have.a.property('muxer')
-      // expect(peer).to.not.have.a.property('streams')
+      expect(peer.peer.toString()).not.to.be.undefined()
+      expect(PeerId.parse(peer.peer.toString())).to.be.ok()
+      expect(isMultiaddr(peer.addr)).to.equal(true)
+      expect(peer).to.have.a.property('direction')
+      expect(peer.direction).to.be.oneOf(['inbound', 'outbound'])
+      /**
+       * When verbose: true is not passed, these will default to empty strings or null
+       */
+      expect(peer).to.have.a.property('latency')
+      expect(peer.latency).to.be.a('string')
+      expect(peer.latency).to.be.empty()
+      expect(peer).to.have.a.property('muxer')
+      expect(peer.muxer).to.be.a('string')
+      expect(peer.muxer).to.be.empty()
+      expect(peer).to.have.a.property('streams')
+      expect(peer.streams).to.equal(null)
     })
 
     it('should list peers this node is connected to with verbose option', async () => {
@@ -69,13 +77,16 @@ export function testPeers (factory, options) {
       expect(peer).to.have.a.property('addr')
       expect(isMultiaddr(peer.addr)).to.equal(true)
       expect(peer).to.have.a.property('peer')
+      expect(peer).to.have.a.property('direction')
+      expect(peer.direction).to.be.oneOf(['inbound', 'outbound'])
       expect(peer).to.have.a.property('latency')
       expect(peer.latency).to.match(/n\/a|[0-9]+[mµ]?s/) // n/a or 3ms or 3µs or 3s
-
-      /* TODO: These assertions must be uncommented as soon as
-         https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
-      // expect(peer).to.have.a.property('muxer')
-      // expect(peer).to.have.a.property('streams')
+      expect(peer).to.have.a.property('muxer')
+      expect(peer.muxer).to.be.a('string')
+      expect(peer.muxer).to.be.empty()
+      expect(peer).to.have.a.property('streams')
+      expect(peer.streams).not.to.equal(null)
+      expect(peer.streams).to.be.a('array')
     })
 
     /**
@@ -101,7 +112,7 @@ export function testPeers (factory, options) {
     }
 
     it('should list peers only once', async () => {
-      const nodeA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+      const nodeA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       const nodeB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       const nodeBId = await nodeB.id()
       await nodeA.swarm.connect(nodeBId.addresses[0])
@@ -128,7 +139,7 @@ export function testPeers (factory, options) {
         // browser nodes have webrtc-star addresses which can't be dialled by go so make the other
         // peer a js-ipfs node to get a tcp address that can be dialled. Also, webworkers are not
         // diable so don't use a in-proc node for webworkers
-        type: ((isBrowser && factory.opts.type === 'go') || isWebWorker) ? 'js' : 'proc',
+        type: 'go',
         ipfsOptions
       })).api
       const nodeAId = await nodeA.id()

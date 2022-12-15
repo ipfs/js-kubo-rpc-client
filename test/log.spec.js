@@ -12,14 +12,14 @@ describe('.log', function () {
 
   let ipfs
 
-  before(async () => {
+  before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
   // cannot get go-ipfs to generate logs
-  it.skip('.log.tail', async () => {
+  it.skip('.log.tail', async function () {
     const i = setInterval(async () => {
       try {
         await ipfs.add(uint8ArrayFromString('just adding some data to generate logs'))
@@ -34,14 +34,14 @@ describe('.log', function () {
     expect(message).to.be.an('object')
   })
 
-  it('.log.ls', async () => {
+  it('.log.ls', async function () {
     const res = await ipfs.log.ls()
 
     expect(res).to.exist()
     expect(res).to.be.an('array')
   })
 
-  it('.log.level', async () => {
+  it('.log.level', async function () {
     const res = await ipfs.log.level('all', 'error')
 
     expect(res).to.exist()

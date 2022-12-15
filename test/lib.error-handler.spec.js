@@ -4,8 +4,8 @@ import { expect } from 'aegir/chai'
 import { throwsAsync } from './utils/throws-async.js'
 import { errorHandler, HTTPError } from '../src/lib/core.js'
 
-describe('lib/error-handler', () => {
-  it('should parse json error response', async () => {
+describe('lib/error-handler', function () {
+  it('should parse json error response', async function () {
     const res = {
       ok: false,
       statusText: 'test',
@@ -25,7 +25,7 @@ describe('lib/error-handler', () => {
     expect(err.response.status).to.eql(500)
   })
 
-  it('should gracefully fail on parse json', async () => {
+  it('should gracefully fail on parse json', async function () {
     const res = {
       ok: false,
       headers: { get: () => 'application/json' },
@@ -37,7 +37,7 @@ describe('lib/error-handler', () => {
     expect(err instanceof HTTPError).to.be.true()
   })
 
-  it('should gracefully fail on read text', async () => {
+  it('should gracefully fail on read text', async function () {
     const res = {
       ok: false,
       headers: { get: () => 'text/plain' },

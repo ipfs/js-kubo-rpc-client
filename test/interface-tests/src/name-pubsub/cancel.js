@@ -23,13 +23,13 @@ export function testCancel (factory, options) {
     /** @type {string} */
     let nodeId
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       const peerInfo = await ipfs.id()
       nodeId = peerInfo.id
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should return false when the name that is intended to cancel is not subscribed', async function () {
       // @ts-ignore this is mocha

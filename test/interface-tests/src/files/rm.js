@@ -4,9 +4,9 @@ import { nanoid } from 'nanoid'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import { createTwoShards } from '../utils/create-two-shards.js'
 import { randomBytes } from 'iso-random-stream'
 import isShardAtPath from '../utils/is-shard-at-path.js'
+import { createTwoShards } from '../utils/create-two-shards.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -26,9 +26,9 @@ export function testRm (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${nanoid()}`
@@ -68,24 +68,6 @@ export function testRm (factory, options) {
       await ipfs.files.rm(file)
 
       await expect(ipfs.files.stat(file)).to.eventually.be.rejectedWith(/does not exist/)
-    })
-
-    it('removes multiple files', async () => {
-      const file1 = `/some-file-${Math.random()}.txt`
-      const file2 = `/some-file-${Math.random()}.txt`
-
-      await ipfs.files.write(file1, randomBytes(100), {
-        create: true,
-        parents: true
-      })
-      await ipfs.files.write(file2, randomBytes(100), {
-        create: true,
-        parents: true
-      })
-      await ipfs.files.rm([file1, file2])
-
-      await expect(ipfs.files.stat(file1)).to.eventually.be.rejectedWith(/does not exist/)
-      await expect(ipfs.files.stat(file2)).to.eventually.be.rejectedWith(/does not exist/)
     })
 
     it('removes a directory', async () => {

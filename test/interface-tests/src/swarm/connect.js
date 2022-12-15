@@ -27,14 +27,14 @@ export function testConnect (factory, options) {
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfsBId
 
-    before(async () => {
-      ipfsA = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+    before(async function () {
+      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
       // webworkers are not dialable because webrtc is not available
       ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
       ipfsBId = await ipfsB.id()
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should connect to a peer', async () => {
       let peers

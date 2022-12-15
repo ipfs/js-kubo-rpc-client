@@ -3,7 +3,7 @@ import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.js'
 import { peerIdFromString } from '@libp2p/peer-id'
-const log = logger('ipfs-http-client:pubsub:subscribe')
+const log = logger('js-kubo-rpc-client:pubsub:subscribe')
 
 /**
  * @param {import('../types').Options} options

@@ -1,16 +1,15 @@
 /* eslint-env mocha */
 
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { base58btc } from 'multiformats/bases/base58'
 import { CID } from 'multiformats/cid'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
 import * as raw from 'multiformats/codecs/raw'
-import { sha512 } from 'multiformats/hashes/sha2'
+import { sha256, sha512 } from 'multiformats/hashes/sha2'
 
 /**
- * @typedef {import('ipfsd-ctl').Factory} Factory
+ * @typedef {import('ipfsd-ctl')} Factory
  */
 
 /**
@@ -22,23 +21,26 @@ export function testPut (factory, options) {
   const it = getIt(options)
 
   describe('.block.put', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
+    /** @type {import('../../../../src/types.js').IPFSHTTPClient} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
+    /**
+     * @see https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-block-put
+     */
     it('should put a buffer, using defaults', async () => {
-      const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
       const blob = uint8ArrayFromString('blorb')
+      const digest = await sha256.digest(blob)
+      const expectedCID = CID.create(1, raw.code, digest)
 
       const cid = await ipfs.block.put(blob)
-
-      expect(cid.toString()).to.equal(expectedHash)
-      expect(cid.bytes).to.equalBytes(base58btc.decode(`z${expectedHash}`))
+      expect(cid.toString()).to.equal(expectedCID.toString())
+      expect(cid.bytes).to.equalBytes(expectedCID.bytes)
     })
 
     it('should put a buffer, using options', async () => {
@@ -46,7 +48,7 @@ export function testPut (factory, options) {
 
       const cid = await ipfs.block.put(blob, {
         format: 'raw',
-        mhtype: 'sha2-512',
+        mhtype: sha512.name,
         version: 1,
         pin: true
       })

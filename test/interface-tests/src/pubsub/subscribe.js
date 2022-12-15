@@ -3,20 +3,38 @@
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { nanoid } from 'nanoid'
-import { pushable } from 'it-pushable'
-import all from 'it-all'
-import { waitForPeers, getTopic } from './utils.js'
+import { getTopic, getSubscriptionTestObject } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
-import delay from 'delay'
-import { isWebWorker, isNode } from 'ipfs-utils/src/env.js'
+import { isNode } from 'ipfs-utils/src/env.js'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
-import first from 'it-first'
 import sinon from 'sinon'
+import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
+import { isPeerId } from '@libp2p/interface-peer-id'
+import { logger } from '@libp2p/logger'
+const log = logger('js-kubo-rpc-client:pubsub:subscribe:test')
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
+ * @typedef {import('../../../../src/types').SubscribeMessage} SubscribeMessage
  */
+
+/**
+ *
+ * @param {import('ipfsd-ctl').Controller} publisher
+ * @param {string} topic
+ * @param {SubscribeMessage} msg
+ * @param {Uint8Array} data
+ * @returns {void}
+ */
+const validateSubscriptionMessage = (publisher, topic, msg, data) => {
+  expect(uint8ArrayEquals(data, msg.data)).to.be.true()
+  expect(msg).to.have.property('sequenceNumber')
+  expect(msg.sequenceNumber).to.be.a('bigint')
+  expect(msg).to.have.property('topic', topic)
+  expect(isPeerId(msg.from)).to.be.true()
+  expect(msg.from.toString()).to.equal(publisher.peer.id.toString())
+}
 
 /**
  * @param {Factory} factory
@@ -32,168 +50,154 @@ export function testSubscribe (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs1
+    /** @type {import('ipfsd-ctl').Controller} */
+    let daemon1
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs2
+    /** @type {import('ipfsd-ctl').Controller} */
+    let daemon2
     /** @type {string} */
     let topic
-    /** @type {string[]} */
-    let subscribedTopics = []
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs1Id
     /** @type {import('ipfs-core-types/src/root').IDResult} */
     let ipfs2Id
 
-    before(async () => {
-      ipfs1 = (await factory.spawn({ ipfsOptions })).api
+    beforeEach(async function () {
+      log('beforeEach start')
+      daemon1 = await factory.spawn({ ipfsOptions, test: true, args: ['--enable-pubsub-experiment'] })
+      ipfs1 = daemon1.api
 
-      // webworkers are not dialable because webrtc is not available
-      ipfs2 = (await factory.spawn({ type: isWebWorker ? 'js' : undefined, ipfsOptions })).api
+      daemon2 = await factory.spawn({ ipfsOptions, test: true, args: ['--enable-pubsub-experiment'] })
+      ipfs2 = daemon2.api
 
       ipfs1Id = await ipfs1.id()
       ipfs2Id = await ipfs2.id()
-    })
+      await ipfs1.swarm.connect(daemon2.peer.addresses[0])
+      await ipfs2.swarm.connect(daemon1.peer.addresses[0])
 
-    beforeEach(() => {
+      const peers = await Promise.all([
+        ipfs1.swarm.peers(),
+        ipfs2.swarm.peers()
+      ])
+
+      expect(peers[0].map((p) => p.peer.toString())).to.include(daemon2.peer.id.toString())
+      expect(peers[1].map((p) => p.peer.toString())).to.include(daemon1.peer.id.toString())
       topic = getTopic()
-      subscribedTopics = [topic]
+      log('beforeEach done')
     })
 
-    afterEach(async () => {
-      const nodes = [ipfs1, ipfs2]
-      for (let i = 0; i < subscribedTopics.length; i++) {
-        const topic = subscribedTopics[i]
-        await Promise.all(nodes.map(ipfs => ipfs.pubsub.unsubscribe(topic)))
-      }
-      subscribedTopics = []
-      await delay(100)
+    afterEach(async function () {
+      log('afterEach start')
+
+      await daemon1.api.pubsub.unsubscribe()
+      await daemon2.api.pubsub.unsubscribe()
+      await factory.clean()
+
+      log('afterEach done')
     })
 
-    after(() => factory.clean())
-
-    describe('single node', () => {
+    describe('single node', function () {
       it('should subscribe to one topic', async () => {
-        const msgStream = pushable()
+        const data = uint8ArrayFromString('hi')
 
-        await ipfs1.pubsub.subscribe(topic, msg => {
-          msgStream.push(msg)
-          msgStream.end()
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          timeout: 5000
         })
 
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hi'))
+        await subscriptionTestObj.publishMessage(data)
+        const [msg] = await subscriptionTestObj.waitForMessages()
 
-        const msg = await first(msgStream)
-
-        expect(uint8ArrayToString(msg.data)).to.equal('hi')
-        expect(msg).to.have.property('seqno')
-        expect(msg.seqno).to.be.an.instanceof(Uint8Array)
-        expect(msg.topicIDs[0]).to.eq(topic)
-        expect(msg).to.have.property('from', ipfs1Id.id)
+        validateSubscriptionMessage(daemon1, topic, msg, data)
+        await subscriptionTestObj.unsubscribe()
       })
 
       it('should subscribe to one topic with options', async () => {
-        const msgStream = pushable()
+        const data = uint8ArrayFromString('hi')
 
-        await ipfs1.pubsub.subscribe(topic, msg => {
-          msgStream.push(msg)
-          msgStream.end()
-        }, {})
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          timeout: 5000,
+          options: {}
+        })
 
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hi'))
+        await subscriptionTestObj.publishMessage(data)
+        const [msg] = await subscriptionTestObj.waitForMessages()
 
-        for await (const msg of msgStream) {
-          expect(uint8ArrayToString(msg.data)).to.equal('hi')
-          expect(msg).to.have.property('seqno')
-          expect(msg.seqno).to.be.an.instanceof(Uint8Array)
-          expect(msg.topicIDs[0]).to.eq(topic)
-          expect(msg).to.have.property('from', ipfs1Id.id)
-        }
+        validateSubscriptionMessage(daemon1, topic, msg, data)
+        await subscriptionTestObj.unsubscribe()
       })
 
       it('should subscribe to topic multiple times with different handlers', async () => {
-        const msgStream1 = pushable()
-        const msgStream2 = pushable()
+        const expectedString = 'hello'
+        const data = uint8ArrayFromString(expectedString)
+        const stub1 = sinon.stub()
+        const stub2 = sinon.stub()
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          subscriptionListener: stub1,
+          timeout: 5000
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          subscriptionListener: stub2,
+          timeout: 5000
+        })
 
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const handler1 = msg => {
-          msgStream1.push(msg)
-          msgStream1.end()
-        }
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const handler2 = msg => {
-          msgStream2.push(msg)
-          msgStream2.end()
-        }
+        expect(stub1).to.have.property('callCount', 0)
+        expect(stub2).to.have.property('callCount', 0)
+        await subscriptionTestObj1.publishMessage(data)
 
-        await Promise.all([
-          ipfs1.pubsub.subscribe(topic, handler1),
-          ipfs1.pubsub.subscribe(topic, handler2)
-        ])
+        const [msg1] = await subscriptionTestObj1.waitForMessages()
+        const [msg2] = await subscriptionTestObj2.waitForMessages()
 
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello'))
+        validateSubscriptionMessage(daemon1, topic, msg1, data)
+        validateSubscriptionMessage(daemon1, topic, msg2, data)
 
-        const [handler1Msg] = await all(msgStream1)
-        expect(uint8ArrayToString(handler1Msg.data)).to.eql('hello')
-
-        const [handler2Msg] = await all(msgStream2)
-        expect(uint8ArrayToString(handler2Msg.data)).to.eql('hello')
-
-        await ipfs1.pubsub.unsubscribe(topic, handler1)
-        await delay(100)
-
-        // Still subscribed as there is one listener left
-        expect(await ipfs1.pubsub.ls()).to.eql([topic])
-
-        await ipfs1.pubsub.unsubscribe(topic, handler2)
-        await delay(100)
-
-        // Now all listeners are gone no subscription anymore
-        expect(await ipfs1.pubsub.ls()).to.eql([])
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
+        await subscriptionTestObj1.unsubscribe()
+        await subscriptionTestObj2.unsubscribe()
       })
 
       it('should allow discover option to be passed', async () => {
-        const msgStream = pushable()
+        const data = uint8ArrayFromString('hi')
 
-        await ipfs1.pubsub.subscribe(topic, msg => {
-          msgStream.push(msg)
-          msgStream.end()
-        }, { discover: true })
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon1,
+          topic,
+          timeout: 5000,
+          options: { discover: true }
+        })
 
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hi'))
+        await subscriptionTestObj.publishMessage(data)
+        const [msg] = await subscriptionTestObj.waitForMessages()
 
-        for await (const msg of msgStream) {
-          expect(uint8ArrayToString(msg.data)).to.eql('hi')
-        }
+        validateSubscriptionMessage(daemon1, topic, msg, data)
+        await subscriptionTestObj.unsubscribe()
       })
     })
 
     describe('multiple connected nodes', () => {
-      before(() => {
-        if (ipfs1.pubsub.setMaxListeners) {
-          ipfs1.pubsub.setMaxListeners(100)
-        }
-
-        if (ipfs2.pubsub.setMaxListeners) {
-          ipfs2.pubsub.setMaxListeners(100)
-        }
-
-        const ipfs2Addr = ipfs2Id.addresses
-          .find(ma => ma.nodeAddress().address === '127.0.0.1')
-
-        if (!ipfs2Addr) {
-          throw new Error('No address found')
-        }
-
-        return ipfs1.swarm.connect(ipfs2Addr)
-      })
-
+      this.timeout(120 * 1000)
       it('should receive messages from a different node with floodsub', async function () {
         if (!isNode) {
-          // @ts-ignore this is mocha
           return this.skip()
         }
         const expectedString = 'should receive messages from a different node with floodsub'
+        const data = uint8ArrayFromString(expectedString)
         const topic = `floodsub-${nanoid()}`
-        const ipfs1 = (await factory.spawn({
+        const daemon1 = await factory.spawn({
           ipfsOptions: {
             config: {
               Pubsub: {
@@ -201,10 +205,9 @@ export function testSubscribe (factory, options) {
               }
             }
           }
-        })).api
-        const ipfs1Id = await ipfs1.id()
-        const ipfs2 = (await factory.spawn({
-          type: isWebWorker ? 'go' : undefined,
+        })
+        const ipfs1 = daemon1.api
+        const daemon2 = await factory.spawn({
           ipfsOptions: {
             config: {
               Pubsub: {
@@ -212,197 +215,156 @@ export function testSubscribe (factory, options) {
               }
             }
           }
-        })).api
+        })
+        const ipfs2 = daemon2.api
         const ipfs2Id = await ipfs2.id()
         await ipfs1.swarm.connect(ipfs2Id.addresses[0])
 
-        const msgStream1 = pushable()
-        const msgStream2 = pushable()
-
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub1 = msg => {
-          msgStream1.push(msg)
-          msgStream1.end()
-        }
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub2 = msg => {
-          msgStream2.push(msg)
-          msgStream2.end()
-        }
-
         const abort1 = new AbortController()
         const abort2 = new AbortController()
-        await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sub1, { signal: abort1.signal }),
-          ipfs2.pubsub.subscribe(topic, sub2, { signal: abort2.signal })
-        ])
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon2,
+          topic,
+          timeout: 5000,
+          options: { signal: abort1.signal }
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon2,
+          topic,
+          timeout: 5000,
+          options: { signal: abort2.signal }
+        })
 
-        await waitForPeers(ipfs2, topic, [ipfs1Id.id], 30000)
-        await ipfs2.pubsub.publish(topic, uint8ArrayFromString(expectedString))
+        await subscriptionTestObj1.publishMessage(data)
+        const [sub1Msg] = await subscriptionTestObj1.waitForMessages()
+        const [sub2Msg] = await subscriptionTestObj2.waitForMessages()
 
-        const [sub1Msg] = await all(msgStream1)
-        expect(uint8ArrayToString(sub1Msg.data)).to.be.eql(expectedString)
-        expect(sub1Msg.from).to.eql(ipfs2Id.id)
-
-        const [sub2Msg] = await all(msgStream2)
-        expect(uint8ArrayToString(sub2Msg.data)).to.be.eql(expectedString)
-        expect(sub2Msg.from).to.eql(ipfs2Id.id)
+        validateSubscriptionMessage(daemon2, topic, sub1Msg, data)
+        validateSubscriptionMessage(daemon2, topic, sub2Msg, data)
         abort1.abort()
         abort2.abort()
+        await subscriptionTestObj1.unsubscribe()
+        await subscriptionTestObj2.unsubscribe()
       })
 
       it('should receive messages from a different node', async () => {
         const expectedString = 'hello from the other side'
+        const data = uint8ArrayFromString(expectedString)
 
-        const msgStream1 = pushable()
-        const msgStream2 = pushable()
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          topic,
+          timeout: 5000
+        })
 
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub1 = msg => {
-          msgStream1.push(msg)
-          msgStream1.end()
-        }
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub2 = msg => {
-          msgStream2.push(msg)
-          msgStream2.end()
-        }
+        await subscriptionTestObj1.publishMessage(data)
+        let [msg] = await subscriptionTestObj1.waitForMessages()
+        await subscriptionTestObj1.unsubscribe()
 
-        await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sub1),
-          ipfs2.pubsub.subscribe(topic, sub2)
-        ])
+        validateSubscriptionMessage(daemon1, topic, msg, data)
 
-        await waitForPeers(ipfs2, topic, [ipfs1Id.id], 30000)
-        await delay(5000) // gossipsub need this delay https://github.com/libp2p/go-libp2p-pubsub/issues/331
-        await ipfs2.pubsub.publish(topic, uint8ArrayFromString(expectedString))
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon2,
+          topic,
+          timeout: 5000
+        })
 
-        const [sub1Msg] = await all(msgStream1)
-        expect(uint8ArrayToString(sub1Msg.data)).to.be.eql(expectedString)
-        expect(sub1Msg.from).to.eql(ipfs2Id.id)
-
-        const [sub2Msg] = await all(msgStream2)
-        expect(uint8ArrayToString(sub2Msg.data)).to.be.eql(expectedString)
-        expect(sub2Msg.from).to.eql(ipfs2Id.id)
+        await subscriptionTestObj2.publishMessage(data);
+        [msg] = await subscriptionTestObj2.waitForMessages()
+        validateSubscriptionMessage(daemon2, topic, msg, data)
+        await subscriptionTestObj2.unsubscribe()
       })
 
       it('should round trip a non-utf8 binary buffer', async () => {
         const expectedHex = 'a36161636179656162830103056164a16466666666f4'
         const buffer = uint8ArrayFromString(expectedHex, 'base16')
 
-        const msgStream1 = pushable()
-        const msgStream2 = pushable()
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          topic,
+          timeout: 5000
+        })
+        await subscriptionTestObj.publishMessage(buffer)
+        const [sub1Msg] = await subscriptionTestObj.waitForMessages()
 
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub1 = msg => {
-          msgStream1.push(msg)
-          msgStream1.end()
-        }
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub2 = msg => {
-          msgStream2.push(msg)
-          msgStream2.end()
-        }
-
-        await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sub1),
-          ipfs2.pubsub.subscribe(topic, sub2)
-        ])
-
-        await waitForPeers(ipfs2, topic, [ipfs1Id.id], 30000)
-        await delay(5000) // gossipsub need this delay https://github.com/libp2p/go-libp2p-pubsub/issues/331
-        await ipfs2.pubsub.publish(topic, buffer)
-
-        const [sub1Msg] = await all(msgStream1)
         expect(uint8ArrayToString(sub1Msg.data, 'base16')).to.be.eql(expectedHex)
-        expect(sub1Msg.from).to.eql(ipfs2Id.id)
-
-        const [sub2Msg] = await all(msgStream2)
-        expect(uint8ArrayToString(sub2Msg.data, 'base16')).to.be.eql(expectedHex)
-        expect(sub2Msg.from).to.eql(ipfs2Id.id)
+        expect(sub1Msg.from.toString()).to.eql(ipfs1Id.id.toString())
+        validateSubscriptionMessage(daemon1, topic, sub1Msg, buffer)
+        await subscriptionTestObj.unsubscribe()
       })
 
-      it('should receive multiple messages', async () => {
+      it('.pubsub.subscribe - should receive multiple messages', async () => {
         const outbox = ['hello', 'world', 'this', 'is', 'pubsub']
 
-        const msgStream1 = pushable()
-        const msgStream2 = pushable()
+        /**
+         * ensure the subscription is kicked off early, and first.
+         * Its promise does not return until it receives the data
+         */
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          topic,
+          timeout: 15000
+        })
 
-        let sub1Called = 0
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub1 = msg => {
-          msgStream1.push(msg)
-          sub1Called++
-          if (sub1Called === outbox.length) msgStream1.end()
-        }
+        const validationMap = new Map()
+        const publishPromises = outbox.map(async (string, i) => {
+          const dataItem = uint8ArrayFromString(string)
+          // keep a map of the string value to the validation function because we can't depend on ordering.
+          // eslint-disable-next-line max-nested-callbacks
+          validationMap.set(string, (msg) => validateSubscriptionMessage(daemon1, topic, msg, dataItem))
+          return await subscriptionTestObj.publishMessage(dataItem)
+        })
+        await Promise.all(publishPromises)
 
-        let sub2Called = 0
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub2 = msg => {
-          msgStream2.push(msg)
-          sub2Called++
-          if (sub2Called === outbox.length) msgStream2.end()
-        }
+        const sub1Msgs = await subscriptionTestObj.waitForMessages(outbox.length)
 
-        await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sub1),
-          ipfs2.pubsub.subscribe(topic, sub2)
-        ])
-
-        await waitForPeers(ipfs2, topic, [ipfs1Id.id], 30000)
-        await delay(5000) // gossipsub need this delay https://github.com/libp2p/go-libp2p-pubsub/issues/331
-
-        for (let i = 0; i < outbox.length; i++) {
-          await ipfs2.pubsub.publish(topic, uint8ArrayFromString(outbox[i]))
-        }
-
-        const sub1Msgs = await all(msgStream1)
-        sub1Msgs.forEach(msg => expect(msg.from).to.eql(ipfs2Id.id))
-        const inbox1 = sub1Msgs.map(msg => uint8ArrayToString(msg.data))
-        expect(inbox1.sort()).to.eql(outbox.sort())
-
-        const sub2Msgs = await all(msgStream2)
-        sub2Msgs.forEach(msg => expect(msg.from).to.eql(ipfs2Id.id))
-        const inbox2 = sub2Msgs.map(msg => uint8ArrayToString(msg.data))
-        expect(inbox2.sort()).to.eql(outbox.sort())
+        expect(sub1Msgs).to.have.length(outbox.length)
+        sub1Msgs.forEach((msg, i) => {
+          const validationFn = validationMap.get(uint8ArrayToString(msg.data))
+          validationFn(msg)
+        })
+        await subscriptionTestObj.unsubscribe()
       })
 
       it('should send/receive 100 messages', async function () {
-        // @ts-ignore this is mocha
         this.timeout(2 * 60 * 1000)
 
         const msgBase = 'msg - '
         const count = 100
-        const msgStream = pushable()
+        const subscriptionTestObj = await getSubscriptionTestObject({
+          subscriber: daemon1,
+          publisher: daemon2,
+          topic,
+          timeout: 15000
+        })
 
-        let subCalled = 0
-        /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-        const sub = msg => {
-          msgStream.push(msg)
-          subCalled++
-          if (subCalled === count) msgStream.end()
-        }
-
-        await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sub),
-          ipfs2.pubsub.subscribe(topic, () => {})
-        ])
-
-        await waitForPeers(ipfs1, topic, [ipfs2Id.id], 30000)
-        await delay(5000) // gossipsub need this delay https://github.com/libp2p/go-libp2p-pubsub/issues/331
+        /**
+         * @type {number}
+         */
         const startTime = new Date().getTime()
-
         for (let i = 0; i < count; i++) {
-          const msgData = uint8ArrayFromString(msgBase + i)
-          await ipfs2.pubsub.publish(topic, msgData)
+          const data = uint8ArrayFromString(msgBase + i)
+          await subscriptionTestObj.publishMessage(data)
         }
+        const msgs = await subscriptionTestObj.waitForMessages(count)
 
-        const msgs = await all(msgStream)
         const duration = new Date().getTime() - startTime
         const opsPerSec = Math.floor(count / (duration / 1000))
 
         // eslint-disable-next-line
         console.log(`Send/Receive 100 messages took: ${duration} ms, ${opsPerSec} ops / s`)
+        /**
+         * Node is slower than browser and webworker because it's all running in the same process.
+         *
+         * TODO: Re-enable this test when we can make it more deterministic
+         */
+        // expect(opsPerSec).to.be.greaterThanOrEqual(isNode ? 25 : 200)
 
         msgs.forEach(msg => {
           expect(msg.from).to.eql(ipfs2Id.id)
@@ -410,137 +372,125 @@ export function testSubscribe (factory, options) {
         })
       })
 
-      it('should receive messages from a different node on lots of topics', async () => {
-        // @ts-ignore this is mocha
-        this.timeout(5 * 60 * 1000)
-
-        const numTopics = 20
-        const topics = []
-        const expectedStrings = []
-        const msgStreams = []
-
+      it('should receive messages from a different node on lots of topics', async function () {
+        // we can only currently have 6 topics subscribed at a time
+        const numTopics = 6
+        const resultingMsgs = []
+        const msgPromises = []
         for (let i = 0; i < numTopics; i++) {
-          const topic = `pubsub-topic-${Math.random()}`
-          topics.push(topic)
-
-          const msgStream1 = pushable()
-          const msgStream2 = pushable()
-
-          msgStreams.push({
-            msgStream1,
-            msgStream2
+          const topic = `pubsub-topic-${i}`
+          // const topicTestFn = async (topic) => {
+          const expectedString = `hello pubsub ${Math.random().toString(32).slice(2)}`
+          const data = uint8ArrayFromString(expectedString)
+          const subscriptionTestObj = await getSubscriptionTestObject({
+            subscriber: daemon1,
+            publisher: daemon2,
+            subscriptionListener: async (msg) => {
+              // required to unsubscribe if there are more than 6 subscribed topics otherwise we get ERR_STREAM_PREMATURE_CLOSE
+              // await subscriptionTestObj.unsubscribe()
+              resultingMsgs.push(msg)
+            },
+            topic,
+            timeout: 2000
           })
-
-          /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-          const sub1 = msg => {
-            msgStream1.push(msg)
-            msgStream1.end()
-          }
-          /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn} */
-          const sub2 = msg => {
-            msgStream2.push(msg)
-            msgStream2.end()
-          }
-
-          await Promise.all([
-            ipfs1.pubsub.subscribe(topic, sub1),
-            ipfs2.pubsub.subscribe(topic, sub2)
-          ])
-
-          await waitForPeers(ipfs2, topic, [ipfs1Id.id], 30000)
+          await subscriptionTestObj.publishMessage(data)
+          // const [msg] = await
+          msgPromises.push(subscriptionTestObj.waitForMessages(1, { retries: 30, maxRetryTime: 40000 }))
         }
+        await Promise.all(msgPromises)
 
-        await delay(5000) // gossipsub needs this delay https://github.com/libp2p/go-libp2p-pubsub/issues/331
-
-        for (let i = 0; i < numTopics; i++) {
-          const expectedString = `hello pubsub ${Math.random()}`
-          expectedStrings.push(expectedString)
-
-          await ipfs2.pubsub.publish(topics[i], uint8ArrayFromString(expectedString))
-        }
-
-        for (let i = 0; i < numTopics; i++) {
-          const [sub1Msg] = await all(msgStreams[i].msgStream1)
-          expect(uint8ArrayToString(sub1Msg.data)).to.equal(expectedStrings[i])
-          expect(sub1Msg.from).to.eql(ipfs2Id.id)
-
-          const [sub2Msg] = await all(msgStreams[i].msgStream2)
-          expect(uint8ArrayToString(sub2Msg.data)).to.equal(expectedStrings[i])
-          expect(sub2Msg.from).to.eql(ipfs2Id.id)
-        }
+        expect(resultingMsgs).to.have.length(numTopics)
       })
 
-      it('should unsubscribe multiple handlers', async () => {
-        // @ts-ignore this is mocha
+      it('should unsubscribe multiple handlers', async function () {
         this.timeout(2 * 60 * 1000)
 
         const topic = `topic-${Math.random()}`
 
-        const handler1 = sinon.stub()
-        const handler2 = sinon.stub()
+        const stub1 = sinon.stub()
+        const stub2 = sinon.stub()
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub1,
+          topic,
+          timeout: 5000
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub2,
+          topic,
+          timeout: 5000
+        })
+
+        expect(stub1).to.have.property('callCount', 0)
+        expect(stub2).to.have.property('callCount', 0)
+
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
+
+        await subscriptionTestObj1.waitForMessages()
+        await subscriptionTestObj2.waitForMessages()
+
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
+
+        await daemon2.api.pubsub.unsubscribe(topic)
+
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
 
         await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sinon.stub()),
-          ipfs2.pubsub.subscribe(topic, handler1),
-          ipfs2.pubsub.subscribe(topic, handler2)
+          expect(subscriptionTestObj1.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1'),
+          expect(subscriptionTestObj2.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1')
         ])
 
-        await waitForPeers(ipfs1, topic, [ipfs2Id.id], 30000)
-
-        expect(handler1).to.have.property('callCount', 0)
-        expect(handler2).to.have.property('callCount', 0)
-
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 1)
-
-        await ipfs2.pubsub.unsubscribe(topic)
-
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 1)
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
       })
 
-      it('should unsubscribe individual handlers', async () => {
-        // @ts-ignore this is mocha
+      it('should unsubscribe individual handlers', async function () {
         this.timeout(2 * 60 * 1000)
 
         const topic = `topic-${Math.random()}`
 
-        const handler1 = sinon.stub()
-        const handler2 = sinon.stub()
+        const stub1 = sinon.stub()
+        const stub2 = sinon.stub()
+        const subscriptionTestObj1 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub1,
+          topic,
+          timeout: 5000
+        })
+        const subscriptionTestObj2 = await getSubscriptionTestObject({
+          subscriber: daemon2,
+          publisher: daemon1,
+          subscriptionListener: stub2,
+          topic,
+          timeout: 5000
+        })
+
+        expect(stub1).to.have.property('callCount', 0)
+        expect(stub2).to.have.property('callCount', 0)
+
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
+        await subscriptionTestObj1.waitForMessages()
+        await subscriptionTestObj2.waitForMessages()
+
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 1)
+
+        await subscriptionTestObj1.unsubscribe()
+
+        await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
 
         await Promise.all([
-          ipfs1.pubsub.subscribe(topic, sinon.stub()),
-          ipfs2.pubsub.subscribe(topic, handler1),
-          ipfs2.pubsub.subscribe(topic, handler2)
+          expect(subscriptionTestObj1.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1'),
+          expect(subscriptionTestObj2.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.eventually.have.lengthOf(2)
         ])
 
-        await waitForPeers(ipfs1, topic, [ipfs2Id.id], 30000)
-
-        expect(handler1).to.have.property('callCount', 0)
-        expect(handler2).to.have.property('callCount', 0)
-
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 1'))
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 1)
-
-        await ipfs2.pubsub.unsubscribe(topic, handler1)
-        await ipfs1.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
-
-        await delay(1000)
-
-        expect(handler1).to.have.property('callCount', 1)
-        expect(handler2).to.have.property('callCount', 2)
+        expect(stub1).to.have.property('callCount', 1)
+        expect(stub2).to.have.property('callCount', 2)
       })
     })
   })

@@ -24,7 +24,7 @@ export function testAdd (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
 
       await drain(
@@ -47,9 +47,9 @@ export function testAdd (factory, options) {
       )
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
-    beforeEach(() => {
+    beforeEach(function () {
       return clearPins(ipfs)
     })
 

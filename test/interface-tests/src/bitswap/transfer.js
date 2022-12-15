@@ -27,14 +27,14 @@ export function testTransfer (factory, options) {
   describe('transfer blocks', function () {
     this.timeout(60 * 1000)
 
-    afterEach(() => factory.clean())
+    afterEach(function () { return factory.clean() })
 
     describe('transfer a block between', () => {
       it('2 peers', async function () {
         // webworkers are not dialable because webrtc is not available
         const remote = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remoteId = await remote.id()
-        const local = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+        const local = (await factory.spawn({ type: 'go', ipfsOptions })).api
         await local.swarm.connect(remoteId.addresses[0])
         const data = uint8ArrayFromString(`IPFS is awesome ${nanoid()}`)
 
@@ -50,7 +50,7 @@ export function testTransfer (factory, options) {
         const remote1Id = await remote1.id()
         const remote2 = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remote2Id = await remote2.id()
-        const local = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+        const local = (await factory.spawn({ type: 'go', ipfsOptions })).api
         await local.swarm.connect(remote1Id.addresses[0])
         await local.swarm.connect(remote2Id.addresses[0])
         await remote1.swarm.connect(remote2Id.addresses[0])
@@ -78,7 +78,7 @@ export function testTransfer (factory, options) {
         const content = randomBytes(1024)
         const remote = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
         const remoteId = await remote.id()
-        const local = (await factory.spawn({ type: 'proc', ipfsOptions })).api
+        const local = (await factory.spawn({ type: 'go', ipfsOptions })).api
         local.swarm.connect(remoteId.addresses[0])
 
         const file = await remote.add({ path: 'awesome.txt', content })

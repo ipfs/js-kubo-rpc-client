@@ -13,10 +13,9 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import bufferStream from 'it-buffer-stream'
 import * as raw from 'multiformats/codecs/raw'
-import * as dagPB from '@ipld/dag-pb'
 import resolve from 'aegir/resolve'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { isFirefox, notImplemented } from '../../constants.js'
+import { isFirefox } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -37,43 +36,9 @@ export function testAddAll (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    /**
-     * @param {string | number} mode
-     * @param {number} expectedMode
-     */
-    async function testMode (mode, expectedMode) {
-      const content = String(Math.random() + Date.now())
-      const files = await all(ipfs.addAll([{
-        content: uint8ArrayFromString(content),
-        mode
-      }]))
-      expect(files).to.have.length(1)
-      expect(files).to.have.nested.property('[0].mode', expectedMode)
+    before(async function () { ipfs = (await factory.spawn()).api })
 
-      const stats = await ipfs.files.stat(`/ipfs/${files[0].cid}`)
-      expect(stats).to.have.property('mode', expectedMode)
-    }
-
-    /**
-     * @param {MtimeLike} mtime
-     * @param {MtimeLike} expectedMtime
-     */
-    async function testMtime (mtime, expectedMtime) {
-      const content = String(Math.random() + Date.now())
-      const files = await all(ipfs.addAll([{
-        content: uint8ArrayFromString(content),
-        mtime
-      }]))
-      expect(files).to.have.length(1)
-      expect(files).to.have.deep.nested.property('[0].mtime', expectedMtime)
-
-      const stats = await ipfs.files.stat(`/ipfs/${files[0].cid}`)
-      expect(stats).to.have.deep.property('mtime', expectedMtime)
-    }
-
-    before(async () => { ipfs = (await factory.spawn()).api })
-
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should add a File as array of tuples', async function () {
       if (!supportsFileReader) {
@@ -358,80 +323,6 @@ export function testAddAll (factory, options) {
       )
     })
 
-    it('should add with mode as string', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
-      this.slow(10 * 1000)
-      const mode = '0777'
-      await testMode(mode, parseInt(mode, 8))
-    })
-
-    it('should add with mode as number', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
-      this.slow(10 * 1000)
-      const mode = parseInt('0777', 8)
-      await testMode(mode, mode)
-    })
-
-    it('should add with mtime as Date', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
-      this.slow(10 * 1000)
-      const mtime = new Date(5000)
-      await testMtime(mtime, {
-        secs: 5,
-        nsecs: 0
-      })
-    })
-
-    it('should add with mtime as { nsecs, secs }', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
-      this.slow(10 * 1000)
-      const mtime = {
-        secs: 5,
-        nsecs: 0
-      }
-      await testMtime(mtime, mtime)
-    })
-
-    it('should add with mtime as timespec', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
-      this.slow(10 * 1000)
-      await testMtime({
-        Seconds: 5,
-        FractionalNanoseconds: 0
-      }, {
-        secs: 5,
-        nsecs: 0
-      })
-    })
-
-    it('should add with mtime as hrtime', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      // @ts-ignore this is mocha
-      this.slow(10 * 1000)
-      const mtime = process.hrtime()
-      await testMtime(mtime, {
-        secs: mtime[0],
-        nsecs: mtime[1]
-      })
-    })
-
     it('should add a directory from the file system', async function () {
       // @ts-ignore this is mocha
       if (!isNode) this.skip()
@@ -525,109 +416,6 @@ export function testAddAll (factory, options) {
       expect(files[0].cid.toString()).to.equal('bafkreifojmzibzlof6xyh5auu3r5vpu5l67brf3fitaf73isdlglqw2t7q')
       expect(files[0].cid.code).to.equal(raw.code)
       expect(files[0].size).to.equal(3)
-    })
-
-    it('should override raw leaves when file is smaller than one block and metadata is present', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const files = await all(ipfs.addAll([{
-        content: Uint8Array.from([0, 1, 2]),
-        mode: 0o123,
-        mtime: {
-          secs: 1000,
-          nsecs: 0
-        }
-      }], {
-        cidVersion: 1,
-        rawLeaves: true
-      }))
-
-      expect(files.length).to.equal(1)
-      expect(files[0].cid.toString()).to.equal('bafybeifmayxiu375ftlgydntjtffy5cssptjvxqw6vyuvtymntm37mpvua')
-      expect(files[0].cid.code).to.equal(dagPB.code)
-      expect(files[0].size).to.equal(18)
-    })
-
-    it('should add directories with metadata', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const files = await all(ipfs.addAll([{
-        path: '/foo',
-        mode: 0o123,
-        mtime: {
-          secs: 1000,
-          nsecs: 0
-        }
-      }]))
-
-      expect(files.length).to.equal(1)
-      expect(files[0].cid.toString()).to.equal('QmaZTosBmPwo9LQ48ESPCEcNuX2kFxkpXYy8i3rxqBdzRG')
-      expect(files[0].cid.code).to.equal(dagPB.code)
-      expect(files[0].size).to.equal(11)
-    })
-
-    it('should support bidirectional streaming', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      let progressInvoked = false
-
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      const handler = (bytes, path) => {
-        progressInvoked = true
-      }
-
-      const source = async function * () {
-        yield {
-          content: 'hello',
-          path: '/file'
-        }
-
-        await new Promise((resolve) => {
-          const interval = setInterval(() => {
-            // we've received a progress result, that means we've received some
-            // data from the server before we're done sending data to the server
-            // so the streaming is bidirectional and we can finish up
-            if (progressInvoked) {
-              clearInterval(interval)
-              resolve(null)
-            }
-          }, 10)
-        })
-      }
-
-      await drain(ipfs.addAll(source(), {
-        progress: handler,
-        fileImportConcurrency: 1
-      }))
-
-      expect(progressInvoked).to.be.true()
-    })
-
-    it('should error during add-all stream', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const source = async function * () {
-        yield {
-          content: 'hello',
-          path: '/file'
-        }
-
-        yield {
-          content: 'hello',
-          path: '/file'
-        }
-      }
-
-      await expect(drain(ipfs.addAll(source(), {
-        fileImportConcurrency: 1,
-        chunker: 'rabin-2048--50' // invalid chunker parameters, validated after the stream starts moving
-      }))).to.eventually.be.rejectedWith(/Chunker parameter avg must be an integer/)
     })
 
     it('should add big files', async function () {

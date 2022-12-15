@@ -24,15 +24,16 @@ export function testId (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should get the node ID', async () => {
       const res = await ipfs.id()
-      expect(res).to.have.a.property('id').that.is.a('string')
+      expect(res).to.have.a.property('id')
+      expect(res.id.toString()).to.exist()
       expect(res).to.have.a.property('publicKey')
       expect(res).to.have.a.property('agentVersion').that.is.a('string')
       expect(res).to.have.a.property('protocolVersion').that.is.a('string')
@@ -41,26 +42,6 @@ export function testId (factory, options) {
       for (const ma of res.addresses) {
         expect(isMultiaddr(ma)).to.be.true()
       }
-    })
-
-    it('should have protocols property', async () => {
-      const res = await ipfs.id()
-
-      expect(res).to.have.a.property('protocols').that.is.an('array')
-
-      expect(res.protocols).to.include.members([
-        '/floodsub/1.0.0',
-        '/ipfs/bitswap/1.0.0',
-        '/ipfs/bitswap/1.1.0',
-        '/ipfs/bitswap/1.2.0',
-        '/ipfs/id/1.0.0',
-        '/ipfs/id/push/1.0.0',
-        '/ipfs/lan/kad/1.0.0',
-        '/ipfs/ping/1.0.0',
-        '/libp2p/circuit/relay/0.1.0',
-        '/meshsub/1.0.0',
-        '/meshsub/1.1.0'
-      ])
     })
 
     it('should return swarm ports opened after startup', async function () {

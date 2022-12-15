@@ -24,14 +24,14 @@ export function testService (factory, options) {
 
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async () => {
+    after(async function () {
       await factory.clean()
     })
-    afterEach(() => clearServices(ipfs))
+    afterEach(function () { return clearServices(ipfs) })
 
     describe('.pin.remote.service.add', () => {
       it('should add a service', async () => {

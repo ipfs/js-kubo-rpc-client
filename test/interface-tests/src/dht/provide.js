@@ -25,14 +25,14 @@ export function testProvide (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       const nodeB = (await factory.spawn()).api
 
       await ensureReachable(ipfs, nodeB)
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should provide local CID', async () => {
       const res = await ipfs.add(uint8ArrayFromString('test'))

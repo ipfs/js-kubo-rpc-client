@@ -19,11 +19,11 @@ export function testRepo (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should get repo stats', async () => {
       const res = await ipfs.stats.repo()

@@ -26,12 +26,12 @@ export function testGet (factory, options) {
     /** @type {CID} */
     let cid
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     it('should respect timeout option when getting a block', () => {
       return testTimeout(() => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {
@@ -54,18 +54,6 @@ export function testGet (factory, options) {
 
       const block = await ipfs.block.get(cid)
       expect(block).to.equalBytes(new Uint8Array(0))
-    })
-
-    it('should get a block added as CIDv0 with a CIDv1', async () => {
-      const input = uint8ArrayFromString(`TEST${Math.random()}`)
-
-      const cidv0 = await ipfs.block.put(input)
-      expect(cidv0.version).to.equal(0)
-
-      const cidv1 = cidv0.toV1()
-
-      const block = await ipfs.block.get(cidv1)
-      expect(block).to.equalBytes(input)
     })
 
     it('should get a block added as CIDv1 with a CIDv0', async () => {

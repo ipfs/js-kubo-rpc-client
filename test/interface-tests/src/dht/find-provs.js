@@ -29,7 +29,7 @@ export function testFindProvs (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let nodeC
 
-    before(async () => {
+    before(async function () {
       nodeA = (await factory.spawn()).api
       nodeB = (await factory.spawn()).api
       nodeC = (await factory.spawn()).api
@@ -38,7 +38,7 @@ export function testFindProvs (factory, options) {
       await ensureReachable(nodeC, nodeB)
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     /**
      * @type {import('multiformats/cid').CID}
@@ -70,15 +70,15 @@ export function testFindProvs (factory, options) {
 
       for await (const event of nodeA.dht.findProvs(providedCid)) {
         if (event.name === 'PROVIDER') {
-          providerIds.push(...event.providers.map(prov => prov.id))
+          providerIds.push(...event.providers.map(prov => prov.id.toString()))
         }
       }
 
       const nodeBId = await nodeB.id()
       const nodeCId = await nodeC.id()
 
-      expect(providerIds).to.include(nodeBId.id)
-      expect(providerIds).to.include(nodeCId.id)
+      expect(providerIds).to.include(nodeBId.id.toString())
+      expect(providerIds).to.include(nodeCId.id.toString())
     })
   })
 }

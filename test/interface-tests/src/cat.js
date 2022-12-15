@@ -12,7 +12,6 @@ import { getDescribe, getIt } from './utils/mocha.js'
 import testTimeout from './utils/test-timeout.js'
 import { importer } from 'ipfs-unixfs-importer'
 import blockstore from './utils/blockstore-adapter.js'
-import { notImplemented } from '../../constants.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -32,19 +31,27 @@ export function testCat (factory, options) {
     /** @type {import('ipfs-core-types').IPFS} */
     let ipfs
 
-    before(async () => { ipfs = (await factory.spawn()).api })
+    before(async function () {
+      ipfs = (await factory.spawn()).api
 
-    after(() => factory.clean())
+      await ipfs.add({ content: fixtures.smallFile.data })
+      await ipfs.add({ content: fixtures.bigFile.data })
+    })
 
-    before(() => Promise.all([
-      all(importer({ content: fixtures.smallFile.data }, blockstore(ipfs))),
-      all(importer({ content: fixtures.bigFile.data }, blockstore(ipfs)))
-    ]))
+    after(async function () { return await factory.clean() })
 
-    it('should respect timeout option when catting files', () => {
-      return testTimeout(() => drain(ipfs.cat(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
+    it('should respect timeout option when catting files', async function () {
+      await testTimeout(() => drain(ipfs.cat(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
         timeout: 1
       })))
+    })
+
+    it('should export a chunk of a file', async function () {
+      const offset = 1
+      const length = 3
+
+      const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.smallFile.cid, { offset, length })))
+      expect(uint8ArrayToString(data)).to.equal('lz ')
     })
 
     it('should cat with a base58 string encoded multihash', async () => {
@@ -168,17 +175,6 @@ export function testCat (factory, options) {
 
       const err = await expect(drain(ipfs.cat(dir.cid))).to.eventually.be.rejected()
       expect(err.message).to.contain('this dag node is a directory')
-    })
-
-    it('should export a chunk of a file', async function () {
-      if (notImplemented()) {
-        return this.skip('Not implemented in kubo yet')
-      }
-      const offset = 1
-      const length = 3
-
-      const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.smallFile.cid, { offset, length })))
-      expect(uint8ArrayToString(data)).to.equal('lz ')
     })
   })
 }

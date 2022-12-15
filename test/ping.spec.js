@@ -34,9 +34,9 @@ describe('.ping', function () {
     otherId = (await other.id()).id
   })
 
-  after(() => f.clean())
+  after(function () { return f.clean() })
 
-  it('.ping with default count', async () => {
+  it('.ping with default count', async function () {
     const res = await all(ipfs.ping(otherId))
     expect(res).to.be.an('array')
     expect(res.filter(isPong)).to.have.lengthOf(10)
@@ -48,7 +48,7 @@ describe('.ping', function () {
     expect(resultMsg).to.exist()
   })
 
-  it('.ping with count = 2', async () => {
+  it('.ping with count = 2', async function () {
     const res = await all(ipfs.ping(otherId, { count: 2 }))
     expect(res).to.be.an('array')
     expect(res.filter(isPong)).to.have.lengthOf(2)

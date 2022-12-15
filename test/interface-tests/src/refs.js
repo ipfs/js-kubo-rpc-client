@@ -32,7 +32,7 @@ export function testRefs (factory, options) {
     /** @type {CID} */
     let dagRootCid
 
-    before(async () => {
+    before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
@@ -44,7 +44,7 @@ export function testRefs (factory, options) {
       dagRootCid = await loadDagContent(ipfs, getMockObjects())
     })
 
-    after(() => factory.clean())
+    after(async function () { return await factory.clean() })
 
     for (const [name, options] of Object.entries(getRefsTests())) {
       const { path, params, expected, expectError, expectTimeout } = options
