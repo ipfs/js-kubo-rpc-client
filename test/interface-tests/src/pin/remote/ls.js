@@ -5,6 +5,7 @@ import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../../utils/mocha.js'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
+import { byCID } from '../../utils/index.js'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -261,9 +262,3 @@ export function testLs (factory, options) {
     })
   })
 }
-
-/**
- * @param {{ cid: CID }} a
- * @param {{ cid: CID }} b
- */
-const byCID = (a, b) => a.cid.toString() > b.cid.toString() ? 1 : -1
