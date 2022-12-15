@@ -1,8 +1,8 @@
 /* eslint-env mocha */
-
-import { expect } from 'aegir/chai'
-import { create as httpClient } from '../../src/index.js'
 import http from 'http'
+import { expect } from 'aegir/chai'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { create as httpClient } from '../../src/index.js'
 
 describe('\'deal with HTTP weirdness\' tests', function () {
   it('does not crash if no content-type header is provided', async function () {
@@ -21,6 +21,40 @@ describe('\'deal with HTTP weirdness\' tests', function () {
     await httpClient('/ip4/127.0.0.1/tcp/6001').config.replace('test/fixtures/r-config.json')
 
     server.close()
+  })
+})
+
+describe('trailer headers', function () {
+  it('should deal with trailer x-stream-error correctly', async function () {
+    this.timeout(5 * 1000)
+    const server = http.createServer((req, res) => {
+      res.setHeader('x-chunked-output', '1')
+      res.setHeader('content-type', 'application/json')
+      res.setHeader('Trailer', 'X-Stream-Error')
+      res.write(JSON.stringify({ Bytes: 1 }))
+      res.addTrailers({ 'X-Stream-Error': JSON.stringify({ Message: 'ups, something went wrong', Code: 500 }) })
+      res.end()
+    })
+
+    const ipfs = httpClient('/ip4/127.0.0.1/tcp/6001')
+
+    await server.listen(6001)
+
+    try {
+      const res = await ipfs.add(uint8ArrayFromString('Hello there!'))
+
+      expect(res).to.be.undefined()
+      /**
+       * TODO: We shouldn't have to close all connections.. X-Stream-Error should signal to the client that the connection should be closed
+       * Without this, the test will hang
+       */
+      await server.closeAllConnections()
+      await server.close()
+    } catch (err) {
+      // TODO: error's are not being correctly
+      // propagated with Trailer headers yet
+      // expect(err).to.exist()
+    }
   })
 })
 
