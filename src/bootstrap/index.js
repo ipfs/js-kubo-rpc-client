@@ -10,10 +10,7 @@ import { createRm } from './rm.js'
 export function createBootstrap (config) {
   return {
     /**
-     * TODO: Add bootstrap.add.default
-     * TODO: Remove bootstrap.clear
-     * TODO: Remove bootstrap.reset
-     * TODO: Add bootstrap.rmAll
+     * TODO: Remove nonmatching bootstrap subcommands https://github.com/ipfs/js-kubo-rpc-client/issues/96
      */
     add: createAdd(config),
     clear: createClear(config),

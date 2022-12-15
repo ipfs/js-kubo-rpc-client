@@ -50,7 +50,7 @@ function executeTests (commonFactory) {
       // config.replace
       {
         name: 'replace',
-        reason: 'FIXME Waiting for fix on kubo https://github.com/ipfs/js-ipfs-http-client/pull/307#discussion_r69281789 and https://github.com/ipfs/kubo/issues/2927'
+        reason: 'FIXME https://github.com/ipfs/js-kubo-rpc-client/issues/97'
       }
     ]
   })

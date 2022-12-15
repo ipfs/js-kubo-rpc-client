@@ -155,7 +155,7 @@ export function testImport (factory, options) {
       expect(result[0].root.pinErrorMsg).to.be.a('string')
       expect(result[0].root.pinErrorMsg).to.be.empty()
       expect(result[1].root.cid.toString()).to.equal(cids[1].toString())
-      // TODO: This is failing. The error message is empty, but it should not be.
+      // TODO: https://github.com/ipfs/js-kubo-rpc-client/issues/94 - This is failing. The error message is empty, but it should not be.
       // expect(result[1].root.pinErrorMsg).to.be.a('string')
       // expect(result[1].root.pinErrorMsg).to.not.be.empty('result[1].root.pinErrorMsg should not be empty')
       // expect(result[0].root.pinErrorMsg).to.contain('ipld: could not find')

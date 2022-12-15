@@ -8,9 +8,7 @@ import { createStat } from './stat.js'
 export function createBitswap (config) {
   return {
     /**
-     * TODO: Add bitswap.ledger
-     * TODO: Add bitswap.reprovide
-     * TODO: Remove bitswap.wantlistForPeer
+     * TODO: https://github.com/ipfs/js-kubo-rpc-client/issues/99
      */
     wantlist: createWantlist(config),
     wantlistForPeer: createWantlistForPeer(config),
