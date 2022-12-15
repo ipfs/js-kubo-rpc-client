@@ -55,22 +55,7 @@ function executeTests (commonFactory) {
     ]
   })
 
-  tests.dag(commonFactory, {
-    skip: [
-      // dag.get:
-      ...[
-        /**
-         * This test is intermittently failing with
-         * 1. mismatched CIDs
-         * 2. pinErrorMsg strings being empty when they're not supposed to be
-         * 3. across browser and node runtimes
-         *
-         * I've tried debugging this one and it seems to have a race condition or other intricate and implicit dependent that I am unaware of.
-         */
-        'should import car with roots but no blocks'
-      ].map((name) => ({ name, reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/56' }))
-    ]
-  })
+  tests.dag(commonFactory)
 
   tests.dht(commonFactory, {
     skip: [
