@@ -1,3 +1,19 @@
+## [2.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.3...v2.0.0) (2022-12-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Re-enable interface tests and get them succeeding (#83)
+
+### Features
+
+* Re-enable interface tests and get them succeeding ([#83](https://github.com/ipfs/js-kubo-rpc-client/issues/83)) ([2819080](https://github.com/ipfs/js-kubo-rpc-client/commit/28190805dee25c70c1122cde41397d97deeba70d)), closes [/github.com/ipfs/js-ipfs/blob/6ae5eb7/packages/ipfs/package.json#L93](https://github.com/ipfs//github.com/ipfs/js-ipfs/blob/6ae5eb7/packages/ipfs/package.json/issues/L93) [/github.com/ipfs/js-kubo-rpc-client/pull/83#issuecomment-1347820355](https://github.com/ipfs//github.com/ipfs/js-kubo-rpc-client/pull/83/issues/issuecomment-1347820355)
+
+
+### Trivial Changes
+
+* move interface tests back to original name ([56c5c28](https://github.com/ipfs/js-kubo-rpc-client/commit/56c5c285b69b2448f021e3ef6680a1924960e5c7))
+
 ## [1.0.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.2...v1.0.3) (2022-11-23)
 
 
