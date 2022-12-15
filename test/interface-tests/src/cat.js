@@ -46,6 +46,14 @@ export function testCat (factory, options) {
       })))
     })
 
+    it('should export a chunk of a file', async function () {
+      const offset = 1
+      const length = 3
+
+      const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.smallFile.cid, { offset, length })))
+      expect(uint8ArrayToString(data)).to.equal('lz ')
+    })
+
     it('should cat with a base58 string encoded multihash', async () => {
       const data = uint8ArrayConcat(await all(ipfs.cat(fixtures.smallFile.cid)))
       expect(uint8ArrayToString(data)).to.contain('Plz add me!')
