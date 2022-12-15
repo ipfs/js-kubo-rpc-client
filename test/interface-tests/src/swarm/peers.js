@@ -51,15 +51,22 @@ export function testPeers (factory, options) {
 
       expect(peer).to.have.a.property('addr')
       expect(isMultiaddr(peer.addr)).to.equal(true)
-      /**
-       * Modified to get passing during https://github.com/ipfs/js-kubo-rpc-client/issues/56
-       */
       expect(peer.peer.toString()).not.to.be.undefined()
       expect(PeerId.parse(peer.peer.toString())).to.be.ok()
       expect(isMultiaddr(peer.addr)).to.equal(true)
+      expect(peer).to.have.a.property('direction')
+      expect(peer.direction).to.be.oneOf(['inbound', 'outbound'])
+      /**
+       * When verbose: true is not passed, these will default to empty strings or null
+       */
       expect(peer).to.have.a.property('latency')
+      expect(peer.latency).to.be.a('string')
+      expect(peer.latency).to.be.empty()
       expect(peer).to.have.a.property('muxer')
+      expect(peer.muxer).to.be.a('string')
+      expect(peer.muxer).to.be.empty()
       expect(peer).to.have.a.property('streams')
+      expect(peer.streams).to.equal(null)
     })
 
     it('should list peers this node is connected to with verbose option', async () => {
@@ -70,10 +77,16 @@ export function testPeers (factory, options) {
       expect(peer).to.have.a.property('addr')
       expect(isMultiaddr(peer.addr)).to.equal(true)
       expect(peer).to.have.a.property('peer')
+      expect(peer).to.have.a.property('direction')
+      expect(peer.direction).to.be.oneOf(['inbound', 'outbound'])
       expect(peer).to.have.a.property('latency')
       expect(peer.latency).to.match(/n\/a|[0-9]+[mµ]?s/) // n/a or 3ms or 3µs or 3s
       expect(peer).to.have.a.property('muxer')
+      expect(peer.muxer).to.be.a('string')
+      expect(peer.muxer).to.be.empty()
       expect(peer).to.have.a.property('streams')
+      expect(peer.streams).not.to.equal(null)
+      expect(peer.streams).to.be.a('array')
     })
 
     /**
