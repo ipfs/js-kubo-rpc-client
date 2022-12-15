@@ -176,8 +176,6 @@ Aside from the default export, `kubo-rpc-client` exports various types and utili
 These can be accessed like this, for example:
 
 ```js
-const { CID } = require('kubo-rpc-client')
-// ...or from an es-module:
 import { CID } from 'kubo-rpc-client'
 ```
 
