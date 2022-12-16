@@ -19,7 +19,10 @@ const DEFAULT_PORT = isBrowser || isWebWorker ? location.port : '5001'
 
 /**
  * @typedef {import('../types').Options} Options
- * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
+ */
+
+/**
+ * @typedef {import('../types').Multiaddr} Multiaddr
  */
 
 /**

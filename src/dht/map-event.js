@@ -13,7 +13,7 @@ import { multiaddr } from '@multiformats/multiaddr'
 import { peerIdFromString } from '@libp2p/peer-id'
 
 /**
- * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
+ * @typedef {ReturnType<typeof multiaddr>} Multiaddr
  */
 
 /**

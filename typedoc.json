@@ -1,0 +1,6 @@
+{
+  "out": "docs",
+  "preserveWatchOutput": true,
+  "logLevel": "Verbose",
+  "excludeExternals": true
+}
