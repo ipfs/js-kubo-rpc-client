@@ -1,3 +1,20 @@
+## [2.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.0...v2.0.1) (2023-01-03)
+
+
+### Bug Fixes
+
+* typedoc ([#102](https://github.com/ipfs/js-kubo-rpc-client/issues/102)) ([29e246b](https://github.com/ipfs/js-kubo-rpc-client/commit/29e246b1f41b7672c7be3d11688054abeaf7555d))
+
+
+### Trivial Changes
+
+* Update .github/workflows/stale.yml [skip ci] ([1550880](https://github.com/ipfs/js-kubo-rpc-client/commit/1550880f40652b23df6749118f036c57ca8829e8))
+
+
+### Documentation
+
+* remove reference to CJS require in README ([#100](https://github.com/ipfs/js-kubo-rpc-client/issues/100)) ([072f698](https://github.com/ipfs/js-kubo-rpc-client/commit/072f6984b4f2c1df7165f6a255c751086d9e08d5))
+
 ## [2.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v1.0.3...v2.0.0) (2022-12-15)
 
 
