@@ -131,7 +131,7 @@ export type StatsAPI = import('ipfs-core-types/src/stats').API<HTTPClientExtraOp
 export type SwarmAPI = import('ipfs-core-types/src/swarm').API<HTTPClientExtraOptions>
 
 export type MultibaseCodec<Prefix extends string = any> = import('multiformats/bases/interface').MultibaseCodec<Prefix>
-export type { Message, MultihashHasher }
+export type { Message, MultihashHasher, Multiaddr }
 
 export interface SubscribeMessage {
   from: import('ipfsd-ctl').Controller['peer']
