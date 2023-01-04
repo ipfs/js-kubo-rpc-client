@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.1...v2.0.2) (2023-01-04)
+
+
+### Bug Fixes
+
+* remove bootstrap.clear() and bootstrap.reset() ([#114](https://github.com/ipfs/js-kubo-rpc-client/issues/114)) ([a55a31b](https://github.com/ipfs/js-kubo-rpc-client/commit/a55a31b493d55e4f733b13aa7909ea2573433250))
+
 ## [2.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.0...v2.0.1) (2023-01-03)
 
 
