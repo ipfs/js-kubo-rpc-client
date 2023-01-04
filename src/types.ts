@@ -55,10 +55,11 @@ interface KuboRpcClientConfigApi extends Omit<OldRpcClientConfigApi, 'profiles'>
   profiles: Omit<OldRpcClientConfigApi['profiles'], 'list'>
 }
 
-export interface KuboRpcClientApi extends Omit<IPFS<HTTPClientExtraOptions>, 'files' | 'bitswap' | 'config'> {
+export interface KuboRpcClientApi extends Omit<IPFS<HTTPClientExtraOptions>, 'files' | 'bitswap' | 'config' | 'bootstrap'> {
   bitswap: Omit<IPFS<HTTPClientExtraOptions>['bitswap'], 'unwant'>
   config: KuboRpcClientConfigApi
   files: Omit<IPFS<HTTPClientExtraOptions>['files'], 'chmod' | 'touch'>
+  bootstrap: Omit<IPFS<HTTPClientExtraOptions>['bootstrap'], 'clear' | 'reset'>
 }
 
 export interface IPFSHTTPClient extends KuboRpcClientApi {

@@ -46,8 +46,6 @@ export function testAdd (factory, options) {
     })
 
     it('should prevent duplicate inserts of bootstrap peers', async () => {
-      await ipfs.bootstrap.clear()
-
       const added = await ipfs.bootstrap.add(validIp4)
       expect(added).to.have.property('Peers').that.deep.equals([validIp4])
 
