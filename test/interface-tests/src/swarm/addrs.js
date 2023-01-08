@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import PeerId from 'peer-id'
+import { peerIdFromString } from '@libp2p/peer-id'
 import { isMultiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
@@ -46,7 +46,7 @@ export function testAddrs (factory, options) {
       expect(peers).to.be.an('array')
 
       for (const peer of peers) {
-        expect(PeerId.parse(peer.id.toString())).to.be.ok()
+        expect(peerIdFromString(peer.id.toString())).to.be.ok()
         expect(peer).to.have.a.property('addrs').that.is.an('array')
 
         for (const ma of peer.addrs) {

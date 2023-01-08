@@ -4,7 +4,7 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
-import PeerId from 'peer-id'
+import { peerIdFromString } from '@libp2p/peer-id'
 import last from 'it-last'
 import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
@@ -66,7 +66,7 @@ export function testResolve (factory, options) {
 
       // Represent Peer ID as CIDv1 Base32
       // https://github.com/libp2p/specs/blob/master/RFC/0001-text-peerid-cid.md
-      const keyCid = CID.createV1(0x72, Digest.decode(PeerId.parse(peerId.toString()).toBytes()))
+      const keyCid = CID.createV1(0x72, Digest.decode(peerIdFromString(peerId.toString()).toBytes()))
       const resolvedPath = await last(ipfs.name.resolve(`/ipns/${keyCid}`))
 
       expect(resolvedPath).to.equal(`/ipfs/${cid}`)
