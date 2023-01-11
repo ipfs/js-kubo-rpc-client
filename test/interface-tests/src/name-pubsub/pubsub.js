@@ -2,7 +2,7 @@
 
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
-import PeerId from 'peer-id'
+import { peerIdFromString } from '@libp2p/peer-id'
 import { isNode } from 'ipfs-utils/src/env.js'
 import * as ipns from 'ipns'
 import delay from 'delay'
@@ -183,8 +183,8 @@ export function testPubsub (factory, options) {
         throw new Error('No public key found in message data')
       }
 
-      const messageKey = await PeerId.createFromB58String(publishedMessage.from)
-      const pubKeyPeerId = await PeerId.createFromPubKey(publishedMessageData.pubKey)
+      const messageKey = peerIdFromString(publishedMessage.from)
+      const pubKeyPeerId = peerIdFromString(publishedMessageData.pubKey)
 
       expect(pubKeyPeerId.toB58String()).not.to.equal(messageKey.toB58String())
       expect(pubKeyPeerId.toB58String()).to.equal(testAccount.id)

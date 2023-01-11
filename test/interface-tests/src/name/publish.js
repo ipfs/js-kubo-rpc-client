@@ -6,7 +6,7 @@ import { fixture } from './utils.js'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import last from 'it-last'
-import PeerId from 'peer-id'
+import { peerIdFromString } from '@libp2p/peer-id'
 
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
@@ -59,7 +59,7 @@ export function testPublish (factory, options) {
       const res = await ipfs.name.publish(value, { allowOffline: true })
       expect(res).to.exist()
 
-      expect(PeerId.parse(res.name).toString()).to.equal(PeerId.parse(self.id).toString())
+      expect(peerIdFromString(res.name).toString()).to.equal(peerIdFromString(self.id).toString())
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
@@ -91,7 +91,7 @@ export function testPublish (factory, options) {
 
       const res = await ipfs.name.publish(value, options)
       expect(res).to.exist()
-      expect(PeerId.parse(res.name).toString()).to.equal(PeerId.parse(self.id).toString())
+      expect(peerIdFromString(res.name).toString()).to.equal(peerIdFromString(self.id).toString())
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
@@ -112,7 +112,7 @@ export function testPublish (factory, options) {
       const res = await ipfs.name.publish(value, options)
 
       expect(res).to.exist()
-      expect(PeerId.parse(res.name).toString()).to.equal(PeerId.parse(key.id).toString())
+      expect(peerIdFromString(res.name).toString()).to.equal(peerIdFromString(key.id).toString())
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
   })

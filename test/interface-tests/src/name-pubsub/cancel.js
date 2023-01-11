@@ -1,6 +1,5 @@
 /* eslint-env mocha */
-
-import PeerId from 'peer-id'
+import { createPeerId } from '@libp2p/peer-id'
 import all from 'it-all'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
@@ -45,8 +44,8 @@ export function testCancel (factory, options) {
       // @ts-ignore this is mocha
       this.timeout(300 * 1000)
 
-      const peerId = await PeerId.create({ bits: 512 })
-      const id = peerId.toB58String()
+      const peerId = createPeerId()
+      const id = peerId.toString()
       const ipnsPath = `/ipns/${id}`
 
       const subs = await ipfs.name.pubsub.subs()

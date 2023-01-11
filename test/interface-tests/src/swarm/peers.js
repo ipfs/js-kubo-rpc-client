@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { isMultiaddr } from '@multiformats/multiaddr'
-import PeerId from 'peer-id'
+import { peerIdFromString } from '@libp2p/peer-id'
 import delay from 'delay'
 import { isBrowser, isWebWorker } from 'ipfs-utils/src/env.js'
 import { expect } from 'aegir/chai'
@@ -52,7 +52,7 @@ export function testPeers (factory, options) {
       expect(peer).to.have.a.property('addr')
       expect(isMultiaddr(peer.addr)).to.equal(true)
       expect(peer.peer.toString()).not.to.be.undefined()
-      expect(PeerId.parse(peer.peer.toString())).to.be.ok()
+      expect(peerIdFromString(peer.peer.toString())).to.be.ok()
       expect(isMultiaddr(peer.addr)).to.equal(true)
       expect(peer).to.have.a.property('direction')
       expect(peer.direction).to.be.oneOf(['inbound', 'outbound'])
