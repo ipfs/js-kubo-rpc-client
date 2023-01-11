@@ -207,7 +207,7 @@
     "it-pushable": "^3.1.0",
     "it-tar": "^6.0.0",
     "it-to-buffer": "^3.0.0",
-    "jsdoc": "^3.6.11",
+    "jsdoc": "^4.0.0",
     "libp2p-websockets": "^0.16.2",
     "mock-ipfs-pinning-service": "^0.4.2",
     "nanoid": "^4.0.0",
