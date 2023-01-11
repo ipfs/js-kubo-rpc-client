@@ -218,7 +218,7 @@
     "p-timeout": "^4.1.0",
     "pako": "^2.0.4",
     "readable-stream": "^4.2.0",
-    "sinon": "^14.0.1",
+    "sinon": "^15.0.1",
     "typedoc": "^0.23.10"
   },
   "browser": {
