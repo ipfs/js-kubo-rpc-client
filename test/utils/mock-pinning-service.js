@@ -15,7 +15,6 @@ export class PinningService {
    * @returns {Promise<PinningService>}
    */
   static async start ({ port = defaultPort, token = defaultToken } = {}) {
-    // eslint-disable-next-line mocha/no-top-level-hooks
     const service = await setup({ token })
     const server = http.createServer(service)
     const host = '127.0.0.1'

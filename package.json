@@ -54,6 +54,15 @@
       "require": "./dist/src/index.js"
     }
   },
+  "eslintConfig": {
+    "extends": "ipfs",
+    "parserOptions": {
+      "sourceType": "module"
+    },
+    "ignorePatterns": [
+      "test/interface-tests/fixtures/*"
+    ]
+  },
   "release": {
     "branches": [
       "master"
@@ -188,9 +197,6 @@
     "blockstore-core": "^3.0.0",
     "delay": "^5.0.0",
     "did-jwt": "^6.8.0",
-    "eslint-config-ipfs": "^3.1.0",
-    "eslint-plugin-jsdoc": "^39.3.6",
-    "eslint-plugin-mocha": "^10.1.0",
     "go-ipfs": "^0.17.0",
     "ipfs-core-types": "^0.14.0",
     "ipfs-unixfs": "^9.0.0",
@@ -208,7 +214,6 @@
     "it-pushable": "^3.1.0",
     "it-tar": "^6.0.0",
     "it-to-buffer": "^3.0.0",
-    "jsdoc": "^4.0.0",
     "mock-ipfs-pinning-service": "^0.4.2",
     "nanoid": "^4.0.0",
     "nock": "^13.2.9",
@@ -218,8 +223,7 @@
     "p-timeout": "^6.0.0",
     "pako": "^2.0.4",
     "readable-stream": "^4.2.0",
-    "sinon": "^15.0.1",
-    "typedoc": "^0.23.10"
+    "sinon": "^15.0.1"
   },
   "browser": {
     "ipfs-utils/src/files/glob-source": false,
