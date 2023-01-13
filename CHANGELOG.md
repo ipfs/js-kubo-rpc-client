@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.2...v2.0.3) (2023-01-13)
+
+
+### Bug Fixes
+
+* config.replace tests ([#112](https://github.com/ipfs/js-kubo-rpc-client/issues/112)) ([020bf54](https://github.com/ipfs/js-kubo-rpc-client/commit/020bf543187f69e82ea88a16065dd8c6f3bf5d01))
+
 ## [2.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.1...v2.0.2) (2023-01-04)
 
 
