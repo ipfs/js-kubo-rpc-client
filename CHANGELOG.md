@@ -1,3 +1,22 @@
+## [3.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.3...v3.0.0) (2023-01-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* instances of the CID class returned by this module are now from multiformats@11.x.x
+
+Co-authored-by: achingbrain <alex@achingbrain.net>
+
+### Dependencies
+
+* update multiformats to version 11.x.x ([7053f35](https://github.com/ipfs/js-kubo-rpc-client/commit/7053f351c31a3a80ba1b92d48738b098da7244de))
+
+
+### Documentation
+
+* fix up typedoc command ([a8d6037](https://github.com/ipfs/js-kubo-rpc-client/commit/a8d6037a1863aa6076c1ee2f0e3d7fab2e9e9656))
+* update publish step ([86777d6](https://github.com/ipfs/js-kubo-rpc-client/commit/86777d61f5c308dd2708157aed59d7baa82b9c8e))
+
 ## [2.0.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.2...v2.0.3) (2023-01-13)
 
 
