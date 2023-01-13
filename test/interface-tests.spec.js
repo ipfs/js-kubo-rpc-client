@@ -45,15 +45,7 @@ function executeTests (commonFactory) {
 
   tests.bootstrap(commonFactory)
 
-  tests.config(commonFactory, {
-    skip: [
-      // config.replace
-      {
-        name: 'replace',
-        reason: 'FIXME https://github.com/ipfs/js-kubo-rpc-client/issues/97'
-      }
-    ]
-  })
+  tests.config(commonFactory)
 
   tests.dag(commonFactory)
 
