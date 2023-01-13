@@ -6,4 +6,5 @@ node_modules
 dist
 out
 .docs
+docs
 .coverage

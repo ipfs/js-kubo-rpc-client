@@ -15,7 +15,7 @@
 - [Getting Started](#getting-started)
   - [Next Steps](#next-steps)
 - [Usage](#usage)
-  - - [`create([options])`](#createoptions)
+    - [`create([options])`](#createoptions)
     - [Parameters](#parameters)
     - [Options](#options)
     - [Returns](#returns)
@@ -38,7 +38,6 @@
 - [Development](#development)
   - [Testing](#testing)
 - [Historical context](#historical-context)
-- [API Docs](#api-docs)
 - [License](#license)
 - [Contribute](#contribute)
 
@@ -381,10 +380,6 @@ We run tests by executing `npm test` in a terminal window. This will run both No
 ## Historical context
 
 This module started as a direct mapping from the go-ipfs cli to a JavaScript implementation, although this was useful and familiar to a lot of developers that were coming to IPFS for the first time, it also created some confusion on how to operate the core of IPFS and have access to the full capacity of the protocol. After much consideration, we decided to create `interface-ipfs-core` with the goal of standardizing the interface of a core implementation of IPFS, and keep the utility functions the IPFS community learned to use and love, such as reading files from disk and storing them directly to IPFS.
-
-## API Docs
-
-- <https://ipfs.github.io/js-kubo-rpc-client>
 
 ## License
 

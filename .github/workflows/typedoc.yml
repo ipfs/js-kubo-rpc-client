@@ -33,7 +33,7 @@ jobs:
         uses: actions/configure-pages@v1
       - uses: ipfs/aegir/actions/cache-node-modules@master
       - name: Run typedoc
-        run: npm run docs
+        run: npm run typedoc
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
