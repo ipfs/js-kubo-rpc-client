@@ -26,24 +26,49 @@ export function testReplace (factory, options) {
 
     after(async function () { return await factory.clean() })
 
-    const config = {
-      Addresses: {
-        API: ''
-      }
-    }
-
     it('should replace the whole config', async () => {
+      const config = {
+        Addresses: {
+          API: '/ip4/1.2.3.4/tcp/54321/'
+        }
+      }
+
       await ipfs.config.replace(config)
 
       const _config = await ipfs.config.getAll()
-      expect(_config).to.deep.equal(config)
+      expect(cleanConfig(_config)).to.deep.equal(config)
     })
 
     it('should replace to empty config', async () => {
       await ipfs.config.replace({})
 
       const _config = await ipfs.config.getAll()
-      expect(_config).to.deep.equal({})
+      expect(cleanConfig(_config)).to.deep.equal({})
     })
   })
+}
+
+// cleanConfig removes all null properties of the configuration. When replacing
+// a configuration, Kubo always fills missing properties with null values.
+function cleanConfig (config) {
+  if (Array.isArray(config)) {
+    return config.filter(e => Boolean(e))
+  }
+
+  return Object.keys(config).reduce((acc, key) => {
+    if (!config[key]) {
+      return acc
+    }
+
+    if (typeof config[key] === 'object') {
+      const o = cleanConfig(config[key])
+      if (o && Object.keys(o).length) {
+        acc[key] = o
+      }
+    } else if (config[key]) {
+      acc[key] = config[key]
+    }
+
+    return acc
+  }, {})
 }
