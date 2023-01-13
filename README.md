@@ -1,16 +1,17 @@
 # kubo-rpc-client <!-- omit in toc -->
-[![ipfs.io](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
+
+[![ipfs.tech](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
+[![Discuss](https://img.shields.io/discourse/https/discuss.ipfs.tech/posts.svg?style=flat-square)](https://discuss.ipfs.tech)
 [![codecov](https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-kubo-rpc-client)
-[![CI](https://img.shields.io/github/workflow/status/ipfs/js-kubo-rpc-client/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/ipfs/js-kubo-rpc-client/js-test-and-release.yml?branch=master\&style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml?query=branch%3Amaster)
 
 > A client library for the Kubo RPC API
-
-## Work In Progress
-This client is still a work in progress and in active development. Please refer to `ipfs-http-client` for now and only use this package if you are aware of the implications. Follow https://github.com/ipfs/js-kubo-rpc-client/milestone/1 for tracking when this library is ready for consumption
 
 ## Table of contents <!-- omit in toc -->
 
 - [Install](#install)
+  - [Browser `<script>` tag](#browser-script-tag)
+- [Work In Progress](#work-in-progress)
 - [Getting Started](#getting-started)
   - [Next Steps](#next-steps)
 - [Usage](#usage)
@@ -37,6 +38,7 @@ This client is still a work in progress and in active development. Please refer 
 - [Development](#development)
   - [Testing](#testing)
 - [Historical context](#historical-context)
+- [API Docs](#api-docs)
 - [License](#license)
 - [Contribute](#contribute)
 
@@ -45,6 +47,18 @@ This client is still a work in progress and in active development. Please refer 
 ```console
 $ npm i kubo-rpc-client
 ```
+
+### Browser `<script>` tag
+
+Loading this module through a script tag will make it's exports available as `KuboRpcClient` in the global namespace.
+
+```html
+<script src="https://unpkg.com/kubo-rpc-client/dist/index.min.js"></script>
+```
+
+## Work In Progress
+
+This client is still a work in progress and in active development. Please refer to `ipfs-http-client` for now and only use this package if you are aware of the implications. Follow <https://github.com/ipfs/js-kubo-rpc-client/milestone/1> for tracking when this library is ready for consumption
 
 <h1 align="center">
   <a href="https://ipfs.tech"><img width="650px" src="https://ipfs.io/ipfs/QmQJ68PFMDdAsgCZvA1UVzzn18asVcf7HVvCDgpjiSCAse" alt="Kubo RPC Client logo" /></a>
@@ -88,6 +102,7 @@ Both the Current and Active LTS versions of Node.js are supported. Please see [n
 <!-- TODO: currently useless
 - Read the [docs](https://ipfs.github.io/js-kubo-rpc-client)
 -->
+
 - Look into the [examples](https://github.com/ipfs-examples/js-ipfs-examples) to learn how to spawn an RPC client or a full IPFS node in Node.js and in the Browser
 - Consult the [Core API docs](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api) to see what you can do with an IPFS node
 - Check out <https://docs.ipfs.tech> for tips, how-tos and more
@@ -367,6 +382,10 @@ We run tests by executing `npm test` in a terminal window. This will run both No
 
 This module started as a direct mapping from the go-ipfs cli to a JavaScript implementation, although this was useful and familiar to a lot of developers that were coming to IPFS for the first time, it also created some confusion on how to operate the core of IPFS and have access to the full capacity of the protocol. After much consideration, we decided to create `interface-ipfs-core` with the goal of standardizing the interface of a core implementation of IPFS, and keep the utility functions the IPFS community learned to use and love, such as reading files from disk and storing them directly to IPFS.
 
+## API Docs
+
+- <https://ipfs.github.io/js-kubo-rpc-client>
+
 ## License
 
 Licensed under either of
@@ -376,8 +395,12 @@ Licensed under either of
 
 ## Contribute
 
-Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-kubo-rpc-client/issues)!
+Contributions welcome! Please check out [the issues](https://github.com/ipfs/js-kubo-rpc-client/issues).
 
-This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+Also see our [contributing document](https://github.com/ipfs/community/blob/master/CONTRIBUTING_JS.md) for more information on how we work, and about contributing in general.
+
+Please be aware that all interactions related to this repo are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
 
 [![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/CONTRIBUTING.md)
