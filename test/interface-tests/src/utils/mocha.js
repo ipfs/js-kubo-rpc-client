@@ -1,6 +1,4 @@
 /* eslint-env mocha */
-/* eslint-disable mocha/no-exclusive-tests */
-/* eslint-disable mocha/no-skipped-tests */
 
 /**
  * @typedef {object} Skip

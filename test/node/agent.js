@@ -47,7 +47,6 @@ function startServer (handler) {
  *
  * @see https://github.com/ipfs/js-kubo-rpc-client/tree/investigateConcurrencyTest
  */
-// eslint-disable-next-line mocha/no-skipped-tests
 describe.skip('agent', function () {
   /** @type {Agent} */
   let agent
