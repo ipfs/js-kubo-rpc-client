@@ -201,7 +201,7 @@
     "ipfs-core-types": "^0.14.0",
     "ipfs-unixfs": "^9.0.0",
     "ipfs-unixfs-importer": "^12.0.0",
-    "ipfsd-ctl": "^12.2.2",
+    "ipfsd-ctl": "^13.0.0",
     "ipns": "^5.0.1",
     "is-ipfs": "^8.0.1",
     "iso-random-stream": "^2.0.2",
