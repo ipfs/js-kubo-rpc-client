@@ -5,7 +5,7 @@ import EchoServer from 'aegir/echo-server'
  * @typedef {object} BeforeType
  * @property {import('ipfsd-ctl').Controller} server
  * @property {EchoServer} echoServer
- * @property {typeof import('./test/utils/mock-pinning-service.js')} pinningService
+ * @property {typeof import('./dist/test/utils/mock-pinning-service.js')} pinningService
  * @property {Record<string, string>} env
  */
 /** @type {import('aegir').PartialOptions} */
@@ -21,13 +21,13 @@ export default {
      * @returns {Promise<BeforeType>}
      */
     async before (options) {
-      const { PinningService } = await import('./test/utils/mock-pinning-service.js')
+      const { PinningService } = await import('./dist/test/utils/mock-pinning-service.js')
       const pinningService = await PinningService.start()
       const server = createServer({
         port: 0
       }, {
         type: 'go',
-        kuboRpcModule: await import('./src/index.js'),
+        kuboRpcModule: await import('./dist/src/index.js'),
         ipfsBin: (await import('go-ipfs')).default.path()
       })
 
