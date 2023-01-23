@@ -332,16 +332,16 @@ Example:
 ></script>
 ```
 
-CDN-based IPFS API provides the `IpfsHttpClient` constructor as a method of the global `window` object. Example:
+CDN-based IPFS API provides the `KuboRpcClient` object of the global `window` object. Example:
 
 ```js
-const ipfs = window.IpfsHttpClient({ host: 'localhost', port: 5001 })
+const ipfs = window.KuboRpcClient.create({ host: 'localhost', port: 5001 })
 ```
 
 If you omit the host and port, the client will parse `window.host`, and use this information. This also works, and can be useful if you want to write apps that can be run from multiple different gateways:
 
 ```js
-const ipfs = window.IpfsHttpClient()
+const ipfs = window.KuboRpcClient.create()
 ```
 
 ### Custom Headers
