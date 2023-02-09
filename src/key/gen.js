@@ -4,7 +4,7 @@ import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
 /** @type {import('ipfs-core-types/src/key').GenOptions} */
 const defaultOptions = {
-  type: 'Ed25519'
+  type: 'ed25519'
 }
 
 export const createGen = configure(api => {
