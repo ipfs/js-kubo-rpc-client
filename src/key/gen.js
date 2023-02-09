@@ -2,14 +2,14 @@ import { objectToCamel } from '../lib/object-to-camel.js'
 import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
-/** @type {import('ipfs-core-types/src/key').GenOptions} */
+/** @type {import('./types.js').GenOptions} */
 const defaultOptions = {
   type: 'ed25519'
 }
 
 export const createGen = configure(api => {
   /**
-   * @type {import('../types').KeyAPI["gen"]}
+   * @type {import('./types.js').KeyAPI['gen']}
    */
   async function gen (name, options = defaultOptions) {
     const res = await api.post('key/gen', {
