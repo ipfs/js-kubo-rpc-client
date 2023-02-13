@@ -1,3 +1,15 @@
+## [3.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.0...v3.0.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* **key/gen:** use correct key type casing ([#145](https://github.com/ipfs/js-kubo-rpc-client/issues/145)) ([8b24a94](https://github.com/ipfs/js-kubo-rpc-client/commit/8b24a94a1683922778e0fe212ac49d2a5cc62c7e))
+
+
+### Documentation
+
+* fix global variable for CDN version [ci skip] ([2b129c7](https://github.com/ipfs/js-kubo-rpc-client/commit/2b129c79e99e31573ed9ad794ffddfbd29144ec2))
+
 ## [3.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v2.0.3...v3.0.0) (2023-01-13)
 
 
