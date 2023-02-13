@@ -4,7 +4,7 @@ import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
 export const createImport = configure(api => {
   /**
-   * @type {import('../types').KeyAPI["import"]}
+   * @type {import('./types.js').KeyAPI['import']}
    */
   async function importKey (name, pem, password, options = {}) {
     const res = await api.post('key/import', {

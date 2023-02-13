@@ -4,7 +4,7 @@ import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 
 export const createRename = configure(api => {
   /**
-   * @type {import('../types').KeyAPI["rename"]}
+   * @type {import('./types.js').KeyAPI['rename']}
    */
   async function rename (oldName, newName, options = {}) {
     const res = await api.post('key/rename', {
