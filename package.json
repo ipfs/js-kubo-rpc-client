@@ -190,7 +190,7 @@
     "@ipld/car": "^5.0.3",
     "@libp2p/interface-peer-id": "^2.0.0",
     "@libp2p/interface-peer-info": "^1.0.2",
-    "@libp2p/interface-pubsub": "^3.0.0",
+    "@libp2p/interface-pubsub": "^4.0.1",
     "@libp2p/interfaces": "^3.0.3",
     "@libp2p/websockets": "^5.0.2",
     "aegir": "^37.5.6",
