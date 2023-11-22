@@ -158,6 +158,8 @@ const client = create(new URL('http://127.0.0.1:5002'))
 const { cid } = await client.add('Hello world!')
 ```
 
+Do you use Kubo's [**`API.Authorizations`**](https://github.com/ipfs/kubo/blob/master/docs/config.md#apiauthorizations)? Check the [Custom Headers](#custom-headers) section.
+
 ### API
 
 `kubo-rpc-client` will not implement the [IPFS Core API](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api). Please see <https://github.com/ipfs/kubo/issues/9125> for more information.
