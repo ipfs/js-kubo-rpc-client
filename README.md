@@ -158,6 +158,8 @@ const client = create(new URL('http://127.0.0.1:5002'))
 const { cid } = await client.add('Hello world!')
 ```
 
+Do you use Kubo's [**`API.Authorizations`**](https://github.com/ipfs/kubo/blob/master/docs/config.md#apiauthorizations)? Check the [Custom Headers](#custom-headers) section.
+
 ### API
 
 `kubo-rpc-client` will not implement the [IPFS Core API](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api). Please see <https://github.com/ipfs/kubo/issues/9125> for more information.
@@ -346,7 +348,9 @@ const ipfs = window.KuboRpcClient.create()
 
 ### Custom Headers
 
-If you wish to send custom headers with each request made by this library, for example, the Authorization header. You can use the config to do so:
+If you wish to send custom headers with each request made by this library, for example, the `Authorization` header. This can be useful if your Kubo node has keys defined in [`API.Authorizations`](https://github.com/ipfs/kubo/blob/master/docs/config.md#apiauthorizations).
+
+If you're using `bearer:token`, where `token` is `abc123`:
 
 ```js
 const ipfs = create({
@@ -354,7 +358,23 @@ const ipfs = create({
   port: 5001,
   protocol: 'http',
   headers: {
-    authorization: 'Bearer ' + TOKEN
+    authorization: 'Bearer abc123'
+  }
+})
+```
+
+If you're using `basic:user:password`, where `user:password` is `alice:secret`:
+
+```js
+const ipfs = create({
+  host: 'localhost',
+  port: 5001,
+  protocol: 'http',
+  headers: {
+    // For Node.js, using:
+    //    Buffer.from('alice:secret').toString('base64')
+    // is preferred over using `btoa`.
+    authorization: 'Basic ' + btoa('alice:secret')
   }
 })
 ```
