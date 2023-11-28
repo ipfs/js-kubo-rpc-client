@@ -117,7 +117,7 @@ describe('error handling', function () {
 
     await expect(httpClient('/ip4/127.0.0.1/tcp/6001').config.replace('test/fixtures/r-config.json'))
       .to.eventually.be.rejected()
-      .and.to.have.property('message').that.includes('Unexpected token M in JSON at position 2')
+      .and.to.have.property('message').that.includes('invalid json response body')
 
     server.close()
   })
