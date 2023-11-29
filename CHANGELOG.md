@@ -1,3 +1,23 @@
+## [3.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.1...v3.0.2) (2023-11-29)
+
+
+### Bug Fixes
+
+* tests and update multiformats/multiaddr ([#213](https://github.com/ipfs/js-kubo-rpc-client/issues/213)) ([8b2ee7f](https://github.com/ipfs/js-kubo-rpc-client/commit/8b2ee7f6d8e8ecac7133ee55eafc734c5d163484))
+
+
+### Trivial Changes
+
+* add or force update .github/workflows/js-test-and-release.yml ([#161](https://github.com/ipfs/js-kubo-rpc-client/issues/161)) ([f326cee](https://github.com/ipfs/js-kubo-rpc-client/commit/f326ceea41bc0b20723d0ef6fa20844c7fd7b522))
+* delete templates [skip ci] ([#160](https://github.com/ipfs/js-kubo-rpc-client/issues/160)) ([a0aea33](https://github.com/ipfs/js-kubo-rpc-client/commit/a0aea333949f05958fbdfc5ac0e7a52e06abc663))
+* Update .github/workflows/stale.yml [skip ci] ([76cbca8](https://github.com/ipfs/js-kubo-rpc-client/commit/76cbca831d78320343ae51e7038a9a7596745ab9))
+* Update .github/workflows/stale.yml [skip ci] ([4285a5b](https://github.com/ipfs/js-kubo-rpc-client/commit/4285a5b099e60e2fc1a8e44fb388dab13539e334))
+
+
+### Documentation
+
+* improve authorization docs ([5fc5592](https://github.com/ipfs/js-kubo-rpc-client/commit/5fc5592778efccc3b267d14e0e0f4bd509923422))
+
 ## [3.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.0...v3.0.1) (2023-02-13)
 
 
