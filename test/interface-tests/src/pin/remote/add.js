@@ -93,12 +93,12 @@ export function testAdd (factory, options) {
       expect(winner).to.equal(timeout)
 
       // trigger status change on the mock service
-      ipfs.pin.remote.add(cid, {
+      await ipfs.pin.remote.add(cid, {
         service: SERVICE,
         name: 'pinned-block'
       })
 
-      expect(await result).to.deep.equal({
+      await expect(result).to.eventually.deep.equal({
         cid,
         status: 'pinned',
         name: ''

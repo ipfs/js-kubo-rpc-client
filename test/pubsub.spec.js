@@ -25,7 +25,9 @@ describe('.pubsub', function () {
       ipfs = ctl.api
     })
 
-    afterEach(function () { return f.clean() })
+    afterEach(async function () {
+      await f.clean()
+    })
 
     it('.onError when connection is closed', async function () {
       const topic = 'gossipboom'

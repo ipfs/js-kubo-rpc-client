@@ -8,3 +8,4 @@ out
 .docs
 docs
 .coverage
+.DS_Store
