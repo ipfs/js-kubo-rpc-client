@@ -23,7 +23,7 @@ import { testRefsLocal } from './refs-local.js'
 // import testKey from './key/index.js'
 // import testMiscellaneous from './miscellaneous/index.js'
 // import testRepo from './repo/index.js'
-// import testStats from './stats/index.js'
+import testStats from './stats/index.js'
 
 export const root = createSuite({
   add: testAdd,
@@ -32,7 +32,8 @@ export const root = createSuite({
   get: testGet,
   ls: testLs,
   refs: testRefs,
-  refsLocal: testRefsLocal
+  refsLocal: testRefsLocal,
+  stats: testStats
 })
 
 // export const files = testFiles

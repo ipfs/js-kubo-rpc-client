@@ -2,24 +2,18 @@
 
 import { expectIsRepo } from './utils.js'
 import { getDescribe, getIt } from '../utils/mocha.js'
+import type { Factory } from 'ipfsd-ctl'
+import type { KuboClient } from '../../../../src/index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRepo (factory, options) {
+export function testRepo (factory: Factory, options: object) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.stats.repo', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboClient
 
     before(async function () {
+      // @ts-expect-error js-ipfsd-ctl works with interface types
       ipfs = (await factory.spawn()).api
     })
 

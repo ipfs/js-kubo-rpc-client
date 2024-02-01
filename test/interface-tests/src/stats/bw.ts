@@ -5,24 +5,18 @@ import { expect } from 'aegir/chai'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import last from 'it-last'
 import all from 'it-all'
+import type { Factory } from 'ipfsd-ctl'
+import type { KuboClient } from '../../../../src/index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testBw (factory, options) {
+export function testBw (factory: Factory, options: object) {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.stats.bw', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboClient
 
     before(async function () {
+      // @ts-expect-error js-ipfsd-ctl works with interface types
       ipfs = (await factory.spawn()).api
     })
 
@@ -31,7 +25,7 @@ export function testBw (factory, options) {
     it('should get bandwidth stats ', async () => {
       const res = await last(ipfs.stats.bw())
 
-      if (!res) {
+      if (res == null) {
         throw new Error('No bw stats returned')
       }
 
