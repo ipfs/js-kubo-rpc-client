@@ -14,7 +14,7 @@ export const createPut = configure(api => {
     const controller = new AbortController()
     const signal = abortSignal(controller.signal, options.signal)
 
-    const res = await api.post('dht/put', {
+    const res = await api.post('routing/put', {
       signal,
       searchParams: toUrlSearchParams({
         arg: key instanceof Uint8Array ? uint8ArrayToString(key) : key.toString(),

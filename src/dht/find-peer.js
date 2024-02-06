@@ -7,7 +7,7 @@ export const createFindPeer = configure(api => {
    * @type {import('../types').DHTAPI["findPeer"]}
    */
   async function * findPeer (peerId, options = {}) {
-    const res = await api.post('dht/findpeer', {
+    const res = await api.post('routing/findpeer', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: peerId,
