@@ -10,7 +10,7 @@ export const createProvide = configure(api => {
     /** @type {import('../types').CID[]} */
     const cidArr = Array.isArray(cids) ? cids : [cids]
 
-    const res = await api.post('dht/provide', {
+    const res = await api.post('routing/provide', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: cidArr.map(cid => cid.toString()),

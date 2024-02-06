@@ -8,7 +8,7 @@ export const createGet = configure(api => {
    * @type {import('../types').DHTAPI["get"]}
    */
   async function * get (key, options = {}) {
-    const res = await api.post('dht/get', {
+    const res = await api.post('routing/get', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         // arg: base36.encode(key),

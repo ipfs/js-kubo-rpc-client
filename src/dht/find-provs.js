@@ -7,7 +7,7 @@ export const createFindProvs = configure(api => {
    * @type {import('../types.js').DHTAPI["findProvs"]}
    */
   async function * findProvs (cid, options = {}) {
-    const res = await api.post('dht/findprovs', {
+    const res = await api.post('routing/findprovs', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: cid.toString(),
