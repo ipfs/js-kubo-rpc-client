@@ -1,3 +1,15 @@
+## [3.0.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.2...v3.0.3) (2024-02-06)
+
+
+### Bug Fixes
+
+* use /api/v0/routing instead of deprecated /api/v0/dht ([#215](https://github.com/ipfs/js-kubo-rpc-client/issues/215)) ([7725de3](https://github.com/ipfs/js-kubo-rpc-client/commit/7725de3984020b97fdab93a563561eda09fa1e02))
+
+
+### Trivial Changes
+
+* Update .github/workflows/stale.yml [skip ci] ([4e779a6](https://github.com/ipfs/js-kubo-rpc-client/commit/4e779a672f1db3180a25be7f9f7a20dbf335b61f))
+
 ## [3.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.1...v3.0.2) (2023-11-29)
 
 
