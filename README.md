@@ -55,15 +55,9 @@ Loading this module through a script tag will make it's exports available as `Ku
 <script src="https://unpkg.com/kubo-rpc-client/dist/index.min.js"></script>
 ```
 
-## Work In Progress
+## Kubo RPC Client
 
-This client is still a work in progress and in active development. Please refer to `ipfs-http-client` for now and only use this package if you are aware of the implications. Follow <https://github.com/ipfs/js-kubo-rpc-client/milestone/1> for tracking when this library is ready for consumption
-
-<h1 align="center">
-  <a href="https://ipfs.tech"><img width="650px" src="https://ipfs.io/ipfs/QmQJ68PFMDdAsgCZvA1UVzzn18asVcf7HVvCDgpjiSCAse" alt="Kubo RPC Client logo" /></a>
-</h1>
-
-<h3 align="center">The JavaScript RPC client library for Kubo.</h3>
+<h3 align="center">JavaScript client library for the Kubo RPC API</h3>
 
 <p align="center">
   <a href="https://app.element.io/#/room/#ipfs-chatter:ipfs.io"><img src="https://img.shields.io/badge/matrix-%23ipfs%3Amatrix.org-blue.svg?style=flat" /> </a>
@@ -72,11 +66,9 @@ This client is still a work in progress and in active development. Please refer 
 </p>
 
 <p align="center">
-  <a href="https://app.fossa.io/projects/git%2Bgithub.com%2Fipfs%2Fjs-kubo-rpc-client?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Fipfs%2Fjs-kubo-rpc-client.svg?type=shield"/></a>
   <a href="https://codecov.io/gh/ipfs/js-kubo-rpc-client"><img src="https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client/master.svg?style=flat-square"></a>
    <a href="https://bundlephobia.com/result?p=kubo-rpc-client"><img src="https://flat.badgen.net/bundlephobia/minzip/kubo-rpc-client"></a>
   <br>
-  <a href="https://david-dm.org/ipfs/js-kubo-rpc-client"><img src="https://david-dm.org/ipfs/js-kubo-rpc-client.svg?style=flat-square" /></a>
   <a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"></a>
   <a href="https://github.com/RichardLitt/standard-readme"><img src="https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square" /></a>
   <a href=""><img src="https://img.shields.io/badge/npm-%3E%3D3.0.0-orange.svg?style=flat-square" /></a>
