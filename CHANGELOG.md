@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.3...v3.0.4) (2024-02-29)
+
+
+### Documentation
+
+* update readme ([#217](https://github.com/ipfs/js-kubo-rpc-client/issues/217)) ([ff87d85](https://github.com/ipfs/js-kubo-rpc-client/commit/ff87d85a1784f83e8941fbe6e8afe4f68f1c9bb1))
+
 ## [3.0.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.2...v3.0.3) (2024-02-06)
 
 
