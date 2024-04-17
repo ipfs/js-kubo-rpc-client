@@ -7,7 +7,7 @@ import drain from 'it-drain'
 import { ensureReachable } from '../dht/utils.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import testTimeout from '../utils/test-timeout.js'
-import type { DHTQueryEvent } from '../../../../src/dht/index.js'
+import type { RoutingQueryEvent } from '../../../../src/dht/index.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 
@@ -63,7 +63,7 @@ export function testFindPeer (factory: KuboRPCFactory, options: MochaConfig): vo
     it('should fail to find other peer if peer does not exist', async function () {
       const events = await all(nodeA.routing.findPeer(peerIdFromString('Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ')))
 
-      const groupedEvents: Record<string, DHTQueryEvent[]> = events.reduce<Record<string, DHTQueryEvent[]>>((all, current) => {
+      const groupedEvents: Record<string, RoutingQueryEvent[]> = events.reduce<Record<string, RoutingQueryEvent[]>>((all, current) => {
         if (all[current.name] != null) {
           all[current.name].push(current)
         } else {

@@ -3,7 +3,7 @@ import { createFindProvs } from './find-provs.js'
 import { createGet } from './get.js'
 import { createProvide } from './provide.js'
 import { createPut } from './put.js'
-import type { DHTQueryEvent } from '../dht/index.js'
+import type { RoutingQueryEvent } from '../dht/index.js'
 import type { HTTPRPCOptions } from '../index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 import type { PeerId } from '@libp2p/interface'
@@ -34,11 +34,11 @@ export interface RoutingProvideOptions extends HTTPRPCOptions {
 }
 
 export interface RoutingAPI {
-  findPeer(peerId: string | PeerId, options?: HTTPRPCOptions): AsyncIterable<DHTQueryEvent>
-  findProvs(key: string | CID, options?: RoutingFindProvsOptions): AsyncIterable<DHTQueryEvent>
-  get(key: string | Uint8Array, options?: HTTPRPCOptions): AsyncIterable<DHTQueryEvent>
-  put(key: string | Uint8Array, value: Uint8Array, options?: RoutingPutOptions): AsyncIterable<DHTQueryEvent>
-  provide(key: string | string[] | CID | CID[], options?: RoutingProvideOptions): AsyncIterable<DHTQueryEvent>
+  findPeer(peerId: string | PeerId, options?: HTTPRPCOptions): AsyncIterable<RoutingQueryEvent>
+  findProvs(key: string | CID, options?: RoutingFindProvsOptions): AsyncIterable<RoutingQueryEvent>
+  get(key: string | Uint8Array, options?: HTTPRPCOptions): AsyncIterable<RoutingQueryEvent>
+  put(key: string | Uint8Array, value: Uint8Array, options?: RoutingPutOptions): AsyncIterable<RoutingQueryEvent>
+  provide(key: string | string[] | CID | CID[], options?: RoutingProvideOptions): AsyncIterable<RoutingQueryEvent>
 }
 
 export function createRouting (client: HTTPRPCClient): RoutingAPI {

@@ -11,7 +11,7 @@ import EchoServer from 'aegir/echo-server'
 /** @type {import('aegir').PartialOptions} */
 export default {
   build: {
-    bundlesizeMax: '49KB'
+    bundlesizeMax: '42KB'
   },
   test: {
     /**

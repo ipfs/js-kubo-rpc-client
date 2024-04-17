@@ -11,9 +11,9 @@ import {
   AddingPeer,
   DialingPeer
 } from './response-types.js'
-import type { DHTQueryEvent } from './index.js'
+import type { RoutingQueryEvent } from './index.js'
 
-export function mapEvent (event: any): DHTQueryEvent {
+export function mapEvent (event: any): RoutingQueryEvent {
   if (event.Type === SendingQuery) {
     return {
       name: 'SENDING_QUERY',

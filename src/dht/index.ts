@@ -4,11 +4,7 @@ import type { HTTPRPCClient } from '../lib/core.js'
 import type { PeerId, PeerInfo } from '@libp2p/interface'
 import type { CID } from 'multiformats/cid'
 
-export interface DHTProvideOptions extends HTTPRPCOptions {
-  recursive?: boolean
-}
-
-export enum DHTEventTypes {
+export enum RoutingEventTypes {
   SENDING_QUERY = 0,
   PEER_RESPONSE,
   FINAL_PEER,
@@ -22,7 +18,7 @@ export enum DHTEventTypes {
 /**
  * The types of messages set/received during DHT queries
  */
-export enum DHTMessageType {
+export enum RoutingMessageType {
   PUT_VALUE = 0,
   GET_VALUE,
   ADD_PROVIDER,
@@ -31,73 +27,73 @@ export enum DHTMessageType {
   PING
 }
 
-export type DHTMessageName = keyof typeof DHTMessageType
+export type RoutingMessageName = keyof typeof RoutingMessageType
 
-export interface DHTRecord {
+export interface RoutingRecord {
   key: Uint8Array
   value: Uint8Array
   timeReceived?: Date
 }
 
-export interface DHTSendingQueryEvent {
-  type: DHTEventTypes.SENDING_QUERY
+export interface RoutingSendingQueryEvent {
+  type: RoutingEventTypes.SENDING_QUERY
   name: 'SENDING_QUERY'
 }
 
-export interface DHTPeerResponseEvent {
+export interface RoutingPeerResponseEvent {
   from: PeerId
-  type: DHTEventTypes.PEER_RESPONSE
+  type: RoutingEventTypes.PEER_RESPONSE
   name: 'PEER_RESPONSE'
-  messageType: DHTMessageType
-  messageName: DHTMessageName
+  messageType: RoutingMessageType
+  messageName: RoutingMessageName
   providers: PeerInfo[]
   closer: PeerInfo[]
-  record?: DHTRecord
+  record?: RoutingRecord
 }
 
-export interface DHTFinalPeerEvent {
+export interface RoutingFinalPeerEvent {
   peer: PeerInfo
-  type: DHTEventTypes.FINAL_PEER
+  type: RoutingEventTypes.FINAL_PEER
   name: 'FINAL_PEER'
 }
 
-export interface DHTQueryErrorEvent {
-  type: DHTEventTypes.QUERY_ERROR
+export interface RoutingQueryErrorEvent {
+  type: RoutingEventTypes.QUERY_ERROR
   name: 'QUERY_ERROR'
   error: Error
 }
 
-export interface DHTProviderEvent {
-  type: DHTEventTypes.PROVIDER
+export interface RoutingProviderEvent {
+  type: RoutingEventTypes.PROVIDER
   name: 'PROVIDER'
   providers: PeerInfo[]
 }
 
-export interface DHTValueEvent {
-  type: DHTEventTypes.VALUE
+export interface RoutingValueEvent {
+  type: RoutingEventTypes.VALUE
   name: 'VALUE'
   value: Uint8Array
 }
 
-export interface DHTAddingPeerEvent {
-  type: DHTEventTypes.ADDING_PEER
+export interface RoutingAddingPeerEvent {
+  type: RoutingEventTypes.ADDING_PEER
   name: 'ADDING_PEER'
   peer: PeerId
 }
 
-export interface DHTDialingPeerEvent {
+export interface RoutingDialingPeerEvent {
   peer: PeerId
-  type: DHTEventTypes.DIALING_PEER
+  type: RoutingEventTypes.DIALING_PEER
   name: 'DIALING_PEER'
 }
 
-export type DHTQueryEvent = DHTSendingQueryEvent | DHTPeerResponseEvent | DHTFinalPeerEvent | DHTQueryErrorEvent | DHTProviderEvent | DHTValueEvent | DHTAddingPeerEvent | DHTDialingPeerEvent
+export type RoutingQueryEvent = RoutingSendingQueryEvent | RoutingPeerResponseEvent | RoutingFinalPeerEvent | RoutingQueryErrorEvent | RoutingProviderEvent | RoutingValueEvent | RoutingAddingPeerEvent | RoutingDialingPeerEvent
 
 export interface DHTAPI {
   /**
    * Find the closest peers to a given `PeerId` or `CID`, by querying the DHT.
    */
-  query(peerId: PeerId | CID, options?: HTTPRPCOptions): AsyncIterable<DHTQueryEvent>
+  query(peerId: PeerId | CID, options?: HTTPRPCOptions): AsyncIterable<RoutingQueryEvent>
 }
 
 export function createDHT (client: HTTPRPCClient): DHTAPI {
