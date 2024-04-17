@@ -1,46 +1,33 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { base64pad } from 'multiformats/bases/base64'
-import { base58btc } from 'multiformats/bases/base58'
 import { CID } from 'multiformats'
+import { base58btc } from 'multiformats/bases/base58'
+import { base64pad } from 'multiformats/bases/base64'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testDagSharnessT0053 (factory, options) {
+export function testDagSharnessT0053 (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dag (sharness-t0053-dag)', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    /** @type {CID} */
-    let hash1
-    /** @type {CID} */
-    let hash2
-    /** @type {CID} */
-    let hash3
-    /** @type {CID} */
-    let hash4
-    /** @type {Uint8Array} */
-    let ipldObject
-    /** @type {Uint8Array} */
-    let ipldObjectDagCbor
-    /** @type {Uint8Array} */
-    let ipldObjectDagPb
-    /** @type {Uint8Array} */
-    let ipldObjectDagJson
+    let hash1: CID
+    let hash2: CID
+    let hash3: CID
+    let hash4: CID
+    let ipldObject: Uint8Array
+    let ipldObjectDagCbor: Uint8Array
+    let ipldObjectDagPb: Uint8Array
+    let ipldObjectDagJson: Uint8Array
     const ipldHash = 'bafyreiblwimnjbqcdoeafiobk6q27jcw64ew7n2fmmhdpldd63edmjecde'
     const ipldDagCborHash = 'bafyreieculsmrexh3ty5jentbvuku452o27mst4h2tq2rb2zntqhgcstji'
     const ipldDagJsonHash = 'baguqeerajwksxu3lxpomdwxvosl542zl3xknhjgxtq3277gafrhl6vdw5tcq'

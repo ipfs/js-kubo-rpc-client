@@ -1,30 +1,22 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import drain from 'it-drain'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import testTimeout from '../utils/test-timeout.js'
 import { ensureReachable } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testQuery (factory, options) {
+export function testQuery (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dht.query', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let nodeA
-    /** @type {import('ipfs-core-types').IPFS} */
-    let nodeB
+    let nodeA: KuboRPCClient
+    let nodeB: KuboRPCClient
 
     before(async function () {
       nodeA = (await factory.spawn()).api
@@ -33,14 +25,18 @@ export function testQuery (factory, options) {
       await ensureReachable(nodeA, nodeB)
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should respect timeout option when querying the DHT', async () => {
       const nodeBId = await nodeB.id()
 
-      return testTimeout(() => drain(nodeA.dht.query(nodeBId.id, {
-        timeout: 1
-      })))
+      return testTimeout(async () => {
+        return drain(nodeA.dht.query(nodeBId.id, {
+          timeout: 1
+        }))
+      })
     })
 
     it('should return the other node in the query', async function () {

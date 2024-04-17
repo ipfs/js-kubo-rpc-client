@@ -1,28 +1,22 @@
 /* eslint-env mocha */
 
-import { fixtures, clearPins } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
 import drain from 'it-drain'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { fixtures, clearPins } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRmAll (factory, options) {
+export function testRmAll (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pin.rmAll', function () {
     this.timeout(50 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
+
     beforeEach(async function () {
       ipfs = (await factory.spawn()).api
 
@@ -33,9 +27,11 @@ export function testRmAll (factory, options) {
       await ipfs.add(fixtures.files[1].data, { pin: false })
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    beforeEach(function () {
+    beforeEach(async function () {
       return clearPins(ipfs)
     })
 

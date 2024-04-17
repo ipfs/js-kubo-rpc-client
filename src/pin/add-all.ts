@@ -1,28 +1,26 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
-import { normaliseInput } from 'ipfs-core-utils/pins/normalise-input'
+import { normaliseInput } from '../lib/pins/normalise-input.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { PinAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createAddAll = configure(api => {
-  /**
-   * @type {import('../types').PinAPI["addAll"]}
-   */
-  async function * addAll (source, options = {}) {
+export function createAddAll (client: HTTPRPCClient): PinAPI['addAll'] {
+  return async function * addAll (source, options = {}) {
     for await (const { path, recursive, metadata } of normaliseInput(source)) {
-      const res = await api.post('pin/add', {
+      const res = await client.post('pin/add', {
         signal: options.signal,
         searchParams: toUrlSearchParams({
           ...options,
           arg: path,
           recursive,
-          metadata: metadata ? JSON.stringify(metadata) : undefined,
+          metadata: metadata != null ? JSON.stringify(metadata) : undefined,
           stream: true
         }),
         headers: options.headers
       })
 
       for await (const pin of res.ndjson()) {
-        if (pin.Pins) { // non-streaming response
+        if (pin.Pins != null) { // non-streaming response
           for (const cid of pin.Pins) {
             yield CID.parse(cid)
           }
@@ -34,5 +32,4 @@ export const createAddAll = configure(api => {
       }
     }
   }
-  return addAll
-})
+}

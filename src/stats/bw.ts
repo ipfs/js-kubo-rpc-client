@@ -1,16 +1,14 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { StatsAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createBw = configure(api => {
-  /**
-   * @type {import('../types').StatsAPI["bw"]}
-   */
-  async function * bw (options = {}) {
-    const res = await api.post('stats/bw', {
+export function createBw (client: HTTPRPCClient): StatsAPI['bw'] {
+  return async function * bw (options = {}) {
+    const res = await client.post('stats/bw', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers,
-      transform: (stats) => ({
+      transform: (stats: any) => ({
         totalIn: BigInt(stats.TotalIn),
         totalOut: BigInt(stats.TotalOut),
         rateIn: parseFloat(stats.RateIn),
@@ -20,5 +18,4 @@ export const createBw = configure(api => {
 
     yield * res.ndjson()
   }
-  return bw
-})
+}

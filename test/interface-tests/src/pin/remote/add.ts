@@ -1,30 +1,23 @@
 /* eslint-env mocha */
 
-import { fixtures, clearRemotePins, clearServices } from '../utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import { fixtures, clearRemotePins, clearServices } from '../utils.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { KuboRPCFactory } from '../../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAdd (factory, options) {
+export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
+  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT ?? '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
   const SERVICE = 'pinbot-pin.remote.add'
 
   describe('.pin.remote.add', function () {
     this.timeout(50 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () {
       ipfs = (await factory.spawn()).api
       await ipfs.pin.remote.service.add(SERVICE, {
@@ -93,7 +86,7 @@ export function testAdd (factory, options) {
       expect(winner).to.equal(timeout)
 
       // trigger status change on the mock service
-      await ipfs.pin.remote.add(cid, {
+      void ipfs.pin.remote.add(cid, {
         service: SERVICE,
         name: 'pinned-block'
       })
@@ -104,6 +97,7 @@ export function testAdd (factory, options) {
         name: ''
       })
     })
+
     it('should pin dag-cbor', async () => {
       const cid = await ipfs.dag.put({}, {
         storeCodec: 'dag-cbor',

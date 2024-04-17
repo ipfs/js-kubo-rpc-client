@@ -1,14 +1,12 @@
-import { configure } from '../lib/configure.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { multipartRequest } from 'ipfs-core-utils/multipart-request'
-import { abortSignal } from '../lib/abort-signal.js'
+import { anySignal } from 'any-signal'
 import { textToUrlSafeRpc } from '../lib/http-rpc-wire-format.js'
+import { multipartRequest } from '../lib/multipart-request.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { PubSubAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createPublish = configure(api => {
-  /**
-   * @type {import('../types').PubsubAPI["publish"]}
-   */
-  async function publish (topic, data, options = {}) {
+export function createPublish (client: HTTPRPCClient): PubSubAPI['publish'] {
+  return async function publish (topic, data, options = {}) {
     const searchParams = toUrlSearchParams({
       arg: textToUrlSafeRpc(topic),
       ...options
@@ -16,17 +14,20 @@ export const createPublish = configure(api => {
 
     // allow aborting requests on body errors
     const controller = new AbortController()
-    const signal = abortSignal(controller.signal, options.signal)
+    const signal = anySignal([controller.signal, options.signal])
 
-    const res = await api.post('pubsub/pub', {
-      signal,
-      searchParams,
-      ...(
-        await multipartRequest([data], controller, options.headers)
-      )
-    })
+    try {
+      const res = await client.post('pubsub/pub', {
+        signal,
+        searchParams,
+        ...(
+          await multipartRequest([data], controller, options.headers)
+        )
+      })
 
-    await res.text()
+      await res.text()
+    } finally {
+      signal.clear()
+    }
   }
-  return publish
-})
+}

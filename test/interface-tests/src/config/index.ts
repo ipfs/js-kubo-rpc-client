@@ -1,8 +1,8 @@
 import { createSuite } from '../utils/suite.js'
 import { testGet } from './get.js'
-import { testSet } from './set.js'
-import { testReplace } from './replace.js'
 import profiles from './profiles/index.js'
+import { testReplace } from './replace.js'
+import { testSet } from './set.js'
 
 const tests = {
   get: testGet,

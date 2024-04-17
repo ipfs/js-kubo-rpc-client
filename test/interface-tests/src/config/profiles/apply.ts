@@ -1,30 +1,25 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { KuboRPCFactory } from '../../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testApply (factory, options) {
+export function testApply (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.config.profiles.apply', function () {
     this.timeout(30 * 1000)
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should apply a config profile', async () => {
       const diff = await ipfs.config.profiles.apply('lowpower')

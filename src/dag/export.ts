@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { DAGAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createExport = configure(api => {
-  /**
-   * @type {import('../types').DAGAPI["export"]}
-   */
-  async function * dagExport (root, options = {}) {
-    const res = await api.post('dag/export', {
+export function createExport (client: HTTPRPCClient): DAGAPI['export'] {
+  return async function * dagExport (root, options = {}) {
+    const res = await client.post('dag/export', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: root.toString()
@@ -16,6 +14,4 @@ export const createExport = configure(api => {
 
     yield * res.iterator()
   }
-
-  return dagExport
-})
+}

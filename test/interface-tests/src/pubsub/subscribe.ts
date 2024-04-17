@@ -1,33 +1,28 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import { nanoid } from 'nanoid'
-import { getTopic, getSubscriptionTestObject } from './utils.js'
+import { isPeerId } from '@libp2p/interface'
+import { logger } from '@libp2p/logger'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { isNode } from 'ipfs-utils/src/env.js'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { nanoid } from 'nanoid'
 import sinon from 'sinon'
 import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
-import { isPeerId } from '@libp2p/interface-peer-id'
-import { logger } from '@libp2p/logger'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
+import { isNode } from 'wherearewe'
+import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getTopic, getSubscriptionTestObject } from './utils.js'
+import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
+import type { KuboController, KuboRPCFactory } from '../index.js'
+import type { Message } from '@libp2p/interface'
+
 const log = logger('js-kubo-rpc-client:pubsub:subscribe:test')
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- * @typedef {import('../../../../src/types').SubscribeMessage} SubscribeMessage
- */
+const validateSubscriptionMessage = (publisher: KuboController, topic: string, msg: Message, data: Uint8Array): void => {
+  if (msg.type !== 'signed') {
+    throw new Error('Message was not signed')
+  }
 
-/**
- *
- * @param {import('ipfsd-ctl').Controller} publisher
- * @param {string} topic
- * @param {SubscribeMessage} msg
- * @param {Uint8Array} data
- * @returns {void}
- */
-const validateSubscriptionMessage = (publisher, topic, msg, data) => {
   expect(uint8ArrayEquals(data, msg.data)).to.be.true()
   expect(msg).to.have.property('sequenceNumber')
   expect(msg.sequenceNumber).to.be.a('bigint')
@@ -40,7 +35,7 @@ const validateSubscriptionMessage = (publisher, topic, msg, data) => {
  * @param {Factory} factory
  * @param {object} options
  */
-export function testSubscribe (factory, options) {
+export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): void {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -48,20 +43,13 @@ export function testSubscribe (factory, options) {
   describe('.pubsub.subscribe', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs1
-    /** @type {import('ipfsd-ctl').Controller} */
-    let daemon1
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs2
-    /** @type {import('ipfsd-ctl').Controller} */
-    let daemon2
-    /** @type {string} */
-    let topic
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let ipfs1Id
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let ipfs2Id
+    let ipfs1: KuboRPCClient
+    let daemon1: KuboController
+    let ipfs2: KuboRPCClient
+    let daemon2: KuboController
+    let topic: string
+    let ipfs1Id: IDResult
+    let ipfs2Id: IDResult
 
     beforeEach(async function () {
       log('beforeEach start')
@@ -90,8 +78,8 @@ export function testSubscribe (factory, options) {
     afterEach(async function () {
       log('afterEach start')
 
-      await daemon1.api.pubsub.unsubscribe()
-      await daemon2.api.pubsub.unsubscribe()
+      await daemon1.api.pubsub.unsubscribe('')
+      await daemon2.api.pubsub.unsubscribe('')
       await factory.clean()
 
       log('afterEach done')
@@ -292,6 +280,10 @@ export function testSubscribe (factory, options) {
         await subscriptionTestObj.publishMessage(buffer)
         const [sub1Msg] = await subscriptionTestObj.waitForMessages()
 
+        if (sub1Msg.type !== 'signed') {
+          throw new Error('Message was not signed')
+        }
+
         expect(uint8ArrayToString(sub1Msg.data, 'base16')).to.be.eql(expectedHex)
         expect(sub1Msg.from.toString()).to.eql(ipfs1Id.id.toString())
         validateSubscriptionMessage(daemon1, topic, sub1Msg, buffer)
@@ -317,8 +309,8 @@ export function testSubscribe (factory, options) {
           const dataItem = uint8ArrayFromString(string)
           // keep a map of the string value to the validation function because we can't depend on ordering.
           // eslint-disable-next-line max-nested-callbacks
-          validationMap.set(string, (msg) => validateSubscriptionMessage(daemon1, topic, msg, dataItem))
-          return await subscriptionTestObj.publishMessage(dataItem)
+          validationMap.set(string, (msg: Message) => { validateSubscriptionMessage(daemon1, topic, msg, dataItem) })
+          await subscriptionTestObj.publishMessage(dataItem)
         })
         await Promise.all(publishPromises)
 
@@ -349,7 +341,7 @@ export function testSubscribe (factory, options) {
          */
         const startTime = new Date().getTime()
         for (let i = 0; i < count; i++) {
-          const data = uint8ArrayFromString(msgBase + i)
+          const data = uint8ArrayFromString(`${msgBase}${i}`)
           await subscriptionTestObj.publishMessage(data)
         }
         const msgs = await subscriptionTestObj.waitForMessages(count)
@@ -367,6 +359,10 @@ export function testSubscribe (factory, options) {
         // expect(opsPerSec).to.be.greaterThanOrEqual(isNode ? 25 : 200)
 
         msgs.forEach(msg => {
+          if (msg.type !== 'signed') {
+            throw new Error('Message was not signed')
+          }
+
           expect(msg.from).to.eql(ipfs2Id.id)
           expect(uint8ArrayToString(msg.data).startsWith(msgBase)).to.be.true()
         })
@@ -375,7 +371,7 @@ export function testSubscribe (factory, options) {
       it('should receive messages from a different node on lots of topics', async function () {
         // we can only currently have 6 topics subscribed at a time
         const numTopics = 6
-        const resultingMsgs = []
+        const resultingMsgs: Message[] = []
         const msgPromises = []
         for (let i = 0; i < numTopics; i++) {
           const topic = `pubsub-topic-${i}`
@@ -440,8 +436,10 @@ export function testSubscribe (factory, options) {
         await daemon1.api.pubsub.publish(topic, uint8ArrayFromString('hello world 2'))
 
         await Promise.all([
-          expect(subscriptionTestObj1.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1'),
-          expect(subscriptionTestObj2.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 })).to.be.rejectedWith('Wanting 2 messages but only have 1')
+          expect(subscriptionTestObj1.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 }))
+            .to.be.rejectedWith('Wanting 2 messages but only have 1'),
+          expect(subscriptionTestObj2.waitForMessages(2, { maxTimeout: 1000, maxRetryTime: 3000 }))
+            .to.be.rejectedWith('Wanting 2 messages but only have 1')
         ])
 
         expect(stub1).to.have.property('callCount', 1)

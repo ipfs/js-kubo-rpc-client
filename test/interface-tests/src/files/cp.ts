@@ -1,34 +1,29 @@
 /* eslint-env mocha */
 
-import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
-import all from 'it-all'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import { randomBytes } from 'iso-random-stream'
+import all from 'it-all'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import isShardAtPath from '../utils/is-shard-at-path.js'
-import { randomBytes } from 'iso-random-stream'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testCp (factory, options) {
+export function testCp (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.files.cp', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('refuses to copy files without a source', async () => {
       // @ts-expect-error invalid args
@@ -68,7 +63,7 @@ export function testCp (factory, options) {
       try {
         await ipfs.files.cp(source, destination)
         throw new Error('No error was thrown when trying to overwrite a file')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('directory already has entry by that name')
       }
     })
@@ -83,7 +78,7 @@ export function testCp (factory, options) {
       try {
         await ipfs.files.cp(source, source)
         throw new Error('No error was thrown for a non-existent file')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('directory already has entry by that name')
       }
     })
@@ -178,8 +173,7 @@ export function testCp (factory, options) {
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({

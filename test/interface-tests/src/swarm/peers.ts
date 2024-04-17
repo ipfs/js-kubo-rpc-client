@@ -1,22 +1,17 @@
 /* eslint-env mocha */
 
-import { isMultiaddr } from '@multiformats/multiaddr'
 import { peerIdFromString } from '@libp2p/peer-id'
-import delay from 'delay'
-import { isBrowser, isWebWorker } from 'ipfs-utils/src/env.js'
+import { isMultiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import delay from 'delay'
+import { isBrowser, isWebWorker } from 'wherearewe'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { Config } from '../../../../src/config/index.js'
+import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPeers (factory, options) {
+export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -24,12 +19,9 @@ export function testPeers (factory, options) {
   describe('.swarm.peers', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsA
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsB
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let ipfsBId
+    let ipfsA: KuboRPCClient
+    let ipfsB: KuboRPCClient
+    let ipfsBId: IDResult
 
     before(async function () {
       ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
@@ -41,7 +33,9 @@ export function testPeers (factory, options) {
       // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should list peers this node is connected to', async () => {
       const peers = await ipfsA.swarm.peers()
@@ -55,18 +49,16 @@ export function testPeers (factory, options) {
       expect(peerIdFromString(peer.peer.toString())).to.be.ok()
       expect(isMultiaddr(peer.addr)).to.equal(true)
       expect(peer).to.have.a.property('direction')
-      expect(peer.direction).to.be.oneOf(['inbound', 'outbound'])
+      expect(peer.direction).to.be.undefined()
       /**
        * When verbose: true is not passed, these will default to empty strings or null
        */
       expect(peer).to.have.a.property('latency')
-      expect(peer.latency).to.be.a('string')
-      expect(peer.latency).to.be.empty()
+      expect(peer.latency).to.be.undefined()
       expect(peer).to.have.a.property('muxer')
-      expect(peer.muxer).to.be.a('string')
-      expect(peer.muxer).to.be.empty()
+      expect(peer.muxer).to.be.undefined()
       expect(peer).to.have.a.property('streams')
-      expect(peer.streams).to.equal(null)
+      expect(peer.streams).to.be.undefined()
     })
 
     it('should list peers this node is connected to with verbose option', async () => {
@@ -82,18 +74,13 @@ export function testPeers (factory, options) {
       expect(peer).to.have.a.property('latency')
       expect(peer.latency).to.match(/n\/a|[0-9]+[mµ]?s/) // n/a or 3ms or 3µs or 3s
       expect(peer).to.have.a.property('muxer')
-      expect(peer.muxer).to.be.a('string')
-      expect(peer.muxer).to.be.empty()
+      expect(peer.muxer).to.be.undefined()
       expect(peer).to.have.a.property('streams')
       expect(peer.streams).not.to.equal(null)
       expect(peer.streams).to.be.a('array')
     })
 
-    /**
-     * @param {string | string[]} addrs
-     * @returns
-     */
-    function getConfig (addrs) {
+    function getConfig (addrs: string | string[]): Config {
       addrs = Array.isArray(addrs) ? addrs : [addrs]
 
       return {

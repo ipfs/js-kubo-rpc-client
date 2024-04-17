@@ -4,12 +4,7 @@ import { isWindows, isFirefox, isChrome } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
 
-/** @typedef {import("ipfsd-ctl").ControllerOptions} ControllerOptions */
-
-/**
- * @param {Factory<ControllerType>} [commonFactory]
- */
-function executeTests (commonFactory) {
+function executeTests (commonFactory: tests.KuboRPCFactory): void {
   tests.root(commonFactory, {
     skip: [
       {
@@ -221,12 +216,12 @@ function executeTests (commonFactory) {
   })
 
   tests.pin(commonFactory, {
-    skip: [].concat(isChrome
+    skip: isChrome
       ? [{
           name: 'should default to blocking pin',
           reason: 'FIXME: intermittently failing. see https://github.com/ipfs/js-kubo-rpc-client/issues/56'
         }]
-      : [])
+      : []
   })
 
   tests.ping(commonFactory, {
@@ -259,14 +254,16 @@ function executeTests (commonFactory) {
 
   tests.repo(commonFactory)
 
+  tests.routing(commonFactory)
+
   tests.stats(commonFactory)
 
   tests.swarm(commonFactory)
 }
 
 describe('kubo-rpc-client tests against kubo', function () {
-  (async function () {
-    const { path } = await import('go-ipfs')
+  void (async function () {
+    const { path } = await import('kubo')
     /**
      * @type {string|undefined}
      */

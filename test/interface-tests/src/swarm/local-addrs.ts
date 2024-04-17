@@ -1,32 +1,27 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { isWebWorker } from 'ipfs-utils/src/env.js'
+import { isWebWorker } from 'wherearewe'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testLocalAddrs (factory, options) {
+export function testLocalAddrs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.swarm.localAddrs', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should list local addresses the node is listening on', async () => {
       const multiaddrs = await ipfs.swarm.localAddrs()

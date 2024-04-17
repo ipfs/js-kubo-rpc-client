@@ -2,18 +2,20 @@
 
 import { expect } from 'aegir/chai'
 import { factory } from './utils/factory.js'
+import type { KuboRPCClient } from '../src/index.js'
+
 const f = factory()
 
 describe('.key', function () {
   this.timeout(50 * 1000)
 
-  let ipfs
+  let ipfs: KuboRPCClient
 
   before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(function () { return f.clean() })
+  after(async function () { return f.clean() })
 
   describe('.gen', function () {
     it('create a new rsa key', async function () {

@@ -1,23 +1,17 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { nanoid } from 'nanoid'
-import { fixtures } from '../utils/index.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { randomBytes } from 'iso-random-stream'
 import * as raw from 'multiformats/codecs/raw'
+import { nanoid } from 'nanoid'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { createShardedDirectory } from '../utils/create-sharded-directory.js'
+import { fixtures } from '../utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testStat (factory, options) {
+export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
   const smallFile = randomBytes(13)
@@ -26,8 +20,7 @@ export function testStat (factory, options) {
   describe('.files.stat', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn({
@@ -36,7 +29,9 @@ export function testStat (factory, options) {
       await ipfs.add(fixtures.smallFile.data)
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('refuses to stat files with an empty path', async () => {
       await expect(ipfs.files.stat('')).to.eventually.be.rejected()
@@ -181,8 +176,7 @@ export function testStat (factory, options) {
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({

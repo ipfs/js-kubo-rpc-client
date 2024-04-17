@@ -1,17 +1,17 @@
 /* eslint-env mocha */
 /* eslint max-nested-callbacks: ["error", 8] */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { expect } from 'aegir/chai'
-import * as dagPB from '@ipld/dag-pb'
 import * as dagCBOR from '@ipld/dag-cbor'
-import * as raw from 'multiformats/codecs/raw'
+import * as dagPB from '@ipld/dag-pb'
+import { expect } from 'aegir/chai'
 import { base32 } from 'multiformats/bases/base32'
-import { create as httpClient } from '../src/index.js'
+import * as raw from 'multiformats/codecs/raw'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { create as httpClient, type KuboRPCClient } from '../src/index.js'
 import { factory } from './utils/factory.js'
 const f = factory()
 
-let ipfs
+let ipfs: KuboRPCClient
 
 describe('.dag', function () {
   this.timeout(20 * 1000)
@@ -19,7 +19,7 @@ describe('.dag', function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(function () { return f.clean() })
+  after(async function () { return f.clean() })
 
   it('should be able to put and get a DAG node with dag-pb codec', async function () {
     const data = uint8ArrayFromString('some data')
@@ -87,12 +87,12 @@ describe('.dag', function () {
   it('should attempt to load an unsupported codec', async function () {
     let askedToLoadCodec
     const ipfs2 = httpClient({
-      url: `http://${ipfs.apiHost}:${ipfs.apiPort}`,
+      url: `http://${ipfs.getEndpointConfig().host}:${ipfs.getEndpointConfig().port}`,
       ipld: {
-        loadCodec: (codec) => {
+        loadCodec: async (codec): Promise<any> => {
           askedToLoadCodec = codec === 'boop'
           return {
-            encode: (buf) => buf
+            encode: (buf: any) => buf
           }
         }
       }
@@ -108,7 +108,7 @@ describe('.dag', function () {
 
   it('should allow formats to be specified without overwriting others', async function () {
     const ipfs2 = httpClient({
-      url: `http://${ipfs.apiHost}:${ipfs.apiPort}`,
+      url: `http://${ipfs.getEndpointConfig().host}:${ipfs.getEndpointConfig().port}`,
       ipld: {
         codecs: [{
           name: 'custom-codec',

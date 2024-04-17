@@ -1,29 +1,23 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { fixtures, clearPins, expectPinned, expectNotPinned, pinTypes } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
 import drain from 'it-drain'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { fixtures, clearPins, expectPinned, expectNotPinned, pinTypes } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAdd (factory, options) {
+export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pin.add', function () {
     this.timeout(50 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
+
     before(async function () {
       ipfs = (await factory.spawn()).api
 
@@ -47,9 +41,11 @@ export function testAdd (factory, options) {
       )
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    beforeEach(function () {
+    beforeEach(async function () {
       return clearPins(ipfs)
     })
 
@@ -69,7 +65,7 @@ export function testAdd (factory, options) {
       await ipfs.pin.add(fixtures.directory.cid)
       await expectPinned(ipfs, fixtures.directory.cid, pinTypes.recursive)
 
-      const pinChecks = Object.values(fixtures.directory.files).map(file => expectPinned(ipfs, file.cid))
+      const pinChecks = Object.values(fixtures.directory.files).map(async file => expectPinned(ipfs, file.cid))
       return Promise.all(pinChecks)
     })
 
@@ -102,9 +98,7 @@ export function testAdd (factory, options) {
     })
 
     it('should fail to pin a hash not in datastore', async function () {
-      // @ts-ignore this is mocha
       this.slow(3 * 1000)
-      // @ts-ignore this is mocha
       this.timeout(5 * 1000)
       const falseHash = `${`${fixtures.directory.cid}`.slice(0, -2)}ss`
 
@@ -113,9 +107,7 @@ export function testAdd (factory, options) {
     })
 
     it('needs all children in datastore to pin recursively', async function () {
-      // @ts-ignore this is mocha
       this.slow(3 * 1000)
-      // @ts-ignore this is mocha
       this.timeout(5 * 1000)
       await all(ipfs.block.rm(fixtures.directory.files[0].cid))
 

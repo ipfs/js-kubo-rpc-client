@@ -1,12 +1,10 @@
-import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
+import type { KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-export const createCommands = configure(api => {
-  /**
-   * @type {import('./types').RootAPI["commands"]}
-   */
-  const commands = async (options = {}) => {
-    const res = await api.post('commands', {
+export function createCommands (client: HTTPRPCClient): KuboRPCClient['commands'] {
+  return async function commands (options = {}) {
+    const res = await client.post('commands', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
@@ -14,5 +12,4 @@ export const createCommands = configure(api => {
 
     return res.json()
   }
-  return commands
-})
+}

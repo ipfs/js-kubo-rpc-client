@@ -1,12 +1,11 @@
+function isPromise <T> (obj: any): obj is Promise<T> {
+  return obj.then != null
+}
 
-/**
- *
- * @param {Promise<unknown> | () => Promise<unknown>} fnOrPromise
- */
-export async function throwsAsync (fnOrPromise) {
+export async function throwsAsync <E extends Error> (fnOrPromise: Promise<unknown> | (() => Promise<unknown>)): Promise<E> {
   try {
-    await (fnOrPromise.then ? fnOrPromise : fnOrPromise())
-  } catch (/** @type {any} */ err) {
+    await (isPromise(fnOrPromise) ? fnOrPromise : fnOrPromise())
+  } catch (err: any) {
     return err
   }
   throw new Error('did not throw')

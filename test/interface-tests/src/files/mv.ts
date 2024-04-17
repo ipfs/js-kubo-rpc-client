@@ -1,31 +1,23 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { randomBytes } from 'iso-random-stream'
-import isShardAtPath from '../utils/is-shard-at-path.js'
 import all from 'it-all'
-
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testMv (factory, options) {
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { createShardedDirectory } from '../utils/create-sharded-directory.js'
+import isShardAtPath from '../utils/is-shard-at-path.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+export function testMv (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.files.mv', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
@@ -33,7 +25,9 @@ export function testMv (factory, options) {
       await ipfs.files.write('/test/a', uint8ArrayFromString('Hello, world!'), { create: true })
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('refuses to move files without arguments', async () => {
       // @ts-expect-error invalid args
@@ -76,7 +70,7 @@ export function testMv (factory, options) {
       try {
         await ipfs.files.stat(source)
         throw new Error('Directory was copied but not removed')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('does not exist')
       }
     })
@@ -103,14 +97,13 @@ export function testMv (factory, options) {
       try {
         await ipfs.files.stat(source)
         throw new Error('Directory was copied but not removed')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('does not exist')
       }
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({
@@ -145,8 +138,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(shardedDirPath)
           throw new Error('Dir was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
 
@@ -165,8 +158,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(dirPath)
           throw new Error('Dir was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
 
@@ -185,8 +178,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(otherShardedDirPath)
           throw new Error('Sharded dir was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
 
@@ -211,8 +204,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(filePath)
           throw new Error('File was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
 
@@ -238,8 +231,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(filePath)
           throw new Error('File was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
 
@@ -265,8 +258,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(filePath)
           throw new Error('File was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
 
@@ -292,8 +285,8 @@ export function testMv (factory, options) {
         try {
           await ipfs.files.stat(filePath)
           throw new Error('File was not removed')
-        } catch (/** @type {any} */ error) {
-          expect(error.message).to.contain('does not exist')
+        } catch (err: any) {
+          expect(err.message).to.contain('does not exist')
         }
       })
     })

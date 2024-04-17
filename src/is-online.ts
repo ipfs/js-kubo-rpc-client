@@ -1,18 +1,13 @@
 import { createId } from './id.js'
+import type { KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-/**
- * @param {import('./types').Options} options
- */
-export const createIsOnline = options => {
-  const id = createId(options)
+export function createIsOnline (client: HTTPRPCClient): KuboRPCClient['isOnline'] {
+  const id = createId(client)
 
-  /**
-   * @type {import('./types').RootAPI["isOnline"]}
-   */
-  async function isOnline (options = {}) {
+  return async function isOnline (options = {}) {
     const res = await id(options)
 
-    return Boolean(res && res.addresses && res.addresses.length)
+    return Boolean(res?.addresses?.length)
   }
-  return isOnline
 }

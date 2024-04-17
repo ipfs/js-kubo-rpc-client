@@ -1,34 +1,29 @@
 /* eslint-env mocha */
 
-import { nanoid } from 'nanoid'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { randomBytes } from 'iso-random-stream'
-import isShardAtPath from '../utils/is-shard-at-path.js'
+import { nanoid } from 'nanoid'
+import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { createTwoShards } from '../utils/create-two-shards.js'
+import isShardAtPath from '../utils/is-shard-at-path.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRm (factory, options) {
+export function testRm (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.files.rm', function () {
     this.timeout(300 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${nanoid()}`
@@ -114,8 +109,7 @@ export function testRm (factory, options) {
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({

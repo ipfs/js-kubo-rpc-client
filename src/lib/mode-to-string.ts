@@ -1,8 +1,4 @@
-
-/**
- * @param {number | string | undefined} mode
- */
-export function modeToString (mode) {
+export function modeToString (mode?: number | string): string | undefined {
   if (mode == null) {
     return undefined
   }

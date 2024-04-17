@@ -1,58 +1,38 @@
 import { CID } from 'multiformats/cid'
-import { configure } from './lib/configure.js'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
 import { createStat } from './files/stat.js'
+import { toUrlSearchParams } from './lib/to-url-search-params.js'
+import type { IPFSEntry, KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-export const createLs = configure((api, opts) => {
-  /**
-   * @type {import('./types').RootAPI["ls"]}
-   */
-  async function * ls (path, options = {}) {
+export function createLs (client: HTTPRPCClient): KuboRPCClient['ls'] {
+  return async function * ls (path, options = {}) {
     const pathStr = `${path instanceof Uint8Array ? CID.decode(path) : path}`
 
-    /**
-     * @param {*} link
-     */
-    async function mapLink (link) {
-      let hash = link.Hash
+    async function mapLink (link: { Hash: string, Name: string, Size: number }): Promise<any> {
+      let hash: any = link.Hash
 
-      if (hash.includes('/')) {
+      if (hash.includes('/') === true) {
         // the hash is a path, but we need the CID
-        const ipfsPath = hash.startsWith('/ipfs/') ? hash : `/ipfs/${hash}`
-        const stats = await createStat(opts)(ipfsPath)
+        const ipfsPath = hash.startsWith('/ipfs/') === true ? hash : `/ipfs/${hash}`
+        const stats = await createStat(client)(ipfsPath)
 
         hash = stats.cid
       } else {
         hash = CID.parse(hash)
       }
 
-      /** @type {import('./types').IPFSEntry} */
-      const entry = {
+      const entry: IPFSEntry = {
         name: link.Name,
-        path: pathStr + (link.Name ? `/${link.Name}` : ''),
+        path: pathStr + (link.Name != null ? `/${link.Name}` : ''),
         size: link.Size,
         cid: hash,
         type: typeOf(link)
       }
 
-      if (link.Mode) {
-        entry.mode = parseInt(link.Mode, 8)
-      }
-
-      if (link.Mtime !== undefined && link.Mtime !== null) {
-        entry.mtime = {
-          secs: link.Mtime
-        }
-
-        if (link.MtimeNsecs !== undefined && link.MtimeNsecs !== null) {
-          entry.mtime.nsecs = link.MtimeNsecs
-        }
-      }
-
       return entry
     }
 
-    const res = await api.post('ls', {
+    const res = await client.post('ls', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: pathStr,
@@ -64,12 +44,12 @@ export const createLs = configure((api, opts) => {
     for await (let result of res.ndjson()) {
       result = result.Objects
 
-      if (!result) {
+      if (result == null) {
         throw new Error('expected .Objects in results')
       }
 
       result = result[0]
-      if (!result) {
+      if (result == null) {
         throw new Error('expected one array in results.Objects')
       }
 
@@ -78,7 +58,7 @@ export const createLs = configure((api, opts) => {
         throw new Error('expected one array in results.Objects[0].Links')
       }
 
-      if (!links.length) {
+      if (links.length === 0) {
         // no links, this is a file, yield a single result
         yield mapLink(result)
 
@@ -88,13 +68,9 @@ export const createLs = configure((api, opts) => {
       yield * links.map(mapLink)
     }
   }
-  return ls
-})
+}
 
-/**
- * @param {any} link
- */
-function typeOf (link) {
+function typeOf (link: any): 'dir' | 'file' {
   switch (link.Type) {
     case 1:
     case 5:

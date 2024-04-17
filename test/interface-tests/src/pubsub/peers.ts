@@ -1,20 +1,14 @@
 /* eslint-env mocha */
 
-import { getTopic, waitForTopicPeer } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getTopic, waitForTopicPeer } from './utils.js'
+import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
+import type { KuboController, KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPeers (factory, options) {
+export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -22,25 +16,16 @@ export function testPeers (factory, options) {
   describe('.pubsub.peers', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs1
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs2
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs3
-    /** @type {string[]} */
-    let subscribedTopics = []
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let ipfs2Id
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let ipfs3Id
+    let ipfs1: KuboRPCClient
+    let ipfs2: KuboRPCClient
+    let ipfs3: KuboRPCClient
+    let subscribedTopics: string[] = []
+    let ipfs2Id: IDResult
+    let ipfs3Id: IDResult
 
-    /** @type {import('ipfsd-ctl').Controller} */
-    let daemon1
-    /** @type {import('ipfsd-ctl').Controller} */
-    let daemon2
-    /** @type {import('ipfsd-ctl').Controller} */
-    let daemon3
+    let daemon1: KuboController
+    let daemon2: KuboController
+    let daemon3: KuboController
 
     before(async function () {
       daemon1 = (await factory.spawn({ ipfsOptions }))
@@ -59,7 +44,7 @@ export function testPeers (factory, options) {
       const ipfs3Addr = ipfs3Id.addresses
         .find(ma => ma.nodeAddress().address === '127.0.0.1')
 
-      if (!ipfs2Addr || !ipfs3Addr) {
+      if (ipfs2Addr == null || ipfs3Addr == null) {
         throw new Error('Could not find addrs')
       }
 
@@ -72,13 +57,15 @@ export function testPeers (factory, options) {
       const nodes = [ipfs1, ipfs2, ipfs3]
       for (let i = 0; i < subscribedTopics.length; i++) {
         const topic = subscribedTopics[i]
-        await Promise.all(nodes.map(ipfs => ipfs.pubsub.unsubscribe(topic)))
+        await Promise.all(nodes.map(async ipfs => ipfs.pubsub.unsubscribe(topic)))
       }
       subscribedTopics = []
       await delay(100)
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should not error when not subscribed to a topic', async () => {
       const topic = getTopic()
@@ -88,9 +75,9 @@ export function testPeers (factory, options) {
     })
 
     it('should not return extra peers', async () => {
-      const sub1 = () => {}
-      const sub2 = () => {}
-      const sub3 = () => {}
+      const sub1 = (): void => {}
+      const sub2 = (): void => {}
+      const sub3 = (): void => {}
 
       const topic = getTopic()
       const topicOther = topic + 'different topic'
@@ -106,9 +93,9 @@ export function testPeers (factory, options) {
     })
 
     it('should return peers for a topic - one peer', async () => {
-      const sub1 = () => {}
-      const sub2 = () => {}
-      const sub3 = () => {}
+      const sub1 = (): void => {}
+      const sub2 = (): void => {}
+      const sub3 = (): void => {}
       const topic = getTopic()
 
       subscribedTopics = [topic]
@@ -121,9 +108,9 @@ export function testPeers (factory, options) {
     })
 
     it('should return peers for a topic - multiple peers', async () => {
-      const sub1 = () => {}
-      const sub2 = () => {}
-      const sub3 = () => {}
+      const sub1 = (): void => {}
+      const sub2 = (): void => {}
+      const sub3 = (): void => {}
       const topic = getTopic()
 
       subscribedTopics = [topic]

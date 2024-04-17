@@ -1,23 +1,20 @@
-import { multiaddr } from '@multiformats/multiaddr'
-import { configure } from '../lib/configure.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
+import { multiaddr } from '@multiformats/multiaddr'
+import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { SwarmAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createPeers = configure(api => {
-  /**
-   * @type {import('../types').SwarmAPI["peers"]}
-   */
-  async function peers (options = {}) {
-    const res = await api.post('swarm/peers', {
+export function createPeers (client: HTTPRPCClient): SwarmAPI['peers'] {
+  return async function peers (options = {}) {
+    const res = await client.post('swarm/peers', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
     })
 
-    /** @type {{ Peers: { Peer: string, Addr: string, Muxer?: string, Latency?: string, Streams?: string[], Direction?: 0 | 1 }[] }} */
-    const { Peers } = await res.json()
+    const body = await res.json()
 
-    return (Peers || []).map(peer => {
+    return (body.Peers ?? []).map((peer: any) => {
       return {
         addr: multiaddr(peer.Addr),
         peer: peerIdFromString(peer.Peer),
@@ -29,5 +26,4 @@ export const createPeers = configure(api => {
       }
     })
   }
-  return peers
-})
+}

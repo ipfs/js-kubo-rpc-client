@@ -1,46 +1,44 @@
 /* eslint-env mocha */
 
-import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
 import { byCID } from '../../utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { RemotePinStatus } from '../../../../../src/pin/remote/index.js'
+import type { KuboRPCFactory } from '../../index.js'
+import type { Version } from 'multiformats/cid'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- * @typedef {{name: string, cid: CID<unknown, number, number, Version>, status: string}} TestCIDObject
- */
+interface TestCIDObject {
+  name: string
+  cid: CID<unknown, number, number, Version>
+  status: RemotePinStatus
+}
 
 const cid1 = CID.parse('QmbKtKBrmeRHjNCwR4zAfCJdMVu6dgmwk9M9AE9pUM9RgG')
 const cid2 = CID.parse('QmdFyxZXsFiP4csgfM5uPu99AvFiKH62CSPDw5TP92nr7w')
 const cid3 = CID.parse('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
 const cid4 = CID.parse('QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu')
 
-/** @type {TestCIDObject[]} */
-const testCIDs = [
+const testCIDs: TestCIDObject[] = [
   { name: 'one', cid: cid1, status: 'queued' },
   { name: 'pinned-two', cid: cid2, status: 'pinned' },
   { name: 'pinning-three', cid: cid3, status: 'pinning' },
   { name: 'failed-four', cid: cid4, status: 'failed' }
 ]
 
-function getTestCIDByProperty (prop, value) {
-  const foundTestCID = testCIDs.find((v) => v[prop] === value)
+function getTestCIDByProperty (prop: string, value: any): TestCIDObject {
+  const foundTestCID = testCIDs.find((v: Record<string, any>) => v[prop] === value)
   if (foundTestCID != null) {
     return foundTestCID
   }
   throw new Error(`No test CID found where .'${prop}'=${value}`)
 }
-/**
- * @param {string[]} names
- * @returns {Record<string,CID<unknown, number, number, Version>>}
- */
-function getTestCIDsAsObject (...names) {
-  /**
-   * @type {Record<string,CID<unknown, number, number, Version>>}
-   */
-  const object = {}
+
+function getTestCIDsAsObject (...names: string[]): Record<string, CID<unknown, number, number, Version>> {
+  const object: Record<string, CID<unknown, number, number, Version>> = {}
   names.forEach((name) => {
     const foundTestCID = getTestCIDByProperty('name', name)
     if (foundTestCID != null) {
@@ -50,23 +48,19 @@ function getTestCIDsAsObject (...names) {
 
   return object
 }
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testLs (factory, options) {
+
+export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
+  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT ?? '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
   const SERVICE = 'pinbot-pin.remote.ls'
 
   describe('.pin.remote.ls', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfsd-ctl').Controller<'go'>['api']} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () {
       ipfs = (await factory.spawn()).api
 

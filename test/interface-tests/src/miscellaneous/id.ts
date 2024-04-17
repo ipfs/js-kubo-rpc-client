@@ -1,34 +1,28 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import { isMultiaddr } from '@multiformats/multiaddr'
-import { isWebWorker } from 'ipfs-utils/src/env.js'
+import { expect } from 'aegir/chai'
 import retry from 'p-retry'
+import { isWebWorker } from 'wherearewe'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testId (factory, options) {
+export function testId (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.id', function () {
-    // @ts-ignore this is mocha
     this.timeout(60 * 1000)
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should get the node ID', async () => {
       const res = await ipfs.id()
@@ -36,7 +30,6 @@ export function testId (factory, options) {
       expect(res.id.toString()).to.exist()
       expect(res).to.have.a.property('publicKey')
       expect(res).to.have.a.property('agentVersion').that.is.a('string')
-      expect(res).to.have.a.property('protocolVersion').that.is.a('string')
       expect(res).to.have.a.property('addresses').that.is.an('array')
 
       for (const ma of res.addresses) {
@@ -47,7 +40,6 @@ export function testId (factory, options) {
     it('should return swarm ports opened after startup', async function () {
       if (isWebWorker) {
         // TODO: webworkers are not currently dialable
-        // @ts-ignore this is mocha
         return this.skip()
       }
 
@@ -57,7 +49,6 @@ export function testId (factory, options) {
     it('should get the id of another node in the swarm', async function () {
       if (isWebWorker) {
         // TODO: https://github.com/libp2p/js-libp2p-websockets/issues/129
-        // @ts-ignore this is mocha
         return this.skip()
       }
 

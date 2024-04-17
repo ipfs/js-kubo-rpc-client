@@ -1,13 +1,9 @@
 import { toUrlSearchParams } from '../../../lib/to-url-search-params.js'
+import type { PinRemoteServiceAPI } from './index.js'
+import type { HTTPRPCClient } from '../../../lib/core.js'
 
-/**
- * @param {import('../../../lib/core').Client} client
- */
-export function createRm (client) {
-  /**
-   * @type {import('../../../types').RemotePiningServiceAPI["rm"]}
-   */
-  async function rm (name, options = {}) {
+export function createRm (client: HTTPRPCClient): PinRemoteServiceAPI['rm'] {
+  return async function rm (name, options = {}) {
     await client.post('pin/remote/service/rm', {
       signal: options.signal,
       headers: options.headers,
@@ -16,6 +12,4 @@ export function createRm (client) {
       })
     })
   }
-
-  return rm
 }

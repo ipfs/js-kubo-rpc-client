@@ -1,29 +1,22 @@
 /* eslint-env mocha */
 
-import { clearServices } from '../utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import { clearServices } from '../utils.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { KuboRPCFactory } from '../../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testService (factory, options) {
+export function testService (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
+  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT ?? '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
 
   describe('.pin.remote.service', function () {
     this.timeout(50 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
@@ -31,7 +24,7 @@ export function testService (factory, options) {
     after(async function () {
       await factory.clean()
     })
-    afterEach(function () { return clearServices(ipfs) })
+    afterEach(async function () { return clearServices(ipfs) })
 
     describe('.pin.remote.service.add', () => {
       it('should add a service', async () => {
@@ -201,6 +194,7 @@ export function testService (factory, options) {
 
       it('should not fail if service does not registered', async () => {
         expect(await ipfs.pin.remote.service.ls()).to.deep.equal([])
+        // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
         expect(await ipfs.pin.remote.service.rm('pinbot')).to.equal(undefined)
       })
 
@@ -213,8 +207,4 @@ export function testService (factory, options) {
   })
 }
 
-/**
- * @param {{ service: string }} a
- * @param {{ service: string }} b
- */
-const byName = (a, b) => a.service > b.service ? 1 : -1
+const byName = (a: { service: string }, b: { service: string }): 1 | -1 => a.service > b.service ? 1 : -1

@@ -2,9 +2,11 @@
 
 import { multiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
-import { factory } from './utils/factory.js'
+import { isBrowser } from 'wherearewe'
 import { create as ipfsClient } from '../src/index.js'
-import { isBrowser } from 'ipfs-utils/src/env.js'
+import { factory } from './utils/factory.js'
+import type { KuboController } from './interface-tests/src/index.js'
+import type { KuboRPCClient } from '../src/index.js'
 
 const f = factory()
 
@@ -166,7 +168,7 @@ describe('js-kubo-rpc-client constructor tests', function () {
   })
 
   describe('integration', function () {
-    let ipfsd
+    let ipfsd: KuboController
 
     before(async function () {
       this.timeout(60 * 1000) // slow CI
@@ -174,7 +176,7 @@ describe('js-kubo-rpc-client constructor tests', function () {
       ipfsd = await f.spawn()
     })
 
-    after(function () { return f.clean() })
+    after(async function () { return f.clean() })
 
     it('can connect to an ipfs http api', async function () {
       await clientWorks(ipfsClient(ipfsd.apiAddr))
@@ -182,36 +184,27 @@ describe('js-kubo-rpc-client constructor tests', function () {
   })
 })
 
-/**
- *
- * @param {import("../src/types.js").IPFSHTTPClient} client
- */
-async function clientWorks (client) {
+async function clientWorks (client: KuboRPCClient): Promise<void> {
   const id = await client.id()
 
   expect(id).to.have.a.property('id')
   expect(id).to.have.a.property('publicKey')
 }
 
-/**
- *
- * @param {import("../src/types.js").IPFSHTTPClient} ipfs
- * @param {{host: string, port: string, protocol: string, apiPath: string}} param1
- */
-function expectConfig (ipfs, { host, port, protocol, apiPath }) {
+function expectConfig (ipfs: KuboRPCClient, { host, port, protocol, apiPath }: any): void {
   const conf = ipfs.getEndpointConfig()
-  if (protocol) {
-    protocol = protocol + ':'
+  if (protocol != null) {
+    protocol = `${protocol}:`
   }
   if (isBrowser) {
     expect(conf.host).to.be.oneOf([host, globalThis.location.hostname, ''])
     expect(conf.port).to.be.oneOf([port, globalThis.location.port, '80'])
-    expect(conf.protocol).to.equal(protocol || 'http:')
-    expect(conf.pathname).to.equal(apiPath || '/api/v0')
+    expect(conf.protocol).to.equal(protocol ?? 'http:')
+    expect(conf.pathname).to.equal(apiPath ?? '/api/v0')
   } else {
     expect(conf.host).to.be.oneOf([host, 'localhost', ''])
     expect(conf.port).to.be.oneOf([port, '5001', '80'])
-    expect(conf.protocol).to.equal(protocol || 'http:')
-    expect(conf.pathname).to.equal(apiPath || '/api/v0')
+    expect(conf.protocol).to.equal(protocol ?? 'http:')
+    expect(conf.pathname).to.equal(apiPath ?? '/api/v0')
   }
 }

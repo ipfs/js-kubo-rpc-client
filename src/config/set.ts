@@ -1,11 +1,9 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { ConfigAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createSet = configure(api => {
-  /**
-   * @type {import('../types.js').ConfigAPI["set"]}
-   */
-  const set = async (key, value, options = {}) => {
+export function createSet (client: HTTPRPCClient): ConfigAPI['set'] {
+  return async function set (key, value, options = {}) {
     if (typeof key !== 'string') {
       throw new Error('Invalid key type')
     }
@@ -15,7 +13,7 @@ export const createSet = configure(api => {
       ...encodeParam(key, value)
     }
 
-    const res = await api.post('config', {
+    const res = await client.post('config', {
       signal: options.signal,
       searchParams: toUrlSearchParams(params),
       headers: options.headers
@@ -23,15 +21,9 @@ export const createSet = configure(api => {
 
     await res.text()
   }
+}
 
-  return set
-})
-
-/**
- * @param {*} key
- * @param {*} value
- */
-const encodeParam = (key, value) => {
+function encodeParam (key: any, value: any): any {
   switch (typeof value) {
     case 'boolean':
       return { arg: [key, value.toString()], bool: true }

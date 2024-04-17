@@ -1,44 +1,38 @@
 /* eslint-env mocha */
 
-import { nanoid } from 'nanoid'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testFlush (factory, options) {
+import { nanoid } from 'nanoid'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+export function testFlush (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.files.flush', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should not flush not found file/dir, expect error', async () => {
       const testDir = `/test-${nanoid()}`
 
       try {
         await ipfs.files.flush(`${testDir}/404`)
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err).to.exist()
       }
     })
 
-    it('should require a path', () => {
+    it('should require a path', async () => {
       // @ts-expect-error invalid args
-      expect(ipfs.files.flush()).to.eventually.be.rejected()
+      await expect(ipfs.files.flush()).to.eventually.be.rejected()
     })
 
     it('should flush root', async () => {

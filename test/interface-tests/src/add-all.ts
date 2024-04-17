@@ -1,48 +1,42 @@
 /* eslint-env mocha, browser */
 
-import { fixtures } from './utils/index.js'
-import { Readable } from 'readable-stream'
-import all from 'it-all'
-import last from 'it-last'
-import drain from 'it-drain'
-import { supportsFileReader } from 'ipfs-utils/src/supports.js'
-import globSource from 'ipfs-utils/src/files/glob-source.js'
-import { isNode } from 'ipfs-utils/src/env.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from './utils/mocha.js'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import bufferStream from 'it-buffer-stream'
-import * as raw from 'multiformats/codecs/raw'
 import resolve from 'aegir/resolve'
+import all from 'it-all'
+import bufferStream from 'it-buffer-stream'
+import drain from 'it-drain'
+import last from 'it-last'
+import * as raw from 'multiformats/codecs/raw'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
+import { Readable } from 'readable-stream'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { isNode } from 'wherearewe'
+import { globSource } from '../../../src/index.js'
 import { isFirefox } from '../../constants.js'
+import { supportsFileReader } from '../fixtures/supports.js'
+import { fixtures } from './utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
+import type { KuboRPCFactory } from './index.js'
+import type { AddProgressFn, ImportCandidate, KuboRPCClient } from '../../../src/index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- * @typedef {import('ipfs-unixfs').MtimeLike} MtimeLike
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAddAll (factory, options) {
+export function testAddAll (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.addAll', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should add a File as array of tuples', async function () {
       if (!supportsFileReader) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip('skip in node')
       }
 
@@ -68,7 +62,7 @@ export function testAddAll (factory, options) {
 
     it('should add array of objects with readable stream content', async function () {
       if (!isNode) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         this.skip('Only node supports readable streams')
       }
 
@@ -90,18 +84,12 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a nested directory as array of tupples', async function () {
-      /**
-       * @param {string} name
-       */
-      const content = (name) => ({
+      const content = (name: string): ImportCandidate => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
       })
 
-      /**
-       * @param {string} name
-       */
-      const emptyDir = (name) => ({ path: `test-folder/${name}` })
+      const emptyDir = (name: string): ImportCandidate => ({ path: `test-folder/${name}` })
 
       const dirs = [
         content('pp.txt'),
@@ -116,7 +104,7 @@ export function testAddAll (factory, options) {
 
       const root = await last(ipfs.addAll(dirs))
 
-      if (!root) {
+      if (root == null) {
         throw new Error('Dirs were not loaded')
       }
 
@@ -125,21 +113,14 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a nested directory as array of tupples with progress', async function () {
-      /**
-       * @param {string} name
-       */
-      const content = (name) => ({
+      const content = (name: string): { path: string, content: Uint8Array } => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
       })
 
-      /**
-       * @param {string} name
-       */
-      const emptyDir = (name) => ({ path: `test-folder/${name}`, content: undefined })
+      const emptyDir = (name: string): { path: string, content: undefined } => ({ path: `test-folder/${name}`, content: undefined })
 
-      /** @type {Record<string, number>} */
-      const progressSizes = {}
+      const progressSizes: Record<string, number> = {}
 
       const dirs = [
         content('pp.txt'),
@@ -152,19 +133,16 @@ export function testAddAll (factory, options) {
         emptyDir('files/empty')
       ]
 
-      const total = dirs.reduce((/** @type {Record<string, number>} */ acc, curr) => {
-        if (curr.content) {
+      const total = dirs.reduce<Record<string, number>>((acc, curr) => {
+        if (curr.content != null) {
           acc[curr.path] = curr.content.length
         }
 
         return acc
       }, {})
 
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      const handler = (bytes, path) => {
-        if (path) {
+      const handler: AddProgressFn = (bytes, path) => {
+        if (path != null) {
           progressSizes[path] = bytes
         }
       }
@@ -176,13 +154,9 @@ export function testAddAll (factory, options) {
     })
 
     it('should receive progress path as empty string when adding content without paths', async function () {
-      /**
-       * @param {string} name
-       */
-      const content = (name) => fixtures.directory.files[name]
+      const content = (name: string): Uint8Array => fixtures.directory.files[name]
 
-      /** @type {Record<string, number>} */
-      const progressSizes = {}
+      const progressSizes: Record<string, number> = {}
 
       const dirs = [
         content('pp.txt'),
@@ -194,10 +168,7 @@ export function testAddAll (factory, options) {
         '': dirs.reduce((acc, curr) => acc + curr.length, 0)
       }
 
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      const handler = (bytes, path) => {
+      const handler: AddProgressFn = (bytes, path) => {
         progressSizes[`${path}`] = bytes
       }
 
@@ -206,14 +177,10 @@ export function testAddAll (factory, options) {
     })
 
     it('should receive file name from progress event', async () => {
-      /** @type {string[]} */
-      const receivedNames = []
+      const receivedNames: string[] = []
 
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      function handler (p, name) {
-        if (name) {
+      const handler: AddProgressFn = (p, name) => {
+        if (name != null) {
           receivedNames.push(name)
         }
       }
@@ -233,12 +200,9 @@ export function testAddAll (factory, options) {
     })
 
     it('should add files to a directory non sequentially', async function () {
-      /**
-       * @param {string} path
-       */
-      const content = path => ({
+      const content = (path: string): { path: string, content: Uint8Array } => ({
         path: `test-dir/${path}`,
-        content: fixtures.directory.files[path.split('/').pop() || '']
+        content: fixtures.directory.files[path.split('/').pop() ?? '']
       })
 
       const input = [
@@ -250,11 +214,7 @@ export function testAddAll (factory, options) {
 
       const filesAdded = await all(ipfs.addAll(input))
 
-      /**
-       * @param {object} arg
-       * @param {string} arg.path
-       */
-      const toPath = ({ path }) => path
+      const toPath = ({ path }: { path: string }): string => path
       const nonSeqDirFilePaths = input.map(toPath).filter(p => p.includes('/a/'))
       const filesAddedPaths = filesAdded.map(toPath)
 
@@ -302,7 +262,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a directory with only-hash=true', async function () {
-      // @ts-ignore this is mocha
       this.slow(10 * 1000)
       const content = String(Math.random() + Date.now())
 
@@ -316,7 +275,7 @@ export function testAddAll (factory, options) {
       expect(files).to.have.length(3)
 
       await Promise.all(
-        files.map(file => expect(ipfs.object.get(file.cid, { timeout: 4000 }))
+        files.map(file => expect(ipfs.dag.get(file.cid, { timeout: 4000 }))
           .to.eventually.be.rejected()
           .and.to.have.property('name').that.equals('TimeoutError')
         )
@@ -324,7 +283,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a directory from the file system', async function () {
-      // @ts-ignore this is mocha
       if (!isNode) this.skip()
       const filesPath = resolve('test/interface-tests/fixtures/test-folder')
 
@@ -333,7 +291,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a directory from the file system with an odd name', async function () {
-      // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
       const filesPath = resolve('test/interface-tests/fixtures/weird name folder [v0]')
@@ -343,7 +300,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should ignore a directory from the file system', async function () {
-      // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
       const filesPath = resolve('test/interface-tests/fixtures/test-folder')
@@ -353,7 +309,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a file from the file system', async function () {
-      // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
       const filePath = resolve('test/interface-tests/fixtures/test-folder')
@@ -364,7 +319,6 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a hidden file in a directory from the file system', async function () {
-      // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
       const filesPath = resolve('test/interface-tests/fixtures')
@@ -375,17 +329,15 @@ export function testAddAll (factory, options) {
     })
 
     it('should add a file with only-hash=true', async function () {
-      // @ts-ignore this is mocha
       if (!isNode) this.skip()
 
-      // @ts-ignore this is mocha
       this.slow(10 * 1000)
 
       const out = await all(ipfs.addAll([{
         content: uint8ArrayFromString('hello world')
       }], { onlyHash: true }))
 
-      await expect(ipfs.object.get(out[0].cid, { timeout: 500 }))
+      await expect(ipfs.dag.get(out[0].cid, { timeout: 500 }))
         .to.eventually.be.rejected()
         .and.to.have.property('name').that.equals('TimeoutError')
     })
@@ -420,12 +372,13 @@ export function testAddAll (factory, options) {
 
     it('should add big files', async function () {
       if (isFirefox) {
+        // @ts-expect-error should not have argument
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
       const totalSize = 1024 * 1024 * 200
       const chunkSize = 1024 * 1024 * 99
 
-      const source = async function * () {
+      const source = async function * (): AsyncGenerator<ImportCandidate> {
         yield {
           path: '/dir/file-200mb-1',
           content: bufferStream(totalSize, {

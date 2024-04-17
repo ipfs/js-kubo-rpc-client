@@ -1,9 +1,7 @@
 import { expect } from 'aegir/chai'
+import type { PingResult } from '../../../../src'
 
-/**
- * @param {*} obj
- */
-export function expectIsPingResponse (obj) {
+export function expectIsPingResponse (obj: any): void {
   expect(obj).to.have.a.property('success')
   expect(obj).to.have.a.property('time')
   expect(obj).to.have.a.property('text')
@@ -13,10 +11,9 @@ export function expectIsPingResponse (obj) {
 }
 
 /**
- * Determine if a ping response object is a pong, or something else, like a status message
- *
- * @param {*} pingResponse
+ * Determine if a ping response object is a pong, or something else, like a
+ * status message
  */
-export function isPong (pingResponse) {
-  return Boolean(pingResponse && pingResponse.success && !pingResponse.text)
+export function isPong (pingResponse: any): pingResponse is PingResult {
+  return Boolean(pingResponse?.success != null && (pingResponse.text == null || pingResponse.text === ''))
 }

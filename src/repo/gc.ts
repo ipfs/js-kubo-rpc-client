@@ -1,25 +1,22 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { RepoAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createGc = configure(api => {
-  /**
-   * @type {import('../types').RepoAPI["gc"]}
-   */
-  async function * gc (options = {}) {
-    const res = await api.post('repo/gc', {
+export function createGc (client: HTTPRPCClient): RepoAPI['gc'] {
+  return async function * gc (options = {}) {
+    const res = await client.post('repo/gc', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers,
-      transform: (res) => {
+      transform: (res: any) => {
         return {
-          err: res.Error ? new Error(res.Error) : null,
-          cid: (res.Key || {})['/'] ? CID.parse(res.Key['/']) : null
+          err: res.Error != null ? new Error(res.Error) : null,
+          cid: res.Key?.['/'] != null ? CID.parse(res.Key['/']) : null
         }
       }
     })
 
     yield * res.ndjson()
   }
-  return gc
-})
+}

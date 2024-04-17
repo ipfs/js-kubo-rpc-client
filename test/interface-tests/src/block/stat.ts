@@ -1,39 +1,33 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { CID } from 'multiformats/cid'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import { CID } from 'multiformats/cid'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import testTimeout from '../utils/test-timeout.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testStat (factory, options) {
+export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.block.stat', () => {
     const data = uint8ArrayFromString('blorb')
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {CID} */
-    let cid
+    let ipfs: KuboRPCClient
+    let cid: CID
 
     before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    it('should respect timeout option when statting a block', () => {
-      return testTimeout(() => ipfs.block.stat(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
+    it('should respect timeout option when statting a block', async () => {
+      return testTimeout(async () => ipfs.block.stat(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
         timeout: 1
       }))
     })

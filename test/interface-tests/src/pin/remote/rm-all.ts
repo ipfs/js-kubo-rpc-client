@@ -1,25 +1,19 @@
 /* eslint-env mocha */
 
-import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
-import { CID } from 'multiformats/cid'
 import all from 'it-all'
+import { CID } from 'multiformats/cid'
 import { byCID } from '../../utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { KuboRPCFactory } from '../../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRmAll (factory, options) {
+export function testRmAll (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
-  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT || '')
+  const ENDPOINT = new URL(process.env.PINNING_SERVICE_ENDPOINT ?? '')
   const KEY = `${process.env.PINNING_SERVICE_KEY}`
   const SERVICE = 'pinbot-pin.remote.rmAll'
 
@@ -31,8 +25,7 @@ export function testRmAll (factory, options) {
   describe('.pin.remote.rmAll', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () {
       ipfs = (await factory.spawn()).api
       await ipfs.pin.remote.service.add(SERVICE, {

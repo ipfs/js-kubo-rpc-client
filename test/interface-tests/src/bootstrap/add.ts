@@ -1,35 +1,30 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import { multiaddr, isMultiaddr } from '@multiformats/multiaddr'
+import { expect } from 'aegir/chai'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
 const invalidArg = 'this/Is/So/Invalid/'
 const validIp4 = multiaddr('/ip4/104.236.176.52/tcp/4001/p2p/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z')
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAdd (factory, options) {
+export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.bootstrap.add', function () {
     this.timeout(100 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should return an error when called with an invalid arg', () => {
       // @ts-expect-error invalid input

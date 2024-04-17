@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { SwarmAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createDisconnect = configure(api => {
-  /**
-   * @type {import('../types').SwarmAPI["disconnect"]}
-   */
-  async function disconnect (addr, options = {}) {
-    const res = await api.post('swarm/disconnect', {
+export function createDisconnect (client: HTTPRPCClient): SwarmAPI['disconnect'] {
+  return async function disconnect (addr, options = {}) {
+    const res = await client.post('swarm/disconnect', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: addr,
@@ -16,7 +14,6 @@ export const createDisconnect = configure(api => {
     })
     const { Strings } = await res.json()
 
-    return Strings || []
+    return Strings ?? []
   }
-  return disconnect
-})
+}

@@ -1,59 +1,43 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
 import drain from 'it-drain'
-import { CID } from 'multiformats/cid'
 import { base64 } from 'multiformats/bases/base64'
+import { CID } from 'multiformats/cid'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- */
-async function getBaseEncodedMultihashes (ipfs) {
+async function getBaseEncodedMultihashes (ipfs: KuboRPCClient): Promise<string[]> {
   const refs = await all(ipfs.refs.local())
 
   return refs.map(r => base64.encode(CID.parse(r.ref).multihash.bytes))
 }
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {CID} cid
- */
-async function shouldHaveRef (ipfs, cid) {
+async function shouldHaveRef (ipfs: KuboRPCClient, cid: CID): Promise<void> {
   return expect(getBaseEncodedMultihashes(ipfs)).to.eventually.include(base64.encode(cid.multihash.bytes))
 }
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {CID} cid
- */
-async function shouldNotHaveRef (ipfs, cid) {
+async function shouldNotHaveRef (ipfs: KuboRPCClient, cid: CID): Promise<void> {
   return expect(getBaseEncodedMultihashes(ipfs)).to.eventually.not.include(base64.encode(cid.multihash.bytes))
 }
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testGc (factory, options) {
+export function testGc (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.repo.gc', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should run garbage collection', async () => {
       const res = await ipfs.add(uint8ArrayFromString('apples'))
@@ -189,7 +173,9 @@ export function testGc (factory, options) {
       }
 
       // Put the object into IPFS
-      const objCid = await ipfs.object.put(obj)
+      const objCid = await ipfs.dag.put(obj, {
+        storeCodec: 'dag-pb'
+      })
 
       // Putting an object doesn't pin it
       expect((await all(ipfs.pin.ls())).map(p => p.cid.toString())).not.includes(objCid.toString())

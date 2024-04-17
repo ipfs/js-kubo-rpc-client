@@ -1,28 +1,27 @@
 /* eslint-env mocha */
 
-/**
- * @typedef {object} Skip
- * @property {string} [name]
- * @property {string} [reason]
- */
+export interface Skip {
+  name?: string
+  reason?: string
+}
 
-/**
- * @param {any} o
- * @returns {o is Skip}
- */
-const isSkip = (o) => Object.prototype.toString.call(o) === '[object Object]' && (o.name || o.reason)
+export const isSkip = (o: any): o is Skip => Object.prototype.toString.call(o) === '[object Object]' && (o.name != null || o.reason != null)
+
+export interface MochaConfig {
+  skip?: Skip | boolean
+  only?: boolean
+}
 
 /**
  * Get a "describe" function that is optionally 'skipped' or 'onlyed'
  * If skip/only are boolean true, or an object with a reason property, then we
  * want to skip/only the whole suite
- *
- * @param {object} [config]
- * @param {boolean | Skip | (string | Skip)[]} [config.skip]
- * @param {boolean} [config.only]
  */
-export function getDescribe (config) {
-  if (config) {
+export function getDescribe (config: MochaConfig & { skip: true }): Mocha.PendingSuiteFunction
+export function getDescribe (config: MochaConfig & { only: true }): Mocha.ExclusiveSuiteFunction
+export function getDescribe (config?: MochaConfig): Mocha.SuiteFunction
+export function getDescribe (config?: MochaConfig): any {
+  if (config != null) {
     if (config.skip === true) {
       return describe.skip
     }
@@ -34,11 +33,7 @@ export function getDescribe (config) {
     if (Array.isArray(config.skip)) {
       const skipArr = config.skip
 
-      /**
-       * @param {string} name
-       * @param {*} impl
-       */
-      const _describe = (name, impl) => {
+      const _describe = (name: string, impl: any): any => {
         const skip = skipArr.find(skip => {
           if (typeof skip === 'string') {
             return skip === name
@@ -47,7 +42,7 @@ export function getDescribe (config) {
           return skip.name === name
         })
 
-        if (skip) {
+        if (skip != null) {
           return describe.skip(`${name} (${typeof skip === 'string' ? '🤷' : skip.reason})`, impl)
         }
 
@@ -61,15 +56,11 @@ export function getDescribe (config) {
     } else if (isSkip(config.skip)) {
       const skip = config.skip
 
-      if (!skip.reason) {
+      if (skip.reason == null) {
         return describe.skip
       }
 
-      /**
-       * @param {string} name
-       * @param {*} impl
-       */
-      const _describe = (name, impl) => {
+      const _describe = (name: string, impl: any): any => {
         describe.skip(`${name} (${skip.reason})`, impl)
       }
 
@@ -89,26 +80,22 @@ export function getDescribe (config) {
  * test if one of the items in the array is the same as the test name or if one
  * of the items in the array is an object with a name property that is the same
  * as the test name.
- *
- * @param {object} [config]
- * @param {boolean | Skip | (string | Skip)[]} [config.skip]
- * @param {boolean} [config.only]
  */
-export function getIt (config) {
-  if (!config) return it
+export function getIt (config?: MochaConfig): Mocha.TestFunction {
+  if (config == null) {
+    return it
+  }
 
-  /**
-   * @param {string} name
-   * @param {*} impl
-   */
-  const _it = (name, impl) => {
+  const _it = (name: string, impl: any): any => {
     if (Array.isArray(config.skip)) {
       const skip = config.skip
         .map((s) => isSkip(s) ? s : { name: s, reason: '🤷' })
         .find((s) => s.name === name)
 
-      if (skip) {
-        if (skip.reason) name = `${name} (${skip.reason})`
+      if (skip != null) {
+        if (skip.reason != null) {
+          name = `${name} (${skip.reason})`
+        }
         return it.skip(name, impl)
       }
     }
@@ -118,8 +105,10 @@ export function getIt (config) {
         .map((o) => isSkip(o) ? o : { name: o, reason: '🤷' })
         .find((o) => o.name === name)
 
-      if (only) {
-        if (only.reason) name = `${name} (${only.reason})`
+      if (only != null) {
+        if (only.reason != null) {
+          name = `${name} (${only.reason})`
+        }
         return it.only(name, impl) // eslint-disable-line no-only-tests/no-only-tests
       }
     }
@@ -130,5 +119,5 @@ export function getIt (config) {
   _it.skip = it.skip
   _it.only = it.only // eslint-disable-line no-only-tests/no-only-tests
 
-  return _it
+  return _it as Mocha.TestFunction
 }

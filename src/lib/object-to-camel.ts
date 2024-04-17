@@ -1,23 +1,20 @@
-
 /**
  * Convert object properties to camel case.
  * NOT recursive!
  * e.g.
  * AgentVersion => agentVersion
  * ID => id
- *
- * @param {Record<string, any>} obj
  */
-export function objectToCamel (obj) {
+export function objectToCamel <T> (obj: Record<string, any>): T {
   if (obj == null) {
     return obj
   }
 
   const caps = /^[A-Z]+$/
 
-  /** @type {Record<string, any>} */
-  const output = {}
+  const output: Record<string, any> = {}
 
+  // @ts-expect-error type may be unrelated
   return Object.keys(obj).reduce((camelObj, k) => {
     if (caps.test(k)) { // all caps
       camelObj[k.toLowerCase()] = obj[k]

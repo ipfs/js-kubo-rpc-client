@@ -1,37 +1,32 @@
 /* eslint-env mocha */
 
-import { expectIsBandwidth } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import last from 'it-last'
 import all from 'it-all'
+import last from 'it-last'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { expectIsBandwidth } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testBw (factory, options) {
+export function testBw (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.stats.bw', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should get bandwidth stats ', async () => {
       const res = await last(ipfs.stats.bw())
 
-      if (!res) {
+      if (res == null) {
         throw new Error('No bw stats returned')
       }
 

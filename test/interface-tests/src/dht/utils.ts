@@ -1,29 +1,17 @@
-
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import delay from 'delay'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
-import delay from 'delay'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import type { KuboRPCClient } from '../../../../src/index.js'
 
-/**
- * @param {Uint8Array} [data]
- * @returns
- */
-export async function fakeCid (data) {
-  const bytes = data || uint8ArrayFromString(`TEST${Math.random()}`)
+export async function fakeCid (data?: Uint8Array): Promise<CID> {
+  const bytes = data ?? uint8ArrayFromString(`TEST${Math.random()}`)
   const mh = await sha256.digest(bytes)
   return CID.createV0(mh)
 }
 
-/**
- * @param {import('ipfs-core-types').IPFS} nodeA
- * @param {import('ipfs-core-types').IPFS} nodeB
- */
-export async function ensureReachable (nodeA, nodeB) {
-  /**
-   * @param {import('ipfs-core-types').IPFS} source
-   * @param {import('ipfs-core-types').IPFS} target
-   */
-  async function canFindOnDHT (source, target) {
+export async function ensureReachable (nodeA: KuboRPCClient, nodeB: KuboRPCClient): Promise<void> {
+  async function canFindOnDHT (source: KuboRPCClient, target: KuboRPCClient): Promise<void> {
     const { id } = await target.id()
 
     for await (const event of source.dht.query(id)) {

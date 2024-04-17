@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { DiagAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createSys = configure(api => {
-  /**
-   * @type {import('../types').DiagAPI["sys"]}
-   */
-  async function sys (options = {}) {
-    const res = await api.post('diag/sys', {
+export function createSys (client: HTTPRPCClient): DiagAPI['sys'] {
+  return async function sys (options = {}) {
+    const res = await client.post('diag/sys', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
@@ -14,5 +12,4 @@ export const createSys = configure(api => {
 
     return res.json()
   }
-  return sys
-})
+}

@@ -1,41 +1,35 @@
 /* eslint-env mocha */
 
-import { isBrowser, isWebWorker, isElectronRenderer } from 'ipfs-utils/src/env.js'
-import { getTopic } from './utils.js'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import { isBrowser, isWebWorker, isElectronRenderer } from 'wherearewe'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import waitFor from '../utils/wait-for.js'
+import { getTopic } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testUnsubscribe (factory, options) {
+export function testUnsubscribe (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pubsub.unsubscribe', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     // Browser/worker has max ~5 open HTTP requests to the same origin
     const count = isBrowser || isWebWorker || isElectronRenderer ? 5 : 10
 
     it(`should subscribe and unsubscribe ${count} times`, async () => {
       const someTopic = getTopic()
-      /** @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn[]} */
-      const handlers = Array.from(Array(count), () => msg => {})
+      const handlers = Array.from(Array(count), () => () => {})
 
       for (let i = 0; i < count; i++) {
         await ipfs.pubsub.subscribe(someTopic, handlers[i])

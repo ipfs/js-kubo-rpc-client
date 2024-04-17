@@ -1,19 +1,15 @@
+import { parseMtime } from '../lib/files/utils.js'
 import { modeToString } from './mode-to-string.js'
-import { parseMtime } from '../lib/parse-mtime.js'
 
-/**
- * @param {*} params
- * @returns {URLSearchParams}
- */
-export function toUrlSearchParams ({ arg, searchParams, hashAlg, mtime, mode, ...options } = {}) {
-  if (searchParams) {
+export function toUrlSearchParams ({ arg, searchParams, hashAlg, mtime, mode, ...options }: any = {}): URLSearchParams {
+  if (searchParams != null) {
     options = {
       ...options,
       ...searchParams
     }
   }
 
-  if (hashAlg) {
+  if (hashAlg != null) {
     options.hash = hashAlg
   }
 
@@ -28,7 +24,7 @@ export function toUrlSearchParams ({ arg, searchParams, hashAlg, mtime, mode, ..
     options.mode = modeToString(mode)
   }
 
-  if (options.timeout && !isNaN(options.timeout)) {
+  if (!isNaN(options.timeout)) {
     // server API expects timeouts as strings
     options.timeout = `${options.timeout}ms`
   }
@@ -41,7 +37,9 @@ export function toUrlSearchParams ({ arg, searchParams, hashAlg, mtime, mode, ..
 
   const urlSearchParams = new URLSearchParams(options)
 
-  arg.forEach((/** @type {any} */ arg) => urlSearchParams.append('arg', arg))
+  arg.forEach((arg: any) => {
+    urlSearchParams.append('arg', arg)
+  })
 
   return urlSearchParams
 }

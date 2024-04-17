@@ -1,8 +1,9 @@
-import { configure } from './lib/configure.js'
+import type { KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-export const createGetEndpointConfig = configure(api => {
-  return () => {
-    const url = new URL(api.opts.base || '')
+export function createGetEndpointConfig (client: HTTPRPCClient): KuboRPCClient['getEndpointConfig'] {
+  return function getEndpointConfig () {
+    const url = new URL(client.opts.base ?? '')
     return {
       host: url.hostname,
       port: url.port,
@@ -11,4 +12,4 @@ export const createGetEndpointConfig = configure(api => {
       'api-path': url.pathname
     }
   }
-})
+}

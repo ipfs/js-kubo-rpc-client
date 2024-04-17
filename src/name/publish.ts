@@ -1,17 +1,11 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { NameAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {import('../types').Options} config
- * @returns {import('../types').IPFS<import('../types').HTTPClientExtraOptions>['publish']}
- */
-export const createPublish = configure(api => {
-  /**
-   * @type {import('../types.js').NameAPI["publish"]}
-   */
-  async function publish (path, options = {}) {
-    const res = await api.post('name/publish', {
+export function createPublish (client: HTTPRPCClient): NameAPI['publish'] {
+  return async function publish (path, options = {}) {
+    const res = await client.post('name/publish', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: `${path}`,
@@ -20,8 +14,6 @@ export const createPublish = configure(api => {
       headers: options.headers
     })
 
-    // @ts-expect-error server output is not typed
     return objectToCamel(await res.json())
   }
-  return publish
-})
+}

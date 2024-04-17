@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { RepoAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createStat = configure(api => {
-  /**
-   * @type {import('../types').RepoAPI["stat"]}
-   */
-  async function stat (options = {}) {
-    const res = await api.post('repo/stat', {
+export function createStat (client: HTTPRPCClient): RepoAPI['stat'] {
+  return async function stat (options = {}) {
+    const res = await client.post('repo/stat', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
@@ -21,5 +19,4 @@ export const createStat = configure(api => {
       storageMax: BigInt(data.StorageMax)
     }
   }
-  return stat
-})
+}

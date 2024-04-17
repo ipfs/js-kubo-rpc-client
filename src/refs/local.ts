@@ -1,13 +1,11 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { RefsAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createLocal = configure(api => {
-  /**
-   * @type {import('../types').RefsAPI["local"]}
-   */
-  async function * refsLocal (options = {}) {
-    const res = await api.post('refs/local', {
+export function createLocal (client: HTTPRPCClient): RefsAPI['local'] {
+  return async function * refsLocal (options = {}) {
+    const res = await client.post('refs/local', {
       signal: options.signal,
       transform: objectToCamel,
       searchParams: toUrlSearchParams(options),
@@ -16,5 +14,4 @@ export const createLocal = configure(api => {
 
     yield * res.ndjson()
   }
-  return refsLocal
-})
+}

@@ -1,39 +1,34 @@
 /* eslint-env mocha */
 
-import all from 'it-all'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import { CarReader } from '@ipld/car'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import * as dagPB from '@ipld/dag-pb'
 import * as dagCBOR from '@ipld/dag-cbor'
+import * as dagPB from '@ipld/dag-pb'
+import { expect } from 'aegir/chai'
 import loadFixture from 'aegir/fixtures'
+import all from 'it-all'
 import toBuffer from 'it-to-buffer'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testExport (factory, options) {
+export function testExport (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dag.export', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should export a car file', async () => {
       const child = dagPB.encode({
-        Data: uint8ArrayFromString('block-' + Math.random()),
+        Data: uint8ArrayFromString(`block-${Math.random()}`),
         Links: []
       })
       const childCid = await ipfs.block.put(child, {
@@ -54,7 +49,7 @@ export function testExport (factory, options) {
       const grandParent = dagCBOR.encode({
         parent: parentCid
       })
-      const grandParentCid = await await ipfs.block.put(grandParent, {
+      const grandParentCid = await ipfs.block.put(grandParent, {
         format: 'dag-cbor',
         version: 1
       })
@@ -72,7 +67,6 @@ export function testExport (factory, options) {
     })
 
     it('export of shuffled devnet export identical to canonical original', async function () {
-      // @ts-ignore this is mocha
       this.timeout(360000)
 
       const input = loadFixture('test/interface-tests/fixtures/car/lotus_devnet_genesis.car')
@@ -83,7 +77,6 @@ export function testExport (factory, options) {
     })
 
     it('export of shuffled testnet export identical to canonical original', async function () {
-      // @ts-ignore this is mocha
       this.timeout(360000)
 
       const input = loadFixture('test/interface-tests/fixtures/car/lotus_testnet_export_128.car')

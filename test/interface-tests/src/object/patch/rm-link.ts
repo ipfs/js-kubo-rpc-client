@@ -1,35 +1,30 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import * as dagPB from '@ipld/dag-pb'
+import { expect } from 'aegir/chai'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { KuboRPCFactory } from '../../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRmLink (factory, options) {
+export function testRmLink (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.object.patch.rmLink', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should remove a link from an existing node', async () => {
       const obj1 = {
@@ -42,9 +37,13 @@ export function testRmLink (factory, options) {
         Links: []
       }
 
-      const nodeCid = await ipfs.object.put(obj1)
-      const childCid = await ipfs.object.put(obj2)
-      const child = await ipfs.object.get(childCid)
+      const nodeCid = await ipfs.dag.put(obj1, {
+        storeCodec: 'dag-pb'
+      })
+      const childCid = await ipfs.dag.put(obj2, {
+        storeCodec: 'dag-pb'
+      })
+      const { value: child } = await ipfs.dag.get(childCid)
       const childBuf = dagPB.encode(child)
       const childAsDAGLink = {
         Name: 'my-link',

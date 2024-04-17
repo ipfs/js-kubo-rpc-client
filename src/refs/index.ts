@@ -1,18 +1,40 @@
 import { CID } from 'multiformats/cid'
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { createLocal } from './local.js'
+import type { HTTPRPCOptions, IPFSPath } from '../index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createRefs = configure((api, opts) => {
+export interface RefsAPI {
   /**
-   * @type {import('../types').RefsAPI["refs"]}
+   * Get links (references) from an object
    */
-  const refs = async function * (args, options = {}) {
-    /** @type {import('../types').IPFSPath[]} */
+  (ipfsPath: IPFSPath | IPFSPath[], options?: RefsOptions): AsyncIterable<RefsResult>
+
+  /**
+   * List blocks stored in the local block store
+   */
+  local(options?: HTTPRPCOptions): AsyncIterable<RefsResult>
+}
+
+export interface RefsOptions extends HTTPRPCOptions {
+  recursive?: boolean
+  unique?: boolean
+  format?: string
+  edges?: boolean
+  maxDepth?: number
+}
+
+export interface RefsResult {
+  ref: string
+  err?: Error
+}
+
+export function createRefs (client: HTTPRPCClient): RefsAPI {
+  async function * refs (args: IPFSPath | IPFSPath[], options: RefsOptions = {}): AsyncIterable<RefsResult> {
     const argsArr = Array.isArray(args) ? args : [args]
 
-    const res = await api.post('refs', {
+    const res = await client.post('refs', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: argsArr.map(arg => `${arg instanceof Uint8Array ? CID.decode(arg) : arg}`),
@@ -26,6 +48,6 @@ export const createRefs = configure((api, opts) => {
   }
 
   return Object.assign(refs, {
-    local: createLocal(opts)
+    local: createLocal(client)
   })
-})
+}

@@ -1,26 +1,22 @@
-import { multiaddr } from '@multiformats/multiaddr'
-import { configure } from '../lib/configure.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
+import { multiaddr } from '@multiformats/multiaddr'
+import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { SwarmAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createAddrs = configure(api => {
-  /**
-   * @type {import('../types.js').SwarmAPI["addrs"]}
-   */
-  async function addrs (options = {}) {
-    const res = await api.post('swarm/addrs', {
+export function createAddrs (client: HTTPRPCClient): SwarmAPI['addrs'] {
+  return async function addrs (options = {}) {
+    const res = await client.post('swarm/addrs', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
     })
 
-    /** @type {{ Addrs: Record<string, string[]> }} */
     const { Addrs } = await res.json()
 
     return Object.keys(Addrs).map(id => ({
       id: peerIdFromString(id),
-      addrs: (Addrs[id] || []).map(a => multiaddr(a))
+      addrs: (Addrs[id] ?? []).map((a: any) => multiaddr(a))
     }))
   }
-  return addrs
-})
+}

@@ -1,20 +1,15 @@
 /* eslint-env mocha */
 
-import { isNode } from 'ipfs-utils/src/env.js'
-import { expect } from 'aegir/chai'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { create as httpClient } from '../../src/index.js'
 import http from 'http'
+import { expect } from 'aegir/chai'
+import pDefer from 'p-defer'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { isNode } from 'wherearewe'
+import { create as httpClient, type KuboRPCClient } from '../../src/index.js'
+import type { IncomingHttpHeaders } from 'node:http'
 
-/**
- *
- * @param {() => any} fn
- */
-function startServer (fn) {
-  let headersResolve
-  const headers = new Promise((resolve) => {
-    headersResolve = resolve
-  })
+async function startServer (fn: () => any): Promise<IncomingHttpHeaders> {
+  const headersResolve = pDefer<IncomingHttpHeaders>()
 
   // spin up a test http server to inspect the requests made by the library
   const server = http.createServer((req, res) => {
@@ -25,7 +20,7 @@ function startServer (fn) {
       res.end()
       server.close()
 
-      headersResolve(req.headers)
+      headersResolve.resolve(req.headers)
     })
   })
 
@@ -33,7 +28,7 @@ function startServer (fn) {
     fn().then(() => {}, () => {})
   })
 
-  return headers
+  return headersResolve.promise
 }
 
 describe('custom headers', function () {
@@ -42,7 +37,7 @@ describe('custom headers', function () {
     return
   }
 
-  let ipfs
+  let ipfs: KuboRPCClient
 
   describe('supported in the constructor', function () {
     // initialize ipfs with custom headers
@@ -58,13 +53,13 @@ describe('custom headers', function () {
     })
 
     it('regular API calls', async function () {
-      const headers = await startServer(() => ipfs.id())
+      const headers = await startServer(async () => ipfs.id())
 
       expect(headers.authorization).to.equal('Bearer YOLO')
     })
 
     it('multipart API calls', async function () {
-      const headers = await startServer(() => ipfs.files.write('/foo/bar', uint8ArrayFromString('derp'), {
+      const headers = await startServer(async () => ipfs.files.write('/foo/bar', uint8ArrayFromString('derp'), {
         create: true
       }))
 
@@ -83,7 +78,7 @@ describe('custom headers', function () {
     })
 
     it('regular API calls', async function () {
-      const headers = await startServer(() => ipfs.id({
+      const headers = await startServer(async () => ipfs.id({
         headers: {
           authorization: 'Bearer OLOY'
         }
@@ -93,7 +88,7 @@ describe('custom headers', function () {
     })
 
     it('multipart API calls', async function () {
-      const headers = await startServer(() => ipfs.files.write('/foo/bar', uint8ArrayFromString('derp'), {
+      const headers = await startServer(async () => ipfs.files.write('/foo/bar', uint8ArrayFromString('derp'), {
         create: true,
         headers: {
           authorization: 'Bearer OLOY'

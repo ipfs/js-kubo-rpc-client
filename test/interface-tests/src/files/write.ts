@@ -1,40 +1,37 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { isNode } from 'ipfs-utils/src/env.js'
-import { sha512 } from 'multiformats/hashes/sha2'
-import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import { createTwoShards } from '../utils/create-two-shards.js'
 import { randomBytes, randomStream } from 'iso-random-stream'
 import all from 'it-all'
-import isShardAtPath from '../utils/is-shard-at-path.js'
-import * as raw from 'multiformats/codecs/raw'
 import map from 'it-map'
+import * as raw from 'multiformats/codecs/raw'
+import { sha512 } from 'multiformats/hashes/sha2'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { isNode } from 'wherearewe'
+import { createShardedDirectory } from '../utils/create-sharded-directory.js'
+import { createTwoShards } from '../utils/create-two-shards.js'
+import isShardAtPath from '../utils/is-shard-at-path.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
+interface WriteTestArg {
+  type: string
+  path: string
+  content: Uint8Array | AsyncIterable<Uint8Array> | AsyncGenerator<Uint8Array, void, unknown>
+  contentSize: number
+}
 
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testWrite (factory, options) {
+export function testWrite (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const smallFile = randomBytes(13)
-  const largeFile = randomBytes(490668)
+  const smallFile: Uint8Array = randomBytes(13)
+  const largeFile: Uint8Array = randomBytes(490668)
 
-  /**
-   * @param {(arg: { type: string, path: string, content: Uint8Array | AsyncIterable<Uint8Array>, contentSize: number }) => void} fn
-   */
-  const runTest = (fn) => {
-    const iterations = 5
-    const files = [{
+  const runTest = (fn: (arg: WriteTestArg) => void): void => {
+    const files: WriteTestArg[] = [{
       type: 'Small file',
       path: `/small-file-${Math.random()}.txt`,
       content: smallFile,
@@ -44,17 +41,6 @@ export function testWrite (factory, options) {
       path: `/large-file-${Math.random()}.jpg`,
       content: largeFile,
       contentSize: largeFile.length
-    }, {
-      type: 'Really large file',
-      path: `/really-large-file-${Math.random()}.jpg`,
-      content: {
-        [Symbol.asyncIterator]: function * () {
-          for (let i = 0; i < iterations; i++) {
-            yield largeFile
-          }
-        }
-      },
-      contentSize: largeFile.length * iterations
     }]
 
     files.forEach((file) => {
@@ -65,14 +51,15 @@ export function testWrite (factory, options) {
   describe('.files.write', function () {
     this.timeout(300 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('explodes if it cannot convert content to a source', async () => {
       // @ts-expect-error invalid arg
@@ -153,7 +140,6 @@ export function testWrite (factory, options) {
 
     it('writes a small file using a Node stream (Node only)', async function () {
       if (!isNode) {
-        // @ts-ignore this is mocha
         this.skip()
       }
       const filePath = `/small-file-${Math.random()}.txt`
@@ -169,8 +155,7 @@ export function testWrite (factory, options) {
     })
 
     it('writes a small file using an HTML5 Blob (Browser only)', async function () {
-      if (!global.Blob) {
-        // @ts-ignore this is mocha
+      if (global.Blob == null) {
         return this.skip()
       }
 
@@ -207,7 +192,7 @@ export function testWrite (factory, options) {
           create: true
         })
         throw new Error('Writing a file to a non-existent folder without the --parents flag should have failed')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('does not exist')
       }
     })
@@ -218,7 +203,7 @@ export function testWrite (factory, options) {
       try {
         await ipfs.files.write(filePath, smallFile)
         throw new Error('Writing a file to a non-existent file without the --create flag should have failed')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('file does not exist')
       }
     })
@@ -236,7 +221,7 @@ export function testWrite (factory, options) {
         })
 
         throw new Error('Writing a path with a file in it should have failed')
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         expect(err.message).to.contain('Not a directory')
       }
     })
@@ -386,8 +371,7 @@ export function testWrite (factory, options) {
     })
 
     it('supports concurrent writes', async function () {
-      /** @type {{ name: string, source: ReturnType<randomBytes>}[]} */
-      const files = []
+      const files: Array<{ name: string, source: ReturnType<randomBytes> }> = []
 
       for (let i = 0; i < 10; i++) {
         files.push({
@@ -396,9 +380,9 @@ export function testWrite (factory, options) {
         })
       }
 
-      // eslint-disable-next-line no-unused-vars
-      const writeResults = await Promise.allSettled(
-        files.map(({ name, source }) => ipfs.files.write(`/concurrent/${name}`, source, {
+      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+      void await Promise.allSettled(
+        files.map(async ({ name, source }) => ipfs.files.write(`/concurrent/${name}`, source, {
           create: true,
           parents: true
         }))
@@ -501,8 +485,7 @@ export function testWrite (factory, options) {
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({

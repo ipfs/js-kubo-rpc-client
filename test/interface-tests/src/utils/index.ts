@@ -1,14 +1,13 @@
+import loadFixture from 'aegir/fixtures'
 import { CID } from 'multiformats/cid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import loadFixture from 'aegir/fixtures'
 
 const ONE_MEG = Math.pow(2, 20)
 
 export const fixtures = Object.freeze({
   directory: Object.freeze({
     cid: CID.parse('QmVvjDy7yF7hdnqE8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXP'),
-    /** @type {Record<string, Buffer>} */
-    files: Object.freeze({
+    files: Object.freeze<Record<string, Uint8Array>>({
       'pp.txt': loadFixture('test/interface-tests/fixtures/test-folder/pp.txt'),
       'holmes.txt': loadFixture('test/interface-tests/fixtures/test-folder/holmes.txt'),
       'jungle.txt': loadFixture('test/interface-tests/fixtures/test-folder/jungle.txt'),
@@ -31,8 +30,4 @@ export const fixtures = Object.freeze({
   })
 })
 
-/**
- * @param {{ cid: CID }} a
- * @param {{ cid: CID }} b
- */
-export const byCID = (a, b) => a.cid.toString() > b.cid.toString() ? 1 : -1
+export const byCID = (a: { cid: CID }, b: { cid: CID }): 1 | -1 => a.cid.toString() > b.cid.toString() ? 1 : -1

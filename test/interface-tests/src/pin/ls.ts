@@ -1,27 +1,20 @@
 /* eslint-env mocha */
 
-import { fixtures } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { fixtures } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testLs (factory, options) {
+export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pin.ls', function () {
     this.timeout(50 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
@@ -37,7 +30,9 @@ export function testLs (factory, options) {
       await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     // 1st, because ipfs.add pins automatically
     it('should list all recursive pins', async () => {
@@ -180,6 +175,7 @@ export function testLs (factory, options) {
     })
 
     it('should throw error for invalid non-string pin type option', () => {
+      // @ts-expect-error wrong pin type
       return expect(all(ipfs.pin.ls({ type: 6 })))
         .to.eventually.be.rejected()
         // TODO: go-ipfs does not return error codes
@@ -187,6 +183,7 @@ export function testLs (factory, options) {
     })
 
     it('should throw error for invalid string pin type option', () => {
+      // @ts-expect-error invalid pin type
       return expect(all(ipfs.pin.ls({ type: '__proto__' })))
         .to.eventually.be.rejected()
         // TODO: go-ipfs does not return error codes

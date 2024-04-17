@@ -1,34 +1,29 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { CID } from 'multiformats/cid'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
+import { CID } from 'multiformats/cid'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl')} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPut (factory, options) {
+export function testPut (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.block.put', () => {
-    /** @type {import('../../../../src/types.js').IPFSHTTPClient} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     /**
      * @see https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-block-put

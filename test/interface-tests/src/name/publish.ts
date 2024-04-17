@@ -1,31 +1,24 @@
 /* eslint-env mocha */
 
+import { peerIdFromString } from '@libp2p/peer-id'
+import { expect } from 'aegir/chai'
+import last from 'it-last'
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { fixture } from './utils.js'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import last from 'it-last'
-import { peerIdFromString } from '@libp2p/peer-id'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+import type { PeerId } from '@libp2p/interface'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPublish (factory, options) {
+export function testPublish (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.name.publish offline', () => {
     const keyName = nanoid()
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {string} */
-    let nodeId
+    let ipfs: KuboRPCClient
+    let nodeId: PeerId
 
     before(async function () {
       ipfs = (await factory.spawn({
@@ -42,17 +35,18 @@ export function testPublish (factory, options) {
       await ipfs.add(fixture.data, { pin: false })
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should publish an IPNS record with the default params', async function () {
-      // @ts-ignore this is mocha
       this.timeout(50 * 1000)
 
       const value = fixture.cid
       const keys = await ipfs.key.list()
       const self = keys.find(key => key.name === 'self')
 
-      if (!self) {
+      if (self == null) {
         throw new Error('No self key found')
       }
 
@@ -70,14 +64,13 @@ export function testPublish (factory, options) {
     })
 
     it('should publish correctly when the file was not added but resolve is disabled', async function () {
-      // @ts-ignore this is mocha
       this.timeout(50 * 1000)
 
       const value = 'QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
       const keys = await ipfs.key.list()
       const self = keys.find(key => key.name === 'self')
 
-      if (!self) {
+      if (self == null) {
         throw new Error('No self key found')
       }
 
@@ -96,7 +89,6 @@ export function testPublish (factory, options) {
     })
 
     it('should publish with a key received as param, instead of using the key of the node', async function () {
-      // @ts-ignore this is mocha
       this.timeout(90 * 1000)
 
       const value = fixture.cid

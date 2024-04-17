@@ -1,38 +1,23 @@
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- * @typedef {object} Skip
- * @property {string} [name]
- * @property {string} [reason]
- */
+import { isSkip, type Skip } from './mocha.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @param {any} o
- * @returns {o is Skip}
- */
-const isSkip = (o) => Object.prototype.toString.call(o) === '[object Object]' && (o.name || o.reason)
+export interface CreateSuiteOptions {
+  skip?: boolean | Skip | string[] | Skip[]
+  only?: boolean | string | string[]
+}
 
-/**
- * @param {*} tests
- * @param {*} [parent]
- */
-export function createSuite (tests, parent) {
-  /**
-   * @param {Factory} factory
-   * @param {object} [options]
-   * @param {boolean | Skip | (string | Skip)[]} [options.skip]
-   * @param {boolean} [options.only]
-   */
-  const suite = (factory, options = {}) => {
+export function createSuite (tests: any, parent?: any): any {
+  const suite = (factory: KuboRPCFactory, options = {}): void => {
     Object.keys(tests).forEach(t => {
-      const opts = Object.assign({}, options)
-      const suiteName = parent ? `${parent}.${t}` : t
+      const opts: CreateSuiteOptions = Object.assign({}, options)
+      const suiteName = parent != null ? `${parent}.${t}` : t
 
       if (Array.isArray(opts.skip)) {
         const skip = opts.skip
           .map((s) => isSkip(s) ? s : { name: s, reason: '🤷' })
           .find((s) => s.name === suiteName)
 
-        if (skip) {
+        if (skip != null) {
           opts.skip = skip
         }
       }

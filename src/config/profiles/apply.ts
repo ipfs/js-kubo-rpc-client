@@ -1,12 +1,10 @@
-import { configure } from '../../lib/configure.js'
 import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
+import type { ConfigProfilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../../lib/core.js'
 
-export const createApply = configure(api => {
-  /**
-   * @type {import('../../types').ConfigProfilesAPI["apply"]}
-   */
-  async function apply (profile, options = {}) {
-    const res = await api.post('config/profile/apply', {
+export function createApply (client: HTTPRPCClient): ConfigProfilesAPI['apply'] {
+  return async function apply (profile, options = {}) {
+    const res = await client.post('config/profile/apply', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: profile,
@@ -20,6 +18,4 @@ export const createApply = configure(api => {
       original: data.OldCfg, updated: data.NewCfg
     }
   }
-
-  return apply
-})
+}

@@ -1,38 +1,39 @@
-import { configure } from '../lib/configure.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { abortSignal } from '../lib/abort-signal.js'
-import { multipartRequest } from 'ipfs-core-utils/multipart-request'
+import { anySignal } from 'any-signal'
 import { CID } from 'multiformats/cid'
+import { multipartRequest } from '../lib/multipart-request.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { DAGAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createImport = configure(api => {
-  /**
-   * @type {import('../types.js').DAGAPI["import"]}
-   */
-  async function * dagImport (source, options = {}) {
+export function createImport (client: HTTPRPCClient): DAGAPI['import'] {
+  return async function * dagImport (source, options = {}) {
     const controller = new AbortController()
-    const signal = abortSignal(controller.signal, options.signal)
-    const { headers, body } = await multipartRequest(source, controller, options.headers)
+    const signal = anySignal([controller.signal, options.signal])
 
-    const res = await api.post('dag/import', {
-      signal,
-      headers,
-      body,
-      searchParams: toUrlSearchParams({ 'pin-roots': options.pinRoots })
-    })
+    try {
+      const { headers, body } = await multipartRequest(source, controller, options.headers)
 
-    for await (const { Root } of res.ndjson()) {
-      if (Root !== undefined) {
-        const { Cid: { '/': Cid }, PinErrorMsg } = Root
+      const res = await client.post('dag/import', {
+        signal,
+        headers,
+        body,
+        searchParams: toUrlSearchParams({ 'pin-roots': options.pinRoots })
+      })
 
-        yield {
-          root: {
-            cid: CID.parse(Cid),
-            pinErrorMsg: PinErrorMsg
+      for await (const { Root } of res.ndjson()) {
+        if (Root !== undefined) {
+          const { Cid: { '/': Cid }, PinErrorMsg } = Root
+
+          yield {
+            root: {
+              cid: CID.parse(Cid),
+              pinErrorMsg: PinErrorMsg
+            }
           }
         }
       }
+    } finally {
+      signal.clear()
     }
   }
-
-  return dagImport
-})
+}

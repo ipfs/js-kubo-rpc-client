@@ -2,25 +2,21 @@
 
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-
+import { isPong } from './interface-tests/src/ping/utils.js'
 import { factory } from './utils/factory.js'
+import type { KuboRPCClient } from '../src/index.js'
+import type { PeerId } from '@libp2p/interface'
+
 const f = factory()
 
 // Determine if a ping response object is a pong, or something else, like a status message
-/**
- *
- * @param {unknown} pingResponse
- */
-function isPong (pingResponse) {
-  return Boolean(pingResponse && pingResponse.success && !pingResponse.text)
-}
 
 describe('.ping', function () {
   this.timeout(20 * 1000)
 
-  let ipfs
-  let other
-  let otherId
+  let ipfs: KuboRPCClient
+  let other: KuboRPCClient
+  let otherId: PeerId
 
   before(async function () {
     this.timeout(30 * 1000) // slow CI
@@ -34,7 +30,7 @@ describe('.ping', function () {
     otherId = (await other.id()).id
   })
 
-  after(function () { return f.clean() })
+  after(async function () { return f.clean() })
 
   it('.ping with default count', async function () {
     const res = await all(ipfs.ping(otherId))

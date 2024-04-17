@@ -1,48 +1,37 @@
-import { configure } from '../lib/configure.js'
-import { resolve } from '../lib/resolve.js'
+import errCode from 'err-code'
 import first from 'it-first'
 import last from 'it-last'
-import errCode from 'err-code'
 import { createGet as createBlockGet } from '../block/get.js'
+import { resolve } from '../lib/resolve.js'
+import type { DAGAPI } from './index.js'
+import type { Codecs } from '../index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {import('../types').Multicodecs} codecs
- * @param {import('../types').Options} options
- */
-export const createGet = (codecs, options) => {
-  const fn = configure((api, opts) => {
-    const getBlock = createBlockGet(opts)
+export function createGet (client: HTTPRPCClient, codecs: Codecs): DAGAPI['get'] {
+  const getBlock = createBlockGet(client)
 
-    /**
-     * @type {import('../types').DAGAPI["get"]}
-     */
-    const get = async (cid, options = {}) => {
-      if (options.path) {
-        const entry = options.localResolve
-          ? await first(resolve(cid, options.path, codecs, getBlock, options))
-          : await last(resolve(cid, options.path, codecs, getBlock, options))
-        /** @type {import('../types').GetResult | undefined} - first and last will return undefined when empty */
-        const result = (entry)
+  return async function get (cid, options = {}) {
+    if (options.path != null) {
+      const entry = options.localResolve === true
+        ? await first(resolve(cid, options.path, codecs, getBlock, options))
+        : await last(resolve(cid, options.path, codecs, getBlock, options))
+      /** @type {import('../types').GetResult | undefined} - first and last will return undefined when empty */
+      const result = (entry)
 
-        if (!result) {
-          throw errCode(new Error('Not found'), 'ERR_NOT_FOUND')
-        }
-
-        return result
+      if (result == null) {
+        throw errCode(new Error('Not found'), 'ERR_NOT_FOUND')
       }
 
-      const codec = await codecs.getCodec(cid.code)
-      const block = await getBlock(cid, options)
-      const node = codec.decode(block)
-
-      return {
-        value: node,
-        remainderPath: ''
-      }
+      return result
     }
 
-    return get
-  })
+    const codec = await codecs.getCodec(cid.code)
+    const block = await getBlock(cid, options)
+    const node = codec.decode(block)
 
-  return fn(options)
+    return {
+      value: node,
+      remainderPath: ''
+    }
+  }
 }

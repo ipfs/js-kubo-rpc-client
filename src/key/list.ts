@@ -1,20 +1,17 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { KeyAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createList = configure(api => {
-  /**
-   * @type {import('../types.js').KeyAPI["list"]}
-   */
-  async function list (options = {}) {
-    const res = await api.post('key/list', {
+export function createList (client: HTTPRPCClient): KeyAPI['list'] {
+  return async function list (options = {}) {
+    const res = await client.post('key/list', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
     })
     const data = await res.json()
 
-    return (data.Keys || []).map((/** @type {any} **/ k) => objectToCamel(k))
+    return (data.Keys ?? []).map((k: any) => objectToCamel(k))
   }
-  return list
-})
+}

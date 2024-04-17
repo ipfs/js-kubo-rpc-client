@@ -1,24 +1,21 @@
-import { createAddAll } from './add-all.js'
 import last from 'it-last'
-import { configure } from './lib/configure.js'
-import { normaliseInput } from 'ipfs-core-utils/files/normalise-input-single'
+import { createAddAll } from './add-all.js'
+import { normaliseInput } from './lib/files/normalise-input-single.js'
+import type { KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-/**
- * @param {import('./types').Options} options
- */
-export function createAdd (options) {
-  const all = createAddAll(options)
-  return configure(() => {
-    /**
-     * @type {import('./types').RootAPI["add"]}
-     */
-    async function add (input, options = {}) {
-      const source = normaliseInput(input)
-      // @ts-expect-error - all may return undefined if source is empty
-      const addAllPromise = all(source, options)
-      // @ts-expect-error - last may return undefined if source is empty
-      return await last(addAllPromise)
+export function createAdd (client: HTTPRPCClient): KuboRPCClient['add'] {
+  const all = createAddAll(client)
+
+  return async function add (input, options = {}) {
+    const source = normaliseInput(input)
+    const addAllPromise = all(source, options)
+    const result = await last(addAllPromise)
+
+    if (result == null) {
+      throw new Error('Invalid body')
     }
-    return add
-  })(options)
+
+    return result
+  }
 }

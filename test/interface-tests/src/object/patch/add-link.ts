@@ -1,35 +1,30 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import * as dagPB from '@ipld/dag-pb'
+import { expect } from 'aegir/chai'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { KuboRPCFactory } from '../../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAddLink (factory, options) {
+export function testAddLink (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.object.patch.addLink', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should add a link to an existing node', async () => {
       const obj = {
@@ -43,7 +38,9 @@ export function testAddLink (factory, options) {
       }
       // note: we need to put the linked obj, otherwise IPFS won't
       // timeout. Reason: it needs the node to get its size
-      await ipfs.object.put(node2)
+      await ipfs.dag.put(node2, {
+        storeCodec: 'dag-pb'
+      })
       const node2Buf = dagPB.encode(node2)
       const link = {
         Name: 'link-to-node',
@@ -60,10 +57,14 @@ export function testAddLink (factory, options) {
         Data: node1a.Data,
         Links: [link]
       }
-      const node1bCid = await ipfs.object.put(node1b)
+      const node1bCid = await ipfs.dag.put(node1b, {
+        storeCodec: 'dag-pb'
+      })
 
       // add link with patch.addLink
-      const testNodeCid = await ipfs.object.put(obj)
+      const testNodeCid = await ipfs.dag.put(obj, {
+        storeCodec: 'dag-pb'
+      })
       const cid = await ipfs.object.patch.addLink(testNodeCid, link)
 
       // assert both are equal

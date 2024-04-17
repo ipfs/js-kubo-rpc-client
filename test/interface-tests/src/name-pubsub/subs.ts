@@ -1,33 +1,27 @@
 /* eslint-env mocha */
 
-import all from 'it-all'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import all from 'it-all'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testSubs (factory, options) {
+export function testSubs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.name.pubsub.subs', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should get an empty array as a result of subscriptions before any resolve', async function () {
-      // @ts-ignore this is mocha
       this.timeout(60 * 1000)
 
       const res = await ipfs.name.pubsub.subs()
@@ -36,7 +30,6 @@ export function testSubs (factory, options) {
     })
 
     it('should get the list of subscriptions updated after a resolve', async function () {
-      // @ts-ignore this is mocha
       this.timeout(300 * 1000)
       const id = 'QmNP1ASen5ZREtiJTtVD3jhMKhoPb1zppET1tgpjHx2NGA'
 

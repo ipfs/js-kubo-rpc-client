@@ -1,47 +1,41 @@
 /* eslint-env mocha, browser */
 
-import { fixtures } from './utils/index.js'
-import { Readable } from 'readable-stream'
-import { supportsFileReader } from 'ipfs-utils/src/supports.js'
-import urlSource from 'ipfs-utils/src/files/url-source.js'
-import { isNode } from 'ipfs-utils/src/env.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from './utils/mocha.js'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import last from 'it-last'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
+import { Readable } from 'readable-stream'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { isNode } from 'wherearewe'
+import { urlSource } from '../../../src/index.js'
 import { isFirefox } from '../../constants.js'
+import { supportsFileReader } from '../fixtures/supports.js'
+import { fixtures } from './utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
+import type { KuboRPCFactory } from './index.js'
+import type { AddProgressFn, KuboRPCClient } from '../../../src/index.js'
 
-const echoUrl = (/** @type {string} */ text) => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
-const redirectUrl = (/** @type {string} */ url) => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
+const echoUrl = (text: string): string => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
+const redirectUrl = (url: string): string => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- * @typedef {import('ipfs-unixfs').MtimeLike} MtimeLike
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAdd (factory, options) {
+export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.add', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should add a File', async function () {
       if (!supportsFileReader) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip('skip in node')
       }
 
@@ -51,7 +45,7 @@ export function testAdd (factory, options) {
 
     it('should add a File as tuple', async function () {
       if (!supportsFileReader) {
-        // @ts-ignore this is mocha
+        // @ts-expect-error this is mocha
         return this.skip('skip in node')
       }
 
@@ -75,6 +69,7 @@ export function testAdd (factory, options) {
 
     it('should add a BIG Uint8Array', async function () {
       if (isFirefox) {
+        // @ts-expect-error should not have argument
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
       const file = await ipfs.add(fixtures.bigFile.data)
@@ -87,15 +82,13 @@ export function testAdd (factory, options) {
 
     it('should add a BIG Uint8Array with progress enabled', async function () {
       if (isFirefox) {
+        // @ts-expect-error should not have argument
         return this.skip('Skipping in Firefox due to https://github.com/microsoft/playwright/issues/4704#issuecomment-826782602')
       }
       let progCalled = false
       let accumProgress = 0
 
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      function handler (p) {
+      const handler: AddProgressFn = (p) => {
         progCalled = true
         accumProgress = p
       }
@@ -112,10 +105,7 @@ export function testAdd (factory, options) {
       let progCalled = false
       let accumProgress = 0
 
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      function handler (p) {
+      const handler: AddProgressFn = (p) => {
         progCalled = true
         accumProgress = p
       }
@@ -131,10 +121,7 @@ export function testAdd (factory, options) {
     it('should receive file name from progress event', async () => {
       let receivedName
 
-      /**
-       * @type {import('ipfs-core-types/src/root').AddProgressFn}
-       */
-      function handler (p, name) {
+      const handler: AddProgressFn = (p, name) => {
         receivedName = name
       }
 
@@ -186,7 +173,6 @@ export function testAdd (factory, options) {
 
     it('should add readable stream', async function () {
       if (!isNode) {
-        // @ts-ignore this is mocha
         this.skip()
       }
       const expectedCid = 'QmVv4Wz46JaZJeH5PMV4LGbRiiMKEmszPYY3g6fjGnVXBS'
@@ -238,19 +224,18 @@ export function testAdd (factory, options) {
     })
 
     it('should add with only-hash=true', async function () {
-      // @ts-ignore this is mocha
       this.slow(10 * 1000)
-      const content = String(Math.random() + Date.now())
+      const content = `${Math.random() + Date.now()}`
 
       const file = await ipfs.add(content, { onlyHash: true })
 
-      await expect(ipfs.object.get(file.cid, { timeout: 4000 }))
+      await expect(ipfs.dag.get(file.cid, { timeout: 4000 }))
         .to.eventually.be.rejected()
         .and.to.have.property('name').that.equals('TimeoutError')
     })
 
     it('should add with sha2-256 by default', async function () {
-      const content = String(Math.random() + Date.now())
+      const content = `${Math.random() + Date.now()}`
 
       const file = await ipfs.add(content)
 
@@ -258,7 +243,7 @@ export function testAdd (factory, options) {
     })
 
     it('should add with a different hashing algorithm', async function () {
-      const content = String(Math.random() + Date.now())
+      const content = `${Math.random() + Date.now()}`
 
       const file = await ipfs.add(content, { hashAlg: 'sha2-512' })
 
@@ -297,7 +282,7 @@ export function testAdd (factory, options) {
 
       const res = await ipfs.add(urlSource(url), { onlyHash: true })
 
-      await expect(ipfs.object.get(res.cid, { timeout: 500 }))
+      await expect(ipfs.dag.get(res.cid, { timeout: 500 }))
         .to.eventually.be.rejected()
         .and.to.have.property('name').that.equals('TimeoutError')
     })
@@ -328,7 +313,7 @@ export function testAdd (factory, options) {
     })
 
     it('should not add from an invalid url', () => {
-      return expect(() => ipfs.add(urlSource('123http://invalid'))).to.throw()
+      return expect((): any => ipfs.add(urlSource('123http://invalid'))).to.throw()
     })
 
     it('should respect raw leaves when file is smaller than one block and no metadata is present', async () => {
@@ -352,14 +337,14 @@ export function testAdd (factory, options) {
     })
 
     const testFiles = Array.from(Array(1005), (_, i) => ({
-      path: 'test-folder/' + i,
-      content: uint8ArrayFromString('some content ' + i)
+      path: `test-folder/${i}`,
+      content: uint8ArrayFromString(`some content ${i}`)
     }))
 
     it('should be able to add dir without sharding', async () => {
       const result = await last(ipfs.addAll(testFiles))
 
-      if (!result) {
+      if (result == null) {
         throw new Error('No addAll result received')
       }
 
@@ -370,8 +355,7 @@ export function testAdd (factory, options) {
 
     describe('with sharding', function () {
       this.timeout(200 * 1000)
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({
@@ -394,7 +378,7 @@ export function testAdd (factory, options) {
       it('should be able to add dir with sharding', async () => {
         const result = await last(ipfs.addAll(testFiles))
 
-        if (!result) {
+        if (result == null) {
           throw new Error('No addAll result received')
         }
 

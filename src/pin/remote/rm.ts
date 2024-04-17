@@ -1,13 +1,9 @@
 import { encodeQuery } from './utils.js'
+import type { PinRemoteAPI } from './index.js'
+import type { HTTPRPCClient } from '../../lib/core.js'
 
-/**
- * @param {import('../../lib/core').Client} client
- */
-export function createRm (client) {
-  /**
-   * @type {import('../../types').RemotePiningAPI["rm"]}
-   */
-  async function rm ({ timeout, signal, headers, ...query }) {
+export function createRm (client: HTTPRPCClient): PinRemoteAPI['rm'] {
+  return async function rm ({ timeout, signal, headers, ...query }) {
     await client.post('pin/remote/rm', {
       timeout,
       signal,
@@ -18,6 +14,4 @@ export function createRm (client) {
       })
     })
   }
-
-  return rm
 }

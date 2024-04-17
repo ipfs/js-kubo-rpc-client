@@ -1,12 +1,9 @@
 import { expect } from 'aegir/chai'
-import isShardAtPath from './is-shard-at-path.js'
 import last from 'it-last'
+import isShardAtPath from './is-shard-at-path.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {number} [files]
- */
-export async function createShardedDirectory (ipfs, files = 1001) {
+export async function createShardedDirectory (ipfs: KuboRPCClient, files: number = 1001): Promise<string> {
   const dirPath = `/sharded-dir-${Math.random()}`
 
   const result = await last(ipfs.addAll((function * () {
@@ -21,7 +18,7 @@ export async function createShardedDirectory (ipfs, files = 1001) {
     pin: false
   }))
 
-  if (!result) {
+  if (result == null) {
     throw new Error('No result received from ipfs.addAll')
   }
 

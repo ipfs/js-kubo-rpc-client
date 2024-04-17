@@ -1,37 +1,31 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { CID } from 'multiformats/cid'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import all from 'it-all'
-
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testLs (factory, options) {
+import { CID } from 'multiformats/cid'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { createShardedDirectory } from '../utils/create-sharded-directory.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.files.ls', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    it('should require a path', () => {
+    it('should require a path', async () => {
       // @ts-expect-error invalid args
-      expect(all(ipfs.files.ls())).to.eventually.be.rejected()
+      await expect(all(ipfs.files.ls())).to.eventually.be.rejected()
     })
 
     it('lists the root directory', async () => {
@@ -103,8 +97,7 @@ export function testLs (factory, options) {
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({

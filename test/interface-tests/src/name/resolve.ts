@@ -1,31 +1,24 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import delay from 'delay'
 import { peerIdFromString } from '@libp2p/peer-id'
+import { expect } from 'aegir/chai'
+import delay from 'delay'
 import last from 'it-last'
 import { CID } from 'multiformats/cid'
 import * as Digest from 'multiformats/hashes/digest'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+import type { PeerId } from '@libp2p/interface'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testResolve (factory, options) {
+export function testResolve (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.name.resolve offline', function () {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {string} */
-    let nodeId
+    let ipfs: KuboRPCClient
+    let nodeId: PeerId
 
     before(async function () {
       ipfs = (await factory.spawn({
@@ -41,10 +34,11 @@ export function testResolve (factory, options) {
       nodeId = peerInfo.id
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should resolve a record default options', async function () {
-      // @ts-ignore this is mocha
       this.timeout(20 * 1000)
 
       const { path } = await ipfs.add(uint8ArrayFromString('should resolve a record default options'))
@@ -58,7 +52,6 @@ export function testResolve (factory, options) {
     })
 
     it('should resolve a record from peerid as cidv1 in base32', async function () {
-      // @ts-ignore this is mocha
       this.timeout(20 * 1000)
       const { cid } = await ipfs.add(uint8ArrayFromString('should resolve a record from cidv1b32'))
       const { id: peerId } = await ipfs.id()
@@ -80,7 +73,6 @@ export function testResolve (factory, options) {
     })
 
     it('should resolve a record recursive === true', async function () {
-      // @ts-ignore this is mocha
       this.timeout(20 * 1000)
 
       const { path } = await ipfs.add(uint8ArrayFromString('should resolve a record recursive === true'))
@@ -94,7 +86,6 @@ export function testResolve (factory, options) {
     })
 
     it('should resolve a record default options with remainder', async function () {
-      // @ts-ignore this is mocha
       this.timeout(20 * 1000)
 
       const { path } = await ipfs.add(uint8ArrayFromString('should resolve a record default options with remainder'))
@@ -115,7 +106,6 @@ export function testResolve (factory, options) {
     })
 
     it('should resolve a record recursive === true with remainder', async function () {
-      // @ts-ignore this is mocha
       this.timeout(20 * 1000)
 
       const { path } = await ipfs.add(uint8ArrayFromString('should resolve a record recursive = true with remainder'))
@@ -143,22 +133,23 @@ export function testResolve (factory, options) {
       // so here we just expect an Error and don't match the error type to expiration
       try {
         await last(ipfs.name.resolve(nodeId))
-      } catch (/** @type {any} */ error) {
-        expect(error).to.exist()
+      } catch (err: any) {
+        expect(err).to.exist()
       }
     })
   })
 
   describe('.name.resolve dns', function () {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     this.retries(5)
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should resolve /ipns/ipfs.io', async () => {
       expect(await last(ipfs.name.resolve('/ipns/ipfs.io')))
@@ -193,8 +184,8 @@ export function testResolve (factory, options) {
     it('should fail to resolve /ipns/ipfs.a', async () => {
       try {
         await last(ipfs.name.resolve('ipfs.a'))
-      } catch (/** @type {any} */ error) {
-        expect(error).to.exist()
+      } catch (err: any) {
+        expect(err).to.exist()
       }
     })
 

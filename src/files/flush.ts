@@ -1,17 +1,15 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { FilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createFlush = configure(api => {
-  /**
-   * @type {import('../types').FilesAPI["flush"]}
-   */
-  async function flush (path, options = {}) {
-    if (!path || typeof path !== 'string') {
+export function createFlush (client: HTTPRPCClient): FilesAPI['flush'] {
+  return async function flush (path, options = {}) {
+    if (typeof path !== 'string') {
       throw new Error('ipfs.files.flush requires a path')
     }
 
-    const res = await api.post('files/flush', {
+    const res = await client.post('files/flush', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: path,
@@ -23,5 +21,4 @@ export const createFlush = configure(api => {
 
     return CID.parse(data.Cid)
   }
-  return flush
-})
+}

@@ -1,29 +1,21 @@
 /* eslint-env mocha */
 
-import { getTopic } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import delay from 'delay'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getTopic } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testLs (factory, options) {
+export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pubsub.ls', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {string[]} */
-    let subscribedTopics = []
+    let ipfs: KuboRPCClient
+    let subscribedTopics: string[] = []
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
@@ -36,7 +28,9 @@ export function testLs (factory, options) {
       await delay(100)
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should return an empty list when no topics are subscribed', async () => {
       const topics = await ipfs.pubsub.ls()
@@ -44,7 +38,7 @@ export function testLs (factory, options) {
     })
 
     it('should return a list with 1 subscribed topic', async () => {
-      const sub1 = () => {}
+      const sub1 = (): void => {}
       const topic = getTopic()
       subscribedTopics = [topic]
 

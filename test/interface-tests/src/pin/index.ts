@@ -1,10 +1,10 @@
 import { createSuite } from '../utils/suite.js'
-import { testAdd } from './add.js'
 import { testAddAll } from './add-all.js'
+import { testAdd } from './add.js'
 import { testLs } from './ls.js'
-import { testRm } from './rm.js'
-import { testRmAll } from './rm-all.js'
 import testRemote from './remote/index.js'
+import { testRmAll } from './rm-all.js'
+import { testRm } from './rm.js'
 
 const tests = {
   add: testAdd,

@@ -1,13 +1,11 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { mapEvent } from './map-event.js'
+import type { DHTAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createQuery = configure(api => {
-  /**
-   * @type {import('../types.js').DHTAPI["query"]}
-   */
-  async function * query (peerId, options = {}) {
-    const res = await api.post('dht/query', {
+export function createQuery (client: HTTPRPCClient): DHTAPI['query'] {
+  return async function * query (peerId, options = {}) {
+    const res = await client.post('dht/query', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: peerId.toString(),
@@ -20,6 +18,4 @@ export const createQuery = configure(api => {
       yield mapEvent(event)
     }
   }
-
-  return query
-})
+}

@@ -1,17 +1,13 @@
 import { expect } from 'aegir/chai'
+import type { BitswapStats } from '../../../../src/bitswap/index.js'
+import type { RepoStatResult } from '../../../../src/repo/index.js'
+import type { StatsBWResult } from '../../../../src/stats/index.js'
 
-/**
- * @param {any} n
- */
-const isBigInt = (n) => {
+const isBigInt = (n: any): n is bigint => {
   return typeof n === 'bigint'
 }
 
-/**
- * @param {Error | null} err
- * @param {import('ipfs-core-types/src/bitswap').Stats} stats
- */
-export function expectIsBitswap (err, stats) {
+export function expectIsBitswap (err: Error | null, stats: BitswapStats): void {
   expect(err).to.not.exist()
   expect(stats).to.exist()
   expect(stats).to.have.a.property('provideBufLen')
@@ -35,11 +31,7 @@ export function expectIsBitswap (err, stats) {
   expect(isBigInt(stats.dupDataReceived)).to.eql(true)
 }
 
-/**
- * @param {Error | null} err
- * @param {import('ipfs-core-types/src/stats').BWResult} stats
- */
-export function expectIsBandwidth (err, stats) {
+export function expectIsBandwidth (err: Error | null, stats: StatsBWResult): void {
   expect(err).to.not.exist()
   expect(stats).to.exist()
   expect(stats).to.have.a.property('totalIn')
@@ -52,11 +44,7 @@ export function expectIsBandwidth (err, stats) {
   expect(stats.rateOut).to.be.a('number')
 }
 
-/**
- * @param {Error | null} err
- * @param {import('ipfs-core-types/src/repo').StatResult} res
- */
-export function expectIsRepo (err, res) {
+export function expectIsRepo (err: Error | null, res: RepoStatResult): void {
   expect(err).to.not.exist()
   expect(res).to.exist()
   expect(res).to.have.a.property('numObjects')

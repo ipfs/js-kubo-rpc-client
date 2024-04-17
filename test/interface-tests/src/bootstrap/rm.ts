@@ -1,18 +1,11 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import { multiaddr, isMultiaddr } from '@multiformats/multiaddr'
-
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRm (factory, options) {
+import { expect } from 'aegir/chai'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+export function testRm (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -22,12 +15,13 @@ export function testRm (factory, options) {
   describe('.bootstrap.rm', function () {
     this.timeout(100 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should return an error when called with an invalid arg', () => {
       // @ts-expect-error invalid input

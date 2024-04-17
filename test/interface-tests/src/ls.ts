@@ -1,60 +1,47 @@
 /* eslint-env mocha */
 
-import { fixtures } from './utils/index.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from './utils/mocha.js'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
+import { fixtures } from './utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
 import testTimeout from './utils/test-timeout.js'
+import type { KuboRPCFactory } from './index.js'
+import type { KuboRPCClient } from '../../../src/index.js'
+import type { ImportCandidate } from 'ipfs-unixfs-importer'
 
-/**
- * @param {string} prefix
- */
-const randomName = prefix => `${prefix}${Math.round(Math.random() * 1000)}`
+const randomName = (prefix: string): string => `${prefix}${Math.round(Math.random() * 1000)}`
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testLs (factory, options) {
+export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.ls', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    it('should respect timeout option when listing files', () => {
+    it('should respect timeout option when listing files', async () => {
       return testTimeout(() => ipfs.ls(CID.parse('QmNonExistentCiD8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXg'), {
         timeout: 1
       }))
     })
 
     it('should ls with a base58 encoded CID', async function () {
-      /**
-       * @param {string} name
-       */
-      const content = (name) => ({
+      const content = (name: string): ImportCandidate => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
       })
 
-      /**
-       * @param {string} name
-       */
-      const emptyDir = (name) => ({ path: `test-folder/${name}` })
+      const emptyDir = (name: string): ImportCandidate => ({ path: `test-folder/${name}` })
 
       const dirs = [
         content('pp.txt'),

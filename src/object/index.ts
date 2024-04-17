@@ -1,23 +1,23 @@
-import { createData } from './data.js'
-import { createGet } from './get.js'
-import { createLinks } from './links.js'
-import { createNew } from './new.js'
-import { createPut } from './put.js'
-import { createStat } from './stat.js'
-import { createPatch } from './patch/index.js'
+import { createPatch, type ObjectPatchAPI } from './patch/index.js'
+import type { Codecs } from '../index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
+import type { CID } from 'multiformats/cid'
 
-/**
- * @param {import('../types').Multicodecs} codecs
- * @param {import('../types').Options} config
- */
-export function createObject (codecs, config) {
+export interface StatResult {
+  Hash: CID
+  NumLinks: number
+  BlockSize: number
+  LinksSize: number
+  DataSize: number
+  CumulativeSize: number
+}
+
+export interface ObjectAPI {
+  patch: ObjectPatchAPI
+}
+
+export function createObject (client: HTTPRPCClient, codecs: Codecs): ObjectAPI {
   return {
-    data: createData(config),
-    get: createGet(config),
-    links: createLinks(config),
-    new: createNew(config),
-    put: createPut(codecs, config),
-    stat: createStat(config),
-    patch: createPatch(config)
+    patch: createPatch(client)
   }
 }

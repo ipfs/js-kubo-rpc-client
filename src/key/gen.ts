@@ -1,18 +1,15 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { KeyAPI, KeyGenOptions } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/** @type {import('./types.js').GenOptions} */
-const defaultOptions = {
+const defaultOptions: KeyGenOptions = {
   type: 'ed25519'
 }
 
-export const createGen = configure(api => {
-  /**
-   * @type {import('./types.js').KeyAPI['gen']}
-   */
-  async function gen (name, options = defaultOptions) {
-    const res = await api.post('key/gen', {
+export function createGen (client: HTTPRPCClient): KeyAPI['gen'] {
+  return async function gen (name, options = defaultOptions) {
+    const res = await client.post('key/gen', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: name,
@@ -22,8 +19,6 @@ export const createGen = configure(api => {
     })
     const data = await res.json()
 
-    // @ts-expect-error server output is not typed
     return objectToCamel(data)
   }
-  return gen
-})
+}

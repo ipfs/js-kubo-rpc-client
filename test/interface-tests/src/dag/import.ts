@@ -1,26 +1,24 @@
 /* eslint-env mocha */
 
+import { CarWriter, CarReader } from '@ipld/car'
+import { expect } from 'aegir/chai'
+import loadFixture from 'aegir/fixtures'
 import all from 'it-all'
 import drain from 'it-drain'
 import { CID } from 'multiformats/cid'
-import { sha256 } from 'multiformats/hashes/sha2'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { CarWriter, CarReader } from '@ipld/car'
 import * as raw from 'multiformats/codecs/raw'
+import { sha256 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import loadFixture from 'aegir/fixtures'
 import { byCID } from '../utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- *
- * @param {number} num
- */
-async function createBlocks (num) {
+async function createBlocks (num: number): Promise<Array<{ bytes: Uint8Array, cid: CID }>> {
   const blocks = []
 
   for (let i = 0; i < num; i++) {
-    const bytes = uint8ArrayFromString('block-' + Math.random())
+    const bytes = uint8ArrayFromString(`block-${Math.random()}`)
     const digest = await sha256.digest(raw.encode(bytes))
     const cid = CID.create(1, raw.code, digest)
 
@@ -30,18 +28,14 @@ async function createBlocks (num) {
   return blocks
 }
 
-/**
- * @param {{ cid: CID, bytes: Uint8Array }[]} blocks
- * @returns {Promise<AsyncIterable<Uint8Array>>}
- */
-async function createCar (blocks) {
+async function createCar (blocks: Array<{ cid: CID, bytes: Uint8Array }>): Promise<AsyncIterable<Uint8Array>> {
   const rootBlock = blocks[0]
-  const { writer, out } = await CarWriter.create([rootBlock.cid])
+  const { writer, out } = CarWriter.create([rootBlock.cid])
 
-  writer.put(rootBlock)
+  void writer.put(rootBlock)
     .then(async () => {
       for (const block of blocks.slice(1)) {
-        writer.put(block)
+        await writer.put(block)
       }
 
       await writer.close()
@@ -58,18 +52,19 @@ async function createCar (blocks) {
  * @param {Factory} factory
  * @param {object} options
  */
-export function testImport (factory, options) {
+export function testImport (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dag.import', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should import a car file', async () => {
       const blocks = await createBlocks(5)
@@ -77,7 +72,7 @@ export function testImport (factory, options) {
 
       const result = await all(ipfs.dag.import(car))
       expect(result).to.have.lengthOf(1)
-      // @ts-ignore chai types are messed up
+      // @ts-expect-error chai types are messed up
       expect(result).to.have.nested.deep.property('[0].root.cid', blocks[0].cid)
 
       for (const { cid } of blocks) {
@@ -182,7 +177,7 @@ export function testImport (factory, options) {
       expect(cids[0].toString()).to.equal('bafkqaaa')
 
       const result = await all(ipfs.dag.import(async function * () { yield input }()))
-      expect(result).to.have.nested.deep.property('[0].root.cid', cids[0])
+      expect(result).to.have.deep.nested.property('[0].root.cid', cids[0])
     })
   })
 }

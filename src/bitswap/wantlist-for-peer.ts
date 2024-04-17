@@ -1,13 +1,11 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { BitswapAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createWantlistForPeer = configure(api => {
-  /**
-   * @type {import('../types').BitswapAPI["wantlistForPeer"]}
-   */
-  async function wantlistForPeer (peerId, options = {}) {
-    const res = await (await api.post('bitswap/wantlist', {
+export function createWantlistForPeer (client: HTTPRPCClient): BitswapAPI['wantlistForPeer'] {
+  return async function wantlistForPeer (peerId, options = {}) {
+    const res = await (await client.post('bitswap/wantlist', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         ...options,
@@ -16,7 +14,6 @@ export const createWantlistForPeer = configure(api => {
       headers: options.headers
     })).json()
 
-    return (res.Keys || []).map((/** @type {{ '/': string }} */ k) => CID.parse(k['/']))
+    return (res.Keys ?? []).map((k: any) => CID.parse(k['/']))
   }
-  return wantlistForPeer
-})
+}

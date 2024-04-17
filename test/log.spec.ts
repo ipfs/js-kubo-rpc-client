@@ -2,27 +2,28 @@
 /* eslint max-nested-callbacks: ["error", 8] */
 
 import { expect } from 'aegir/chai'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import first from 'it-first'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { factory } from './utils/factory.js'
+import type { KuboRPCClient } from '../src/index.js'
 const f = factory()
 
 describe('.log', function () {
   this.timeout(100 * 1000)
 
-  let ipfs
+  let ipfs: KuboRPCClient
 
   before(async function () {
     ipfs = (await f.spawn()).api
   })
 
-  after(function () { return f.clean() })
+  after(async function () { return f.clean() })
 
   // cannot get go-ipfs to generate logs
   it.skip('.log.tail', async function () {
-    const i = setInterval(async () => {
+    const i = setInterval(() => {
       try {
-        await ipfs.add(uint8ArrayFromString('just adding some data to generate logs'))
+        void ipfs.add(uint8ArrayFromString('just adding some data to generate logs'))
       } catch (/** @type {any} */ _) {
         // this can error if the test has finished and we're shutting down the node
       }

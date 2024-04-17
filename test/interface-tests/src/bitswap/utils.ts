@@ -1,20 +1,23 @@
 import delay from 'delay'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { PeerId } from '@libp2p/interface'
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {string} key
- * @param {{ timeout?: number, interval?: number, peerId?: string }} [opts]
- */
-export async function waitForWantlistKey (ipfs, key, opts = {}) {
-  opts.timeout = opts.timeout || 10000
-  opts.interval = opts.interval || 100
+export interface WaitOptions {
+  timeout?: number
+  interval?: number
+  peerId?: PeerId
+}
+
+export async function waitForWantlistKey (ipfs: KuboRPCClient, key: string, opts: WaitOptions = {}): Promise<void> {
+  opts.timeout = opts.timeout ?? 10000
+  opts.interval = opts.interval ?? 100
 
   const end = Date.now() + opts.timeout
 
   while (Date.now() < end) {
     let list
 
-    if (opts.peerId) {
+    if (opts.peerId != null) {
       list = await ipfs.bitswap.wantlistForPeer(opts.peerId)
     } else {
       list = await ipfs.bitswap.wantlist()
@@ -30,21 +33,16 @@ export async function waitForWantlistKey (ipfs, key, opts = {}) {
   throw new Error(`Timed out waiting for ${key} in wantlist`)
 }
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {string} key
- * @param {{ timeout?: number, interval?: number, peerId?: string }} [opts]
- */
-export async function waitForWantlistKeyToBeRemoved (ipfs, key, opts = {}) {
-  opts.timeout = opts.timeout || 10000
-  opts.interval = opts.interval || 100
+export async function waitForWantlistKeyToBeRemoved (ipfs: KuboRPCClient, key: string, opts: WaitOptions = {}): Promise<void> {
+  opts.timeout = opts.timeout ?? 10000
+  opts.interval = opts.interval ?? 100
 
   const end = Date.now() + opts.timeout
 
   while (Date.now() < end) {
     let list
 
-    if (opts.peerId) {
+    if (opts.peerId != null) {
       list = await ipfs.bitswap.wantlistForPeer(opts.peerId)
     } else {
       list = await ipfs.bitswap.wantlist()

@@ -1,14 +1,11 @@
-import { configure } from '../lib/configure.js'
+import { source } from 'stream-to-it'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-// @ts-expect-error no types
-import toIterable from 'stream-to-it/source.js'
+import type { FilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createRead = configure(api => {
-  /**
-   * @type {import('../types').FilesAPI["read"]}
-   */
-  async function * read (path, options = {}) {
-    const res = await api.post('files/read', {
+export function createRead (client: HTTPRPCClient): FilesAPI['read'] {
+  return async function * read (path, options = {}) {
+    const res = await client.post('files/read', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: path,
@@ -18,7 +15,10 @@ export const createRead = configure(api => {
       headers: options.headers
     })
 
-    yield * toIterable(res.body)
+    if (res.body == null) {
+      throw new Error('Invalid response body')
+    }
+
+    yield * source(res.body)
   }
-  return read
-})
+}

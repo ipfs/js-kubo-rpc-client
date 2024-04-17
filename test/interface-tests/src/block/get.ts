@@ -1,40 +1,34 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { identity } from 'multiformats/hashes/identity'
-import { CID } from 'multiformats/cid'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import { CID } from 'multiformats/cid'
+import { identity } from 'multiformats/hashes/identity'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import testTimeout from '../utils/test-timeout.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testGet (factory, options) {
+export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.block.get', () => {
     const data = uint8ArrayFromString('blorb')
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {CID} */
-    let cid
+    let ipfs: KuboRPCClient
+    let cid: CID
 
     before(async function () {
       ipfs = (await factory.spawn()).api
       cid = await ipfs.block.put(data)
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    it('should respect timeout option when getting a block', () => {
-      return testTimeout(() => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {
+    it('should respect timeout option when getting a block', async () => {
+      return testTimeout(async () => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {
         timeout: 1
       }))
     })
@@ -73,7 +67,7 @@ export function testGet (factory, options) {
 
     it('should get a block with an identity CID, without putting first', async () => {
       const identityData = uint8ArrayFromString('A16461736466190144', 'base16upper')
-      const identityHash = await identity.digest(identityData)
+      const identityHash = identity.digest(identityData)
       const identityCID = CID.createV1(identity.code, identityHash)
       const block = await ipfs.block.get(identityCID)
       expect(block).to.equalBytes(identityData)

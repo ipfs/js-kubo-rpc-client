@@ -1,15 +1,21 @@
 /* eslint-env mocha */
 
+import { peerIdFromKeys, peerIdFromString } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { peerIdFromString } from '@libp2p/peer-id'
-import { isNode } from 'ipfs-utils/src/env.js'
-import * as ipns from 'ipns'
 import delay from 'delay'
+import * as ipns from 'ipns'
+import { ipnsValidator } from 'ipns/validator'
 import last from 'it-last'
-import waitFor from '../utils/wait-for.js'
+import { base58btc } from 'multiformats/bases/base58'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
+import { isNode } from 'wherearewe'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import waitFor from '../utils/wait-for.js'
+import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+import type { Message } from '@libp2p/interface'
 
 const namespace = '/record/'
 const ipfsRef = '/ipfs/QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
@@ -22,15 +28,7 @@ const daemonsOptions = {
   }
 }
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPubsub (factory, options) {
+export function testPubsub (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -39,14 +37,10 @@ export function testPubsub (factory, options) {
     if (!isNode) return
 
     let nodes
-    /** @type {import('ipfs-core-types').IPFS} */
-    let nodeA
-    /** @type {import('ipfs-core-types').IPFS} */
-    let nodeB
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let idA
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let idB
+    let nodeA: KuboRPCClient
+    let nodeB: KuboRPCClient
+    let idA: IDResult
+    let idB: IDResult
 
     before(async function () {
       this.timeout(120 * 1000)
@@ -70,27 +64,25 @@ export function testPubsub (factory, options) {
       await nodeA.swarm.connect(idB.addresses[0])
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should publish and then resolve correctly', async function () {
-      // @ts-ignore this is mocha
       this.timeout(80 * 1000)
 
       let subscribed = false
 
-      /**
-       * @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn}
-       */
-      function checkMessage () {
+      function checkMessage (): void {
         subscribed = true
       }
 
-      const alreadySubscribed = () => {
-        return subscribed === true
+      const alreadySubscribed = (): boolean => {
+        return subscribed
       }
 
-      const keys = ipns.getIdKeys(uint8ArrayFromString(idA.id, 'base58btc'))
-      const topic = `${namespace}${uint8ArrayToString(keys.routingKey.uint8Array(), 'base64url')}`
+      const routingKey = ipns.peerIdToRoutingKey(idA.id)
+      const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
       await expect(last(nodeB.name.resolve(idA.id)))
         .to.eventually.be.rejected()
@@ -98,7 +90,7 @@ export function testPubsub (factory, options) {
 
       await waitFor(async () => {
         const res = await nodeA.pubsub.peers(topic)
-        return Boolean(res && res.length)
+        return Boolean(res?.length > 0)
       }, { name: `node A to subscribe to ${topic}` })
       await nodeB.pubsub.subscribe(topic, checkMessage)
       await nodeA.name.publish(ipfsRef, { resolve: false })
@@ -111,7 +103,6 @@ export function testPubsub (factory, options) {
     })
 
     it('should self resolve, publish and then resolve correctly', async function () {
-      // @ts-ignore this is mocha
       this.timeout(6000)
       const emptyDirCid = '/ipfs/QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
       const { path } = await nodeA.add(uint8ArrayFromString('pubsub records'))
@@ -137,24 +128,16 @@ export function testPubsub (factory, options) {
     })
 
     it('should handle event on publish correctly', async function () {
-      // @ts-ignore this is mocha
       this.timeout(80 * 1000)
 
       const testAccountName = 'test-account'
 
-      /**
-       * @type {import('ipfs-core-types/src/pubsub').Message}
-       */
-      let publishedMessage
-
-      /**
-       * @type {import('ipfs-core-types/src/pubsub').MessageHandlerFn}
-       */
-      function checkMessage (msg) {
+      let publishedMessage: Message
+      function checkMessage (msg: Message): void {
         publishedMessage = msg
       }
 
-      const alreadySubscribed = () => {
+      const alreadySubscribed = (): boolean => {
         return Boolean(publishedMessage)
       }
 
@@ -165,35 +148,41 @@ export function testPubsub (factory, options) {
         'ipns-base': 'b58mh'
       })
 
-      const keys = ipns.getIdKeys(uint8ArrayFromString(testAccount.id, 'base58btc'))
-      const topic = `${namespace}${uint8ArrayToString(keys.routingKey.uint8Array(), 'base64url')}`
+      const routingKey = ipns.peerIdToRoutingKey(peerIdFromString(testAccount.id))
+      const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
       await nodeB.pubsub.subscribe(topic, checkMessage)
       await nodeA.name.publish(ipfsRef, { resolve: false, key: testAccountName })
       await waitFor(alreadySubscribed)
 
-      // @ts-ignore publishedMessage is set in handler
-      if (!publishedMessage) {
+      // @ts-expect-error publishedMessage is set in handler
+      if (publishedMessage == null) {
         throw new Error('Pubsub handler not invoked')
       }
 
       const publishedMessageData = ipns.unmarshal(publishedMessage.data)
 
-      if (!publishedMessageData.pubKey) {
+      if (publishedMessageData.pubKey == null) {
         throw new Error('No public key found in message data')
       }
 
-      const messageKey = peerIdFromString(publishedMessage.from)
-      const pubKeyPeerId = peerIdFromString(publishedMessageData.pubKey)
+      if (publishedMessage.type === 'unsigned') {
+        throw new Error('Message was unsigned')
+      }
 
-      expect(pubKeyPeerId.toB58String()).not.to.equal(messageKey.toB58String())
-      expect(pubKeyPeerId.toB58String()).to.equal(testAccount.id)
+      const messageKey = publishedMessage.from
+      const pubKeyPeerId = await peerIdFromKeys(publishedMessageData.pubKey)
+
+      expect(pubKeyPeerId.toString()).not.to.equal(messageKey.toString())
+      expect(pubKeyPeerId.toString()).to.equal(testAccount.id)
       expect(publishedMessage.from).to.equal(idA.id)
-      expect(messageKey.toB58String()).to.equal(idA.id)
-      expect(uint8ArrayToString(publishedMessageData.value)).to.equal(ipfsRef)
+      expect(messageKey.toString()).to.equal(idA.id)
+      expect(publishedMessageData.value).to.equal(ipfsRef)
 
       // Verify the signature
-      await ipns.validate(pubKeyPeerId.pubKey, publishedMessageData)
+      const keyBytes = base58btc.decode(`z${pubKeyPeerId.toString()}`)
+      const key = uint8ArrayConcat([uint8ArrayFromString('/ipns/'), keyBytes])
+      await ipnsValidator(key, publishedMessage.data)
     })
   })
 }

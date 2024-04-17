@@ -1,101 +1,98 @@
 import { logger } from '@libp2p/logger'
-import { configure } from '../lib/configure.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.js'
 import { peerIdFromString } from '@libp2p/peer-id'
+import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { PubSubAPI, PubsubApiErrorHandlerFn } from './index.js'
+import type { SubscriptionTracker } from './subscription-tracker.js'
+import type { HTTPRPCClient } from '../lib/core.js'
+import type { AbortError } from '../lib/errors.js'
+import type { ExtendedResponse } from '../lib/http.js'
+import type { Message } from '@libp2p/interface'
+
 const log = logger('js-kubo-rpc-client:pubsub:subscribe')
 
-/**
- * @param {import('../types').Options} options
- * @param {import('./subscription-tracker').SubscriptionTracker} subsTracker
- */
-export const createSubscribe = (options, subsTracker) => {
-  return configure((api) => {
-    /**
-     * @type {import('../types').PubsubAPI["subscribe"]}
-     */
-    async function subscribe (topic, handler, options = {}) { // eslint-disable-line require-await
-      options.signal = subsTracker.subscribe(topic, handler, options.signal)
+export function createSubscribe (client: HTTPRPCClient, subsTracker: SubscriptionTracker): PubSubAPI['subscribe'] {
+  return async function subscribe (topic, handler, options = {}) { // eslint-disable-line require-await
+    options.signal = subsTracker.subscribe(topic, handler, options.signal)
 
-      /** @type {(value?: any) => void} */
-      let done
-      /** @type {(error: Error) => void} */
-      let fail
+    let done: (value?: any) => void
+    let fail: (error: Error) => void
 
-      const result = new Promise((resolve, reject) => {
-        done = resolve
-        fail = reject
+    const result = new Promise<void>((resolve, reject) => {
+      done = resolve
+      fail = reject
+    })
+
+    // In Firefox, the initial call to fetch does not resolve until some data
+    // is received. If this doesn't happen within 1 second assume success
+    const ffWorkaround = setTimeout(() => {
+      done()
+    }, 1000)
+
+    // Do this async to not block Firefox
+    void client.post('pubsub/sub', {
+      signal: options.signal,
+      searchParams: toUrlSearchParams({
+        arg: textToUrlSafeRpc(topic),
+        ...options
+      }),
+      headers: options.headers
+    })
+      .catch((err) => {
+        // Initial subscribe fail, ensure we clean up
+        subsTracker.unsubscribe(topic, handler)
+
+        fail(err)
       })
+      .then((response) => {
+        clearTimeout(ffWorkaround)
 
-      // In Firefox, the initial call to fetch does not resolve until some data
-      // is received. If this doesn't happen within 1 second assume success
-      const ffWorkaround = setTimeout(() => done(), 1000)
+        if (response == null) {
+          // if there was no response, the subscribe failed
+          return
+        }
 
-      // Do this async to not block Firefox
-      api.post('pubsub/sub', {
-        signal: options.signal,
-        searchParams: toUrlSearchParams({
-          arg: textToUrlSafeRpc(topic),
-          ...options
-        }),
-        headers: options.headers
-      })
-        .catch((err) => {
-          // Initial subscribe fail, ensure we clean up
-          subsTracker.unsubscribe(topic, handler)
+        void readMessages(response, {
+          onMessage: (message) => {
+            if (handler == null) {
+              return
+            }
 
-          fail(err)
-        })
-        .then((response) => {
-          clearTimeout(ffWorkaround)
+            if (typeof handler === 'function') {
+              handler(message)
+              return
+            }
 
-          if (!response) {
-            // if there was no response, the subscribe failed
-            return
-          }
-
-          readMessages(response, {
-            onMessage: (message) => {
-              if (!handler) {
-                return
-              }
-
-              if (typeof handler === 'function') {
-                handler(message)
-                return
-              }
-
-              if (typeof handler.handleEvent === 'function') {
-                handler.handleEvent(message)
-              }
-            },
-            onEnd: () => subsTracker.unsubscribe(topic, handler),
-            onError: options.onError
-          })
-
-          done()
+            if (typeof handler.handleEvent === 'function') {
+              handler.handleEvent(message)
+            }
+          },
+          onEnd: () => {
+            subsTracker.unsubscribe(topic, handler)
+          },
+          onError: options.onError
         })
 
-      return result
-    }
-    return subscribe
-  })(options)
+        done()
+      })
+
+    return result
+  }
 }
 
-/**
- * @param {import('../types').ExtendedResponse} response
- * @param {object} options
- * @param {(message: import('../types').Message) => void} options.onMessage
- * @param {() => void} options.onEnd
- * @param {import('../types').PubsubApiErrorHandlerFn} [options.onError]
- */
-async function readMessages (response, { onMessage, onEnd, onError }) {
-  onError = onError || log
+interface ReadMessagesOptions {
+  onMessage(message: Message): void
+  onEnd(): void
+  onError?: PubsubApiErrorHandlerFn
+}
+
+async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onError }: ReadMessagesOptions): Promise<void> {
+  onError = onError ?? log
 
   try {
     for await (const msg of response.ndjson()) {
       try {
-        if (!msg.from) {
+        if (msg.from == null) {
           // eslint-disable-next-line no-continue
           continue
         }
@@ -117,12 +114,12 @@ async function readMessages (response, { onMessage, onEnd, onError }) {
             topic: rpcToText(msg.topicIDs[0])
           })
         }
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         err.message = `Failed to parse pubsub message: ${err.message}`
         onError(err, false, msg) // Not fatal
       }
     }
-  } catch (/** @type {any} */ err) {
+  } catch (err: any) {
     if (!isAbortError(err)) {
       onError(err, true) // Fatal
     }
@@ -131,11 +128,7 @@ async function readMessages (response, { onMessage, onEnd, onError }) {
   }
 }
 
-/**
- * @param {Error & {type?:string}} error
- * @returns {boolean}
- */
-const isAbortError = error => {
+const isAbortError = (error: any): error is AbortError => {
   switch (error.type) {
     case 'aborted':
       return true

@@ -1,31 +1,26 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import * as dagCBOR from '@ipld/dag-cbor'
+import { expect } from 'aegir/chai'
 import { CID } from 'multiformats/cid'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPut (factory, options) {
+export function testPut (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dag.put', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     const pbNode = {
       Data: uint8ArrayFromString('some data'),
@@ -36,42 +31,42 @@ export function testPut (factory, options) {
     }
     const joseNode = 'eyJhbGciOiJFUzI1NksifQ.AXESICjDGMg3fEBSX7_fpbBUYF4E61TXLysmLJgfGEpFG8Pu.z7a2MvPWLsd7leOeHyfeA1OcAFC9yy5rn1HD8xCeHz3nFrwyn_Su5xXUoaIxAre3fXhGjPkVSNiCE36AKiaMng'
 
-    it('should put dag-pb with default hash func (sha2-256)', () => {
+    it('should put dag-pb with default hash func (sha2-256)', async () => {
       return ipfs.dag.put(pbNode, {
         storeCodec: 'dag-pb',
         hashAlg: 'sha2-256'
       })
     })
 
-    it('should put dag-pb with non-default hash func (sha2-512)', () => {
+    it('should put dag-pb with non-default hash func (sha2-512)', async () => {
       return ipfs.dag.put(pbNode, {
         storeCodec: 'dag-pb',
         hashAlg: 'sha2-512'
       })
     })
 
-    it('should put dag-cbor with default hash func (sha2-256)', () => {
+    it('should put dag-cbor with default hash func (sha2-256)', async () => {
       return ipfs.dag.put(cborNode, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-256'
       })
     })
 
-    it('should put dag-cbor with non-default hash func (sha2-512)', () => {
+    it('should put dag-cbor with non-default hash func (sha2-512)', async () => {
       return ipfs.dag.put(cborNode, {
         storeCodec: 'dag-cbor',
         hashAlg: 'sha2-512'
       })
     })
 
-    it('should put dag-jose with default hash func (sha2-256)', () => {
+    it('should put dag-jose with default hash func (sha2-256)', async () => {
       return ipfs.dag.put(joseNode, {
         storeCodec: 'dag-jose',
         hashAlg: 'sha2-256'
       })
     })
 
-    it('should put dag-jose with non-default hash func (sha2-512)', () => {
+    it('should put dag-jose with non-default hash func (sha2-512)', async () => {
       return ipfs.dag.put(joseNode, {
         storeCodec: 'dag-jose',
         hashAlg: 'sha2-512'
@@ -93,7 +88,7 @@ export function testPut (factory, options) {
       expect(cid.bytes).to.eql(_cid.bytes)
     })
 
-    it('should not fail when calling put without options', () => {
+    it('should not fail when calling put without options', async () => {
       return ipfs.dag.put(cborNode)
     })
 

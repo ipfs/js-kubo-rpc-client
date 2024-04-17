@@ -1,38 +1,39 @@
+import { anySignal } from 'any-signal'
+import { parseMtime } from '../lib/files/utils.js'
 import { modeToString } from '../lib/mode-to-string.js'
-import { parseMtime } from '../lib/parse-mtime.js'
-import { configure } from '../lib/configure.js'
-import { multipartRequest } from 'ipfs-core-utils/multipart-request'
+import { multipartRequest } from '../lib/multipart-request.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { abortSignal } from '../lib/abort-signal.js'
+import type { FilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createWrite = configure(api => {
-  /**
-   * @type {import('../types').FilesAPI["write"]}
-   */
-  async function write (path, input, options = {}) {
+export function createWrite (client: HTTPRPCClient): FilesAPI['write'] {
+  return async function write (path, input, options = {}) {
     // allow aborting requests on body errors
     const controller = new AbortController()
-    const signal = abortSignal(controller.signal, options.signal)
+    const signal = anySignal([controller.signal, options.signal])
 
-    const res = await api.post('files/write', {
-      signal,
-      searchParams: toUrlSearchParams({
-        arg: path,
-        streamChannels: true,
-        count: options.length,
-        ...options
-      }),
-      ...(
-        await multipartRequest([{
-          content: input,
-          path: 'arg',
-          mode: modeToString(options.mode),
-          mtime: parseMtime(options.mtime)
-        }], controller, options.headers)
-      )
-    })
+    try {
+      const res = await client.post('files/write', {
+        signal,
+        searchParams: toUrlSearchParams({
+          arg: path,
+          streamChannels: true,
+          count: options.length,
+          ...options
+        }),
+        ...(
+          await multipartRequest([{
+            content: input,
+            path: 'arg',
+            mode: modeToString(options.mode),
+            mtime: parseMtime(options.mtime)
+          }], controller, options.headers)
+        )
+      })
 
-    await res.text()
+      await res.text()
+    } finally {
+      signal.clear()
+    }
   }
-  return write
-})
+}

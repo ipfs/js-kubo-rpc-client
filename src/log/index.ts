@@ -1,14 +1,19 @@
 import { createLevel } from './level.js'
 import { createLs } from './ls.js'
 import { createTail } from './tail.js'
+import type { HTTPRPCOptions } from '../index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {import('../types').Options} config
- */
-export function createLog (config) {
+export interface LogAPI {
+  level(subsystem: string, level: string, options?: HTTPRPCOptions): Promise<any>
+  ls(options?: HTTPRPCOptions): Promise<any>
+  tail(options?: HTTPRPCOptions): AsyncIterable<any>
+}
+
+export function createLog (client: HTTPRPCClient): LogAPI {
   return {
-    level: createLevel(config),
-    ls: createLs(config),
-    tail: createTail(config)
+    level: createLevel(client),
+    ls: createLs(client),
+    tail: createTail(client)
   }
 }

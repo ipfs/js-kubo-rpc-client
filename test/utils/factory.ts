@@ -1,9 +1,9 @@
 import { createFactory } from 'ipfsd-ctl'
+import { path } from 'kubo'
 import mergeOpts from 'merge-options'
-import { isNode } from 'ipfs-utils/src/env.js'
+import { isNode } from 'wherearewe'
 import * as kuboRpcModule from '../../src/index.js'
-// @ts-expect-error go-ipfs has no types
-import { path } from 'go-ipfs'
+import type { KuboRPCFactory } from '../interface-tests/src/index.js'
 
 const merge = mergeOpts.bind({ ignoreUndefined: true })
 
@@ -16,11 +16,11 @@ const commonOptions = {
 
 const commonOverrides = {
   go: {
-    ipfsBin: isNode ? (process.env.IPFS_GO_EXEC || path()) : undefined
+    ipfsBin: isNode ? (process.env.IPFS_GO_EXEC ?? path()) : undefined
   }
 }
 
-export const factory = (options = {}, overrides = {}) => createFactory(
+export const factory = (options: any = {}, overrides: any = {}): KuboRPCFactory => createFactory(
   merge(commonOptions, options),
   merge(commonOverrides, overrides)
-)
+) as unknown as KuboRPCFactory

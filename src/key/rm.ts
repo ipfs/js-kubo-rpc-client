@@ -1,13 +1,11 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { KeyAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createRm = configure(api => {
-  /**
-   * @type {import('../types').KeyAPI["rm"]}
-   */
-  async function rm (name, options = {}) {
-    const res = await api.post('key/rm', {
+export function createRm (client: HTTPRPCClient): KeyAPI['rm'] {
+  return async function rm (name, options = {}) {
+    const res = await client.post('key/rm', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: name,
@@ -17,8 +15,6 @@ export const createRm = configure(api => {
     })
     const data = await res.json()
 
-    // @ts-expect-error server output is not typed
     return objectToCamel(data.Keys[0])
   }
-  return rm
-})
+}

@@ -1,14 +1,8 @@
 import { CID } from 'multiformats/cid'
 import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
+import type { PinRemoteAddOptions, RemotePin, RemotePinQuery } from './index.js'
 
-/**
- * @param {object} json
- * @param {string} json.Name
- * @param {string} json.Cid
- * @param {import('../../types.js').Status} json.Status
- * @returns {import('../../types.js').Pin}
- */
-export const decodePin = ({ Name: name, Status: status, Cid: cid }) => {
+export const decodePin = ({ Name: name, Status: status, Cid: cid }: any): RemotePin => {
   return {
     cid: CID.parse(cid),
     name,
@@ -16,11 +10,7 @@ export const decodePin = ({ Name: name, Status: status, Cid: cid }) => {
   }
 }
 
-/**
- * @param {any} service
- * @returns {string}
- */
-export const encodeService = (service) => {
+export const encodeService = (service: any): string => {
   if (typeof service === 'string' && service !== '') {
     return service
   } else {
@@ -28,36 +18,28 @@ export const encodeService = (service) => {
   }
 }
 
-/**
- * @param {any} cid
- * @returns {string}
- */
-export const encodeCID = (cid) => {
-  if (CID.asCID(cid)) {
+export const encodeCID = (cid: any): string => {
+  if (CID.asCID(cid) != null) {
     return cid.toString()
   } else {
     throw new TypeError(`CID instance expected instead of ${typeof cid}`)
   }
 }
 
-/**
- * @param {import('../../types.js').Query & { all?: boolean }} query
- * @returns {URLSearchParams}
- */
-export const encodeQuery = ({ service, cid, name, status, all }) => {
+export const encodeQuery = ({ service, cid, name, status, all }: RemotePinQuery): URLSearchParams => {
   const query = toUrlSearchParams({
     service: encodeService(service),
     name,
-    force: all ? true : undefined
+    force: all === true ? true : undefined
   })
 
-  if (cid) {
+  if (cid != null) {
     for (const value of cid) {
       query.append('cid', encodeCID(value))
     }
   }
 
-  if (status) {
+  if (status != null) {
     for (const value of status) {
       query.append('status', value)
     }
@@ -66,19 +48,15 @@ export const encodeQuery = ({ service, cid, name, status, all }) => {
   return query
 }
 
-/**
- * @param {import('../../types.js').AddOptions & {cid:CID}} options
- * @returns {URLSearchParams}
- */
-export const encodeAddParams = ({ cid, service, background, name, origins }) => {
+export const encodeAddParams = (cid: CID, { service, background, name, origins }: PinRemoteAddOptions): URLSearchParams => {
   const params = toUrlSearchParams({
     arg: encodeCID(cid),
     service: encodeService(service),
     name,
-    background: background ? true : undefined
+    background: background === true ? true : undefined
   })
 
-  if (origins) {
+  if (origins != null) {
     for (const origin of origins) {
       params.append('origin', origin.toString())
     }

@@ -1,18 +1,16 @@
-import { objectToCamel } from './lib/object-to-camel.js'
-import { multiaddr } from '@multiformats/multiaddr'
-import { configure } from './lib/configure.js'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
 import { peerIdFromString } from '@libp2p/peer-id'
+import { multiaddr } from '@multiformats/multiaddr'
+import { objectToCamel } from './lib/object-to-camel.js'
+import { toUrlSearchParams } from './lib/to-url-search-params.js'
+import type { KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-export const createId = configure(api => {
-  /**
-   * @type {import('./types').RootAPI["id"]}
-   */
-  async function id (options = {}) {
-    const res = await api.post('id', {
+export function createId (client: HTTPRPCClient): KuboRPCClient['id'] {
+  return async function id (options = {}) {
+    const res = await client.post('id', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
-        arg: options.peerId ? options.peerId.toString() : undefined,
+        arg: options.peerId != null ? options.peerId.toString() : undefined,
         ...options
       }),
       headers: options.headers
@@ -20,17 +18,15 @@ export const createId = configure(api => {
     const data = await res.json()
 
     const output = {
-      ...objectToCamel(data)
+      ...objectToCamel<any>(data)
     }
 
     output.id = peerIdFromString(output.id)
 
-    if (output.addresses) {
-      output.addresses = output.addresses.map((/** @type {string} */ ma) => multiaddr(ma))
+    if (output.addresses != null) {
+      output.addresses = output.addresses.map((ma: any) => multiaddr(ma))
     }
 
-    // @ts-expect-error server output is not typed
     return output
   }
-  return id
-})
+}

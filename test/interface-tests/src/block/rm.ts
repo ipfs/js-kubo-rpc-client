@@ -1,41 +1,36 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { nanoid } from 'nanoid'
 import all from 'it-all'
 import last from 'it-last'
 import { CID } from 'multiformats/cid'
 import * as raw from 'multiformats/codecs/raw'
+import { nanoid } from 'nanoid'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import testTimeout from '../utils/test-timeout.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRm (factory, options) {
+export function testRm (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.block.rm', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should respect timeout option when removing a block', async function () {
       const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
         storeCodec: 'raw',
         hashAlg: 'sha2-256'
       })
-      await testTimeout(async () => await ipfs.block.rm(CID.parse(cid.toString()), {
+      await testTimeout(async () => ipfs.block.rm(CID.parse(cid.toString()), {
         timeout: 1
       }))
     })

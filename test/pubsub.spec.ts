@@ -1,24 +1,24 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import defer from 'p-defer'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { factory } from './utils/factory.js'
+import type { KuboController } from './interface-tests/src/index.js'
+import type { KuboRPCClient } from '../src/index.js'
 
 const f = factory()
 
 describe('.pubsub', function () {
   this.timeout(20 * 1000)
   describe('.subscribe', function () {
-    /** @type {import('../src/types.js').IPFS} */
-    let ipfs
-    /** @type {any} */
-    let ctl
+    let ipfs: KuboRPCClient
+    let ctl: KuboController
 
     beforeEach(async function () {
       this.timeout(30 * 1000) // slow CI
 
-      ctl = await await f.spawn({
+      ctl = await f.spawn({
         args: ['--enable-pubsub-experiment']
       })
 
@@ -39,7 +39,7 @@ describe('.pubsub', function () {
 
         if (messageCount === 2) {
           // Stop the daemon
-          ctl.stop().catch()
+          void ctl.stop().catch()
         }
       }, {
         onError: onError.resolve

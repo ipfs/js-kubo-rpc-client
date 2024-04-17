@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { FilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createMkdir = configure(api => {
-  /**
-   * @type {import('../types').FilesAPI["mkdir"]}
-   */
-  async function mkdir (path, options = {}) {
-    const res = await api.post('files/mkdir', {
+export function createMkdir (client: HTTPRPCClient): FilesAPI['mkdir'] {
+  return async function mkdir (path, options = {}) {
+    const res = await client.post('files/mkdir', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: path,
@@ -17,5 +15,4 @@ export const createMkdir = configure(api => {
 
     await res.text()
   }
-  return mkdir
-})
+}

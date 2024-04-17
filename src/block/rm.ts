@@ -1,17 +1,15 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { BlockRmResult, BlockAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createRm = configure(api => {
-  /**
-   * @type {import('../types').BlockAPI["rm"]}
-   */
-  async function * rm (cid, options = {}) {
+export function createRm (client: HTTPRPCClient): BlockAPI['rm'] {
+  return async function * rm (cid, options = {}) {
     if (!Array.isArray(cid)) {
       cid = [cid]
     }
 
-    const res = await api.post('block/rm', {
+    const res = await client.post('block/rm', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: cid.map(cid => cid.toString()),
@@ -25,20 +23,14 @@ export const createRm = configure(api => {
       yield toCoreInterface(removed)
     }
   }
+}
 
-  return rm
-})
-
-/**
- * @param {*} removed
- */
-function toCoreInterface (removed) {
-  /** @type {import('../types').RmResult} */
-  const out = {
+function toCoreInterface (removed: any): BlockRmResult {
+  const out: BlockRmResult = {
     cid: CID.parse(removed.Hash)
   }
 
-  if (removed.Error) {
+  if (removed.Error != null) {
     out.error = new Error(removed.Error)
   }
 

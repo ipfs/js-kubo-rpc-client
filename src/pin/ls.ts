@@ -1,39 +1,30 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { PinAPI, PinLsResult } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {string} type
- * @param {string} cid
- * @param {Record<string, string>} metadata
- */
-function toPin (type, cid, metadata) {
-  /** @type {import('../types').LsResult} */
-  const pin = {
+function toPin (type: string, cid: string, metadata: Record<string, string>): PinLsResult {
+  const pin: PinLsResult = {
     type,
     cid: CID.parse(cid)
   }
 
-  if (metadata) {
+  if (metadata != null) {
     pin.metadata = metadata
   }
 
   return pin
 }
 
-export const createLs = configure(api => {
-  /**
-   * @type {import('../types').PinAPI["ls"]}
-   */
-  async function * ls (options = {}) {
-    /** @type {any[]} */
-    let paths = []
+export function createLs (client: HTTPRPCClient): PinAPI['ls'] {
+  return async function * ls (options = {}) {
+    let paths: any[] = []
 
-    if (options.paths) {
+    if (options.paths != null) {
       paths = Array.isArray(options.paths) ? options.paths : [options.paths]
     }
 
-    const res = await api.post('pin/ls', {
+    const res = await client.post('pin/ls', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         ...options,
@@ -44,7 +35,7 @@ export const createLs = configure(api => {
     })
 
     for await (const pin of res.ndjson()) {
-      if (pin.Keys) { // non-streaming response
+      if (pin.Keys != null) { // non-streaming response
         for (const cid of Object.keys(pin.Keys)) {
           yield toPin(pin.Keys[cid].Type, cid, pin.Keys[cid].Metadata)
         }
@@ -54,5 +45,4 @@ export const createLs = configure(api => {
       yield toPin(pin.Type, pin.Cid, pin.Metadata)
     }
   }
-  return ls
-})
+}

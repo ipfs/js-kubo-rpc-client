@@ -1,44 +1,36 @@
 /* eslint-env mocha */
 
-import { fixtures } from './utils/index.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from './utils/mocha.js'
+import { importer, type ImportCandidate } from 'ipfs-unixfs-importer'
 import all from 'it-all'
-import { importer } from 'ipfs-unixfs-importer'
 import drain from 'it-drain'
 import { CID } from 'multiformats/cid'
 import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import blockstore from './utils/blockstore-adapter.js'
+import { fixtures } from './utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
+import type { KuboRPCFactory } from './index.js'
+import type { KuboRPCClient } from '../../../src/index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRefsLocal (factory, options) {
+export function testRefsLocal (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.refs.local', function () {
     this.timeout(60 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should get local refs', async function () {
-      /**
-       * @param {string} name
-       */
-      const content = (name) => ({
+      const content = (name: string): ImportCandidate => ({
         path: `test-folder/${name}`,
         content: fixtures.directory.files[name]
       })

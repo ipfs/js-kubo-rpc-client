@@ -1,20 +1,25 @@
-
 import http from 'http'
+import getPort from 'aegir/get-port'
 // @ts-expect-error no types
 import { setup } from 'mock-ipfs-pinning-service'
-import getPort from 'aegir/get-port'
 
 const defaultPort = 1139
 const defaultToken = 'secret'
 
+export interface PinningServiceStartOptions {
+  port?: number
+  token?: string
+}
+
+export interface PinningServiceInit {
+  server: http.Server
+  host: string
+  port: number
+  token?: string
+}
+
 export class PinningService {
-  /**
-   * @param {object} options
-   * @param {number} [options.port]
-   * @param {string|null} [options.token]
-   * @returns {Promise<PinningService>}
-   */
-  static async start ({ port = defaultPort, token = defaultToken } = {}) {
+  static async start ({ port = defaultPort, token = defaultToken }: PinningServiceStartOptions = {}): Promise<PinningService> {
     const service = await setup({ token })
     const server = http.createServer(service)
     const host = '127.0.0.1'
@@ -26,32 +31,27 @@ export class PinningService {
     return new PinningService({ server, host, port, token })
   }
 
-  /**
-   * @param {object} config
-   * @param {any} config.server
-   * @param {string} config.host
-   * @param {number} config.port
-   * @param {any} config.token
-   */
-  constructor ({ server, host, port, token }) {
+  server: http.Server
+  host: string
+  port: number
+  token?: string
+
+  constructor ({ server, host, port, token }: PinningServiceInit) {
     this.server = server
     this.host = host
     this.port = port
     this.token = token
   }
 
-  get endpoint () {
+  get endpoint (): string {
     return `http://${this.host}:${this.port}`
   }
 
-  /**
-   * @returns {Promise<void>}
-   */
-  stop () {
-    return new Promise((resolve, reject) => {
-      this.server.close((/** @type {any} */ error) => {
-        if (error) {
-          reject(error)
+  async stop (): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.server.close((err: any) => {
+        if (err != null) {
+          reject(err)
         } else {
           resolve()
         }

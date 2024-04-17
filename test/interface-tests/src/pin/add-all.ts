@@ -1,28 +1,23 @@
 /* eslint-env mocha */
 
-import { fixtures, clearPins } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
 import all from 'it-all'
 import drain from 'it-drain'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { fixtures, clearPins } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { PinAddInput } from '../../../../src/pin/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testAddAll (factory, options) {
+export function testAddAll (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pin.addAll', function () {
     this.timeout(50 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
+
     before(async function () {
       ipfs = (await factory.spawn()).api
 
@@ -46,17 +41,15 @@ export function testAddAll (factory, options) {
       )
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    beforeEach(function () {
+    beforeEach(async function () {
       return clearPins(ipfs)
     })
 
-    /**
-     *
-     * @param {Iterable<import('ipfs-core-types/src/pin').AddInput> | AsyncIterable<import('ipfs-core-types/src/pin').AddInput>} source
-     */
-    async function testAddPinInput (source) {
+    async function testAddPinInput (source: Iterable<PinAddInput> | AsyncIterable<PinAddInput>): Promise<void> {
       const pinset = await all(ipfs.pin.addAll(source))
 
       expect(pinset).to.have.deep.members([
@@ -65,28 +58,28 @@ export function testAddAll (factory, options) {
       ])
     }
 
-    it('should add an array of CIDs', () => {
+    it('should add an array of CIDs', async () => {
       return testAddPinInput([
         fixtures.files[0].cid,
         fixtures.files[1].cid
       ])
     })
 
-    it('should add a generator of CIDs', () => {
+    it('should add a generator of CIDs', async () => {
       return testAddPinInput(function * () {
         yield fixtures.files[0].cid
         yield fixtures.files[1].cid
       }())
     })
 
-    it('should add an async generator of CIDs', () => {
+    it('should add an async generator of CIDs', async () => {
       return testAddPinInput(async function * () { // eslint-disable-line require-await
         yield fixtures.files[0].cid
         yield fixtures.files[1].cid
       }())
     })
 
-    it('should add an array of pins with options', () => {
+    it('should add an array of pins with options', async () => {
       return testAddPinInput([
         {
           cid: fixtures.files[0].cid,
@@ -99,7 +92,7 @@ export function testAddAll (factory, options) {
       ])
     })
 
-    it('should add a generator of pins with options', () => {
+    it('should add a generator of pins with options', async () => {
       return testAddPinInput(function * () {
         yield {
           cid: fixtures.files[0].cid,
@@ -112,7 +105,7 @@ export function testAddAll (factory, options) {
       }())
     })
 
-    it('should add an async generator of pins with options', () => {
+    it('should add an async generator of pins with options', async () => {
       return testAddPinInput(async function * () { // eslint-disable-line require-await
         yield {
           cid: fixtures.files[0].cid,

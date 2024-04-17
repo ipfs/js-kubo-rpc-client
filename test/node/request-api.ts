@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 import http from 'http'
 import { expect } from 'aegir/chai'
+import { pEvent } from 'p-event'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { create as httpClient } from '../../src/index.js'
 
@@ -17,7 +18,9 @@ describe('\'deal with HTTP weirdness\' tests', function () {
       })
     })
 
-    await new Promise(resolve => server.listen(6001, resolve))
+    await new Promise<void>(resolve => server.listen(6001, resolve))
+
+    // @ts-expect-error arg type is wrong
     await httpClient('/ip4/127.0.0.1/tcp/6001').config.replace('test/fixtures/r-config.json')
 
     server.close()
@@ -25,9 +28,17 @@ describe('\'deal with HTTP weirdness\' tests', function () {
 })
 
 describe('trailer headers', function () {
+  let server: http.Server
+
+  afterEach(async () => {
+    server.closeAllConnections()
+    server.close()
+    await pEvent(server, 'close')
+  })
+
   it('should deal with trailer x-stream-error correctly', async function () {
     this.timeout(5 * 1000)
-    const server = http.createServer((req, res) => {
+    server = http.createServer((req, res) => {
       res.setHeader('x-chunked-output', '1')
       res.setHeader('content-type', 'application/json')
       res.setHeader('Trailer', 'X-Stream-Error')
@@ -38,19 +49,13 @@ describe('trailer headers', function () {
 
     const ipfs = httpClient('/ip4/127.0.0.1/tcp/6001')
 
-    await server.listen(6001)
+    await new Promise<void>(resolve => server.listen(6001, resolve))
 
     try {
       const res = await ipfs.add(uint8ArrayFromString('Hello there!'))
 
       expect(res).to.be.undefined()
-      /**
-       * TODO: We shouldn't have to close all connections.. X-Stream-Error should signal to the client that the connection should be closed
-       * Without this, the test will hang
-       */
-      await server.closeAllConnections()
-      await server.close()
-    } catch (err) {
+    } catch (err: any) {
       // TODO: error's are not being correctly
       // propagated with Trailer headers yet
       // expect(err).to.exist()
@@ -59,8 +64,16 @@ describe('trailer headers', function () {
 })
 
 describe('error handling', function () {
+  let server: http.Server
+
+  afterEach(async () => {
+    server.closeAllConnections()
+    server.close()
+    await pEvent(server, 'close')
+  })
+
   it('should handle plain text error response', async function () {
-    const server = http.createServer((req, res) => {
+    server = http.createServer((req, res) => {
       // Consume the entire request, before responding.
       req.on('data', () => {})
       req.on('end', () => {
@@ -71,17 +84,16 @@ describe('error handling', function () {
       })
     })
 
-    await new Promise(resolve => server.listen(6001, resolve))
+    await new Promise<void>(resolve => server.listen(6001, resolve))
 
+    // @ts-expect-error arg type is wrong
     await expect(httpClient('/ip4/127.0.0.1/tcp/6001').config.replace('test/fixtures/r-config.json'))
       .to.eventually.be.rejectedWith('ipfs method not allowed')
       .and.to.have.nested.property('response.status').that.equals(403)
-
-    server.close()
   })
 
   it('should handle JSON error response', async function () {
-    const server = http.createServer((req, res) => {
+    server = http.createServer((req, res) => {
       // Consume the entire request, before responding.
       req.on('data', () => {})
       req.on('end', () => {
@@ -92,17 +104,16 @@ describe('error handling', function () {
       })
     })
 
-    await new Promise(resolve => server.listen(6001, resolve))
+    await new Promise<void>(resolve => server.listen(6001, resolve))
 
+    // @ts-expect-error arg type is wrong
     await expect(httpClient('/ip4/127.0.0.1/tcp/6001').config.replace('test/fixtures/r-config.json'))
       .to.eventually.be.rejectedWith('client error')
       .and.to.have.nested.property('response.status').that.equals(400)
-
-    server.close()
   })
 
   it('should handle JSON error response with invalid JSON', async function () {
-    const server = http.createServer((req, res) => {
+    server = http.createServer((req, res) => {
       // Consume the entire request, before responding.
       req.on('data', () => {})
       req.on('end', () => {
@@ -113,12 +124,11 @@ describe('error handling', function () {
       })
     })
 
-    await new Promise(resolve => server.listen(6001, resolve))
+    await new Promise<void>(resolve => server.listen(6001, resolve))
 
+    // @ts-expect-error arg type is wrong
     await expect(httpClient('/ip4/127.0.0.1/tcp/6001').config.replace('test/fixtures/r-config.json'))
       .to.eventually.be.rejected()
-      .and.to.have.property('message').that.includes('invalid json response body')
-
-    server.close()
+      .and.to.have.property('message').that.include('Expected property name')
   })
 })

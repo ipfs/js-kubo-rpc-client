@@ -1,14 +1,9 @@
+import type { PubSubAPI } from './index.js'
+import type { SubscriptionTracker } from './subscription-tracker.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {import('..').Options} options
- * @param {import('./subscription-tracker').SubscriptionTracker} subsTracker
- */
-export const createUnsubscribe = (options, subsTracker) => {
-  /**
-   * @type {import('../types').PubsubAPI["unsubscribe"]}
-   */
-  async function unsubscribe (topic, handler) {
+export function createUnsubscribe (client: HTTPRPCClient, subsTracker: SubscriptionTracker): PubSubAPI['unsubscribe'] {
+  return async function unsubscribe (topic, handler) {
     subsTracker.unsubscribe(topic, handler)
   }
-  return unsubscribe
 }

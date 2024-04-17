@@ -1,24 +1,16 @@
 import { CID } from 'multiformats/cid'
-import { configure } from './lib/configure.js'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
+import type { KuboRPCClient } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-export const createGet = configure(api => {
-  /**
-   * @type {import('./types').RootAPI["get"]}
-   */
-  async function * get (path, options = {}) {
-    /** @type {Record<string, any>} */
-    const opts = {
+export function createGet (client: HTTPRPCClient): KuboRPCClient['get'] {
+  return async function * get (path, options = {}) {
+    const opts: Record<string, any> = {
       arg: `${path instanceof Uint8Array ? CID.decode(path) : path}`,
       ...options
     }
 
-    if (opts.compressionLevel) {
-      opts['compression-level'] = opts.compressionLevel
-      delete opts.compressionLevel
-    }
-
-    const res = await api.post('get', {
+    const res = await client.post('get', {
       signal: options.signal,
       searchParams: toUrlSearchParams(opts),
       headers: options.headers
@@ -26,6 +18,4 @@ export const createGet = configure(api => {
 
     yield * res.iterator()
   }
-
-  return get
-})
+}

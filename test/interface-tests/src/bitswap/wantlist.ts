@@ -1,23 +1,17 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { waitForWantlistKey, waitForWantlistKeyToBeRemoved } from './utils.js'
-import { isWebWorker } from 'ipfs-utils/src/env.js'
-import testTimeout from '../utils/test-timeout.js'
-import { CID } from 'multiformats/cid'
 import delay from 'delay'
+import { CID } from 'multiformats/cid'
+import { isWebWorker } from 'wherearewe'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import testTimeout from '../utils/test-timeout.js'
+import { waitForWantlistKey, waitForWantlistKeyToBeRemoved } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testWantlist (factory, options) {
+export function testWantlist (factory: KuboRPCFactory, options: MochaConfig): void {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -25,10 +19,8 @@ export function testWantlist (factory, options) {
   describe('.bitswap.wantlist', function () {
     this.timeout(60 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsA
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsB
+    let ipfsA: KuboRPCClient
+    let ipfsB: KuboRPCClient
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
     before(async function () {
@@ -43,15 +35,17 @@ export function testWantlist (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    it('should respect timeout option when getting bitswap wantlist', () => {
-      return testTimeout(() => ipfsA.bitswap.wantlist({
+    it('should respect timeout option when getting bitswap wantlist', async () => {
+      return testTimeout(async () => ipfsA.bitswap.wantlist({
         timeout: 1
       }))
     })
 
-    it('should get the wantlist', function () {
+    it('should get the wantlist', async function () {
       return waitForWantlistKey(ipfsB, key)
     })
 

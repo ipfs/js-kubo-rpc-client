@@ -1,11 +1,11 @@
 import drain from 'it-drain'
 
-/**
- * @param {*} fn
- * @returns {Promise<void>}
- */
-export default function testTimeout (fn) {
-  return new Promise((resolve, reject) => {
+function isAsyncIterator (obj: any): obj is AsyncIterable<any> {
+  return obj[Symbol.asyncIterator] != null
+}
+
+export default async function testTimeout (fn: any): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
     // some operations are either synchronous so cannot time out, or complete during
     // processing of the microtask queue so the timeout timer doesn't fire.  If this
     // is the case this is more of a best-effort test..
@@ -13,24 +13,24 @@ export default function testTimeout (fn) {
       const start = Date.now()
       let res = fn()
 
-      if (res[Symbol.asyncIterator]) {
+      if (isAsyncIterator(res)) {
         res = drain(res)
       }
 
-      res.then((/** @type {*} */ result) => {
+      res.then((result: any) => {
         const timeTaken = Date.now() - start
 
         if (timeTaken < 100) {
           // the implementation may be too fast to measure a time out reliably on node
           // due to the event loop being blocked.  if it took longer than 100ms though,
           // it almost certainly did not time out
-          return resolve()
+          resolve(); return
         }
 
         reject(new Error(`API call did not time out after ${timeTaken}ms, got ${JSON.stringify(result, null, 2)}`))
-      }, (/** @type {Error} */ err) => {
+      }, (err: any) => {
         if (err.name === 'TimeoutError') {
-          return resolve()
+          resolve(); return
         }
 
         const timeTaken = Date.now() - start

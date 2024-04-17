@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { LogAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createLs = configure(api => {
-  /**
-   * @type {import('../types').LogAPI["ls"]}
-   */
-  async function ls (options = {}) {
-    const res = await api.post('log/ls', {
+export function createLs (client: HTTPRPCClient): LogAPI['ls'] {
+  return async function ls (options = {}) {
+    const res = await client.post('log/ls', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
@@ -15,5 +13,4 @@ export const createLs = configure(api => {
     const data = await res.json()
     return data.Strings
   }
-  return ls
-})
+}

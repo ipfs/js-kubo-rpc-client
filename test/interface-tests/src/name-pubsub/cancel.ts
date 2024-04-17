@@ -1,26 +1,19 @@
 /* eslint-env mocha */
-import { createPeerId } from '@libp2p/peer-id'
-import all from 'it-all'
+import { createEd25519PeerId } from '@libp2p/peer-id-factory'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import all from 'it-all'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
+import type { PeerId } from '@libp2p/interface'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testCancel (factory, options) {
+export function testCancel (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.name.pubsub.cancel', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {string} */
-    let nodeId
+    let ipfs: KuboRPCClient
+    let nodeId: PeerId
 
     before(async function () {
       ipfs = (await factory.spawn()).api
@@ -28,23 +21,23 @@ export function testCancel (factory, options) {
       nodeId = peerInfo.id
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should return false when the name that is intended to cancel is not subscribed', async function () {
-      // @ts-ignore this is mocha
       this.timeout(60 * 1000)
 
-      const res = await ipfs.name.pubsub.cancel(nodeId)
+      const res = await ipfs.name.pubsub.cancel(nodeId.toString())
       expect(res).to.exist()
       expect(res).to.have.property('canceled')
       expect(res.canceled).to.be.false()
     })
 
     it('should cancel a subscription correctly returning true', async function () {
-      // @ts-ignore this is mocha
       this.timeout(300 * 1000)
 
-      const peerId = createPeerId()
+      const peerId = await createEd25519PeerId()
       const id = peerId.toString()
       const ipnsPath = `/ipns/${id}`
 

@@ -1,24 +1,21 @@
-import { createRmAll } from './rm-all.js'
 import last from 'it-last'
-import { configure } from '../lib/configure.js'
+import { createRmAll } from './rm-all.js'
+import type { PinAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {import('../types').Options} config
- */
-export const createRm = (config) => {
-  const all = createRmAll(config)
+export function createRm (client: HTTPRPCClient): PinAPI['rm'] {
+  const all = createRmAll(client)
 
-  return configure(() => {
-    /**
-     * @type {import('../types').PinAPI["rm"]}
-     */
-    async function rm (path, options = {}) {
-      // @ts-expect-error last can return undefined
-      return last(all([{
-        path,
-        ...options
-      }], options))
+  return async function rm (path, options = {}) {
+    const res = await last(all([{
+      path: path.toString(),
+      ...options
+    }], options))
+
+    if (res == null) {
+      throw new Error('No response received')
     }
-    return rm
-  })(config)
+
+    return res
+  }
 }

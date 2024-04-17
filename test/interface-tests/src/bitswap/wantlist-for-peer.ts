@@ -1,20 +1,14 @@
 /* eslint-env mocha */
 
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { waitForWantlistKey } from './utils.js'
-import { isWebWorker } from 'ipfs-utils/src/env.js'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { CID } from 'multiformats/cid'
+import { isWebWorker } from 'wherearewe'
+import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { waitForWantlistKey } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testWantlistForPeer (factory, options) {
+export function testWantlistForPeer (factory: KuboRPCFactory, options: MochaConfig): void {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -22,10 +16,8 @@ export function testWantlistForPeer (factory, options) {
   describe('.bitswap.wantlistForPeer', function () {
     this.timeout(60 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsA
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsB
+    let ipfsA: KuboRPCClient
+    let ipfsB: KuboRPCClient
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
     before(async function () {
@@ -40,7 +32,9 @@ export function testWantlistForPeer (factory, options) {
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should get the wantlist by peer ID for a different node', async () => {
       const ipfsBId = await ipfsB.id()

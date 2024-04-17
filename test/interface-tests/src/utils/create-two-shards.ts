@@ -1,12 +1,20 @@
 import { expect } from 'aegir/chai'
-import isShardAtPath from './is-shard-at-path.js'
 import last from 'it-last'
+import isShardAtPath from './is-shard-at-path.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { CID } from 'multiformats/cid'
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {number} fileCount
- */
-export async function createTwoShards (ipfs, fileCount) {
+export interface TwoShardsResult {
+  nextFile: {
+    path: string
+    content: Uint8Array
+  }
+  dirWithAllFiles: CID
+  dirWithSomeFiles: CID
+  dirPath: string
+}
+
+export async function createTwoShards (ipfs: KuboRPCClient, fileCount: number): Promise<TwoShardsResult> {
   const dirPath = `/sharded-dir-${Math.random()}`
   const files = new Array(fileCount).fill(0).map((_, index) => ({
     path: `${dirPath}/file-${index}`,
@@ -22,7 +30,7 @@ export async function createTwoShards (ipfs, fileCount) {
   }))
   const nextFile = someFiles.pop()
 
-  if (!nextFile) {
+  if (nextFile == null) {
     throw new Error('No nextFile found')
   }
 
@@ -33,7 +41,7 @@ export async function createTwoShards (ipfs, fileCount) {
     pin: false
   }))
 
-  if (!res1) {
+  if (res1 == null) {
     throw new Error('No result received from ipfs.addAll')
   }
 
@@ -45,7 +53,7 @@ export async function createTwoShards (ipfs, fileCount) {
     pin: false
   }))
 
-  if (!res2) {
+  if (res2 == null) {
     throw new Error('No result received from ipfs.addAll')
   }
 

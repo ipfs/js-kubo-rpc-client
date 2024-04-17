@@ -1,78 +1,46 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import * as dagPB from '@ipld/dag-pb'
 import * as dagCBOR from '@ipld/dag-cbor'
+import * as dagPB from '@ipld/dag-pb'
+import { expect } from 'aegir/chai'
 import * as dagJOSE from 'dag-jose'
-import { importer } from 'ipfs-unixfs-importer'
+import { ES256KSigner, createJWS } from 'did-jwt'
 import { UnixFS } from 'ipfs-unixfs'
+import { importer } from 'ipfs-unixfs-importer'
 import all from 'it-all'
-import { CID } from 'multiformats/cid'
-import { sha256 } from 'multiformats/hashes/sha2'
 import { base32 } from 'multiformats/bases/base32'
 import { base64url } from 'multiformats/bases/base64'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
+import { CID } from 'multiformats/cid'
 import { identity } from 'multiformats/hashes/identity'
+import { sha256 } from 'multiformats/hashes/sha2'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import blockstore from '../utils/blockstore-adapter.js'
-import { ES256KSigner, createJWS } from 'did-jwt'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import testTimeout from '../utils/test-timeout.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testGet (factory, options) {
+export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dag.get', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
-    /**
-     * @type {dagPB.PBNode}
-     */
-    let pbNode
-    /**
-     * @type {any}
-     */
-    let cborNode
-    /**
-     * @type {dagJOSE.DagJWE}
-     */
-    let joseNode
-    /**
-     * @type {dagPB.PBNode}
-     */
-    let nodePb
-    /**
-     * @type {any}
-     */
-    let nodeCbor
-    /**
-     * @type {string}
-     */
-    let nodeJose
-    /**
-     * @type {CID}
-     */
-    let cidPb
-    /**
-     * @type {CID}
-     */
-    let cidCbor
-    /**
-     * @type {CID}
-     */
-    let cidJose
+    let pbNode: dagPB.PBNode
+    let cborNode: any
+    let joseNode: dagJOSE.DagJWE
+    let nodePb: dagPB.PBNode
+    let nodeCbor: any
+    let nodeJose: string
+    let cidPb: CID
+    let cidCbor: CID
+    let cidJose: CID
 
     before(async function () {
       const someData = uint8ArrayFromString('some other data')
@@ -105,14 +73,14 @@ export function testGet (factory, options) {
       await ipfs.dag.put(nodePb, { storeCodec: 'dag-pb', hashAlg: 'sha2-256' })
       await ipfs.dag.put(nodeCbor, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
 
-      const signer = ES256KSigner('278a5de700e29faae8e40e366ec5012b')
+      const signer = ES256KSigner(uint8ArrayFromString('278a5de700e29faae8e40e366ec5012b'))
       nodeJose = await createJWS(base64url.encode(cidCbor.bytes).slice(1), signer)
       cidJose = CID.createV1(dagJOSE.code, await sha256.digest(dagJOSE.encode(nodeJose)))
       await ipfs.dag.put(nodeJose, { storeCodec: dagJOSE.name, hashAlg: 'sha2-256' })
     })
 
-    it('should respect timeout option when getting a DAG node', () => {
-      return testTimeout(() => ipfs.dag.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAd'), {
+    it('should respect timeout option when getting a DAG node', async () => {
+      return testTimeout(async () => ipfs.dag.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAd'), {
         timeout: 1
       }))
     })
@@ -256,7 +224,7 @@ export function testGet (factory, options) {
 
     it('should be able to get a dag-cbor node with the identity hash', async () => {
       const identityData = uint8ArrayFromString('A16461736466190144', 'base16upper')
-      const identityHash = await identity.digest(identityData)
+      const identityHash = identity.digest(identityData)
       const identityCID = CID.createV1(identity.code, identityHash)
       const result = await ipfs.dag.get(identityCID)
       expect(result.value).to.deep.equal(identityData)

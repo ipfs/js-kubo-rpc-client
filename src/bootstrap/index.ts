@@ -1,14 +1,86 @@
+import { notImplemented } from '../lib/not-implemented.js'
 import { createAdd } from './add.js'
 import { createList } from './list.js'
 import { createRm } from './rm.js'
+import type { HTTPRPCOptions } from '../index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
+import type { Multiaddr } from '@multiformats/multiaddr'
 
-/**
- * @param {import('../types').Options} config
- */
-export function createBootstrap (config) {
+export interface BootstrapAPI {
+  /**
+   * Add a peer address to the bootstrap list
+   *
+   * @example
+   * ```js
+   * const validIp4 = '/ip4/104....9z'
+   *
+   * const res = await ipfs.bootstrap.add(validIp4)
+   * console.log(res.Peers)
+   * // Logs:
+   * // ['/ip4/104....9z']
+   * ```
+   */
+  add(addr: Multiaddr, options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
+
+  /**
+   * Reset the bootstrap list to contain only the default bootstrap nodes
+   *
+   * @example
+   * ```js
+   * const res = await ipfs.bootstrap.list()
+   * console.log(res.Peers)
+   * // Logs:
+   * // [address1, address2, ...]
+   * ```
+   */
+  reset(options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
+
+  /**
+   * List all peer addresses in the bootstrap list
+   *
+   * @example
+   * ```js
+   * const res = await ipfs.bootstrap.list()
+   * console.log(res.Peers)
+   * // Logs:
+   * // [address1, address2, ...]
+   * ```
+   */
+  list(options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
+
+  /**
+   * Remove a peer address from the bootstrap list
+   *
+   * @example
+   * ```js
+   * const res = await ipfs.bootstrap.list()
+   * console.log(res.Peers)
+   * // Logs:
+   * // [address1, address2, ...]
+   * ```
+   */
+  rm(addr: Multiaddr, options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
+
+  /**
+   * Remove all peer addresses from the bootstrap list
+   *
+   * @example
+   * ```js
+   * const res = await ipfs.bootstrap.clear()
+   * console.log(res.Peers)
+   * // Logs:
+   * // [address1, address2, ...]
+   * ```
+   */
+  clear(options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
+}
+
+export function createBootstrap (client: HTTPRPCClient): BootstrapAPI {
   return {
-    add: createAdd(config),
-    list: createList(config),
-    rm: createRm(config)
+    add: createAdd(client),
+    list: createList(client),
+    rm: createRm(client),
+    reset: notImplemented(),
+    clear: notImplemented()
   }
 }

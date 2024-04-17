@@ -1,24 +1,21 @@
-import { createAddAll } from './add-all.js'
 import last from 'it-last'
-import { configure } from '../lib/configure.js'
+import { createAddAll } from './add-all.js'
+import type { PinAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-/**
- * @param {import('../types').Options} config
- */
-export function createAdd (config) {
-  const all = createAddAll(config)
+export function createAdd (client: HTTPRPCClient): PinAPI['add'] {
+  const all = createAddAll(client)
 
-  return configure(() => {
-    /**
-     * @type {import('../types').PinAPI["add"]}
-     */
-    async function add (path, options = {}) {
-      // @ts-expect-error last can return undefined
-      return last(all([{
-        path,
-        ...options
-      }], options))
+  return async function add (path, options = {}) {
+    const res = await last(all([{
+      path: path.toString(),
+      ...options
+    }], options))
+
+    if (res == null) {
+      throw new Error('No response received')
     }
-    return add
-  })(config)
+
+    return res
+  }
 }

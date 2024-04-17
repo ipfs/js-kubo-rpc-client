@@ -1,8 +1,6 @@
+import type { RemotePinServiceWithStat, Stat } from './index.js'
 
-/**
- * @param {URL} url
- */
-export function encodeEndpoint (url) {
+export function encodeEndpoint (url: URL): string {
   const href = String(url)
   if (href === 'undefined') {
     throw Error('endpoint is required')
@@ -12,23 +10,20 @@ export function encodeEndpoint (url) {
   return href[href.length - 1] === '/' ? href.slice(0, -1) : href
 }
 
-/**
- * @param {any} json
- * @returns {import('../../../types').RemotePinServiceWithStat}
- */
-export function decodeRemoteService (json) {
-  return {
+export function decodeRemoteService (json: any): RemotePinServiceWithStat {
+  const service: RemotePinServiceWithStat = {
     service: json.Service,
-    endpoint: new URL(json.ApiEndpoint),
-    ...(json.Stat && { stat: decodeStat(json.Stat) })
+    endpoint: new URL(json.ApiEndpoint)
   }
+
+  if (json.Stat != null) {
+    service.stat = decodeStat(json.Stat)
+  }
+
+  return service
 }
 
-/**
- * @param {any} json
- * @returns {import('../../../types').Stat}
- */
-export function decodeStat (json) {
+export function decodeStat (json: any): Stat {
   switch (json.Status) {
     case 'valid': {
       const { Pinning, Pinned, Queued, Failed } = json.PinCount

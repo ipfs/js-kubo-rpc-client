@@ -2,33 +2,29 @@
 
 import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import testTimeout from '../utils/test-timeout.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testResolve (factory, options) {
+export function testResolve (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.dag.resolve', () => {
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
+
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should respect timeout option when resolving a path within a DAG node', async function () {
       const cid = await ipfs.dag.put({}, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
 
-      await testTimeout(async () => await ipfs.dag.resolve(cid, {
+      await testTimeout(async () => ipfs.dag.resolve(cid, {
         timeout: 1
       }))
     })
@@ -47,7 +43,7 @@ export function testResolve (factory, options) {
 
       const result = await ipfs.dag.resolve(`${cid}/c/cb`)
       expect(result).to.have.deep.property('cid', cid)
-      expect(result).to.have.property('remainderPath', 'c/cb')
+      expect(result).to.have.property('remainderPath', '/c/cb')
     })
 
     it('should resolve a path inside a cbor node by CID', async () => {
@@ -64,7 +60,7 @@ export function testResolve (factory, options) {
 
       const result = await ipfs.dag.resolve(cid, { path: '/c/cb' })
       expect(result).to.have.deep.property('cid', cid)
-      expect(result).to.have.property('remainderPath', 'c/cb')
+      expect(result).to.have.property('remainderPath', '/c/cb')
     })
 
     it('should resolve a multi-node path inside a cbor node', async () => {
@@ -84,7 +80,7 @@ export function testResolve (factory, options) {
 
       const result = await ipfs.dag.resolve(`/ipfs/${cid1}/c/cb`)
       expect(result).to.have.deep.property('cid', cid0)
-      expect(result).to.have.property('remainderPath', 'cb')
+      expect(result).to.have.property('remainderPath', '/cb')
     })
 
     it('should resolve a multi-node path inside a cbor node by CID', async () => {
@@ -104,7 +100,7 @@ export function testResolve (factory, options) {
 
       const result = await ipfs.dag.resolve(cid1, { path: '/c/cb' })
       expect(result).to.have.deep.property('cid', cid0)
-      expect(result).to.have.property('remainderPath', 'cb')
+      expect(result).to.have.property('remainderPath', '/cb')
     })
 
     it('should resolve a raw node', async () => {

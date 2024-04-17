@@ -1,19 +1,17 @@
 import { CID } from 'multiformats/cid'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { FilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createCp = configure(api => {
-  /**
-   * @type {import('../types').FilesAPI["cp"]}
-   */
-  async function cp (sources, destination, options = {}) {
+export function createCp (client: HTTPRPCClient): FilesAPI['cp'] {
+  return async function cp (sources, destination, options = {}) {
     /** @type {import('../types').IPFSPath[]} */
     const sourceArr = Array.isArray(sources) ? sources : [sources]
 
-    const res = await api.post('files/cp', {
+    const res = await client.post('files/cp', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
-        arg: sourceArr.concat(destination).map(src => CID.asCID(src) ? `/ipfs/${src}` : src),
+        arg: sourceArr.concat(destination).map(src => (CID.asCID(src) != null) ? `/ipfs/${src}` : src),
         ...options
       }),
       headers: options.headers
@@ -21,5 +19,4 @@ export const createCp = configure(api => {
 
     await res.text()
   }
-  return cp
-})
+}

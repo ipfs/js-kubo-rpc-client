@@ -1,13 +1,11 @@
-import { configure } from '../lib/configure.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import { multiaddr } from '@multiformats/multiaddr'
+import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { BootstrapAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createList = configure(api => {
-  /**
-   * @type {import('../types').BootstrapAPI["list"]}
-   */
-  async function list (options = {}) {
-    const res = await api.post('bootstrap/list', {
+export function createList (client: HTTPRPCClient): BootstrapAPI['list'] {
+  return async function list (options = {}) {
+    const res = await client.post('bootstrap/list', {
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
@@ -15,8 +13,6 @@ export const createList = configure(api => {
 
     const { Peers } = await res.json()
 
-    return { Peers: Peers.map((/** @type {string} */ ma) => multiaddr(ma)) }
+    return { Peers: Peers.map((ma: any) => multiaddr(ma)) }
   }
-
-  return list
-})
+}

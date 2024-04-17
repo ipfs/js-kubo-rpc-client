@@ -1,13 +1,11 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { LogAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createLevel = configure(api => {
-  /**
-   * @type {import('../types').LogAPI["level"]}
-   */
-  async function level (subsystem, level, options = {}) {
-    const res = await api.post('log/level', {
+export function createLevel (client: HTTPRPCClient): LogAPI['level'] {
+  return async function level (subsystem, level, options = {}) {
+    const res = await client.post('log/level', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: [
@@ -21,5 +19,4 @@ export const createLevel = configure(api => {
 
     return objectToCamel(await res.json())
   }
-  return level
-})
+}

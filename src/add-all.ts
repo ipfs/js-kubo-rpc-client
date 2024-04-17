@@ -1,77 +1,69 @@
+import { anySignal } from 'any-signal'
 import { CID } from 'multiformats/cid'
+import { multipartRequest } from './lib/multipart-request.js'
 import { objectToCamel } from './lib/object-to-camel.js'
-import { configure } from './lib/configure.js'
-import { multipartRequest } from 'ipfs-core-utils/multipart-request'
 import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import { abortSignal } from './lib/abort-signal.js'
+import type { AddProgressFn, AddResult, KuboRPCClient, UploadProgressFn } from './index.js'
+import type { HTTPRPCClient } from './lib/core.js'
 
-export const createAddAll = configure((api) => {
-  /**
-   * @type {import('./types.js').RootAPI["addAll"]}
-   */
-  async function * addAll (source, options = {}) {
+export function createAddAll (client: HTTPRPCClient): KuboRPCClient['addAll'] {
+  return async function * addAll (source, options = {}) {
     // allow aborting requests on body errors
     const controller = new AbortController()
-    const signal = abortSignal(controller.signal, options.signal)
-    const { headers, body, total, parts } =
-      await multipartRequest(source, controller, options.headers)
+    const signal = anySignal([controller.signal, options.signal])
 
-    // In browser response body only starts streaming once upload is
-    // complete, at which point all the progress updates are invalid. If
-    // length of the content is computable we can interpret progress from
-    // `{ total, loaded}` passed to `onUploadProgress` and `multipart.total`
-    // in which case we disable progress updates to be written out.
-    const [progressFn, onUploadProgress] = typeof options.progress === 'function'
-      ? createProgressHandler(total, parts, options.progress)
-      : [undefined, undefined]
+    try {
+      const { headers, body, total, parts } =
+        await multipartRequest(source, controller, options.headers)
 
-    const res = await api.post('add', {
-      searchParams: toUrlSearchParams({
-        'stream-channels': true,
-        ...options,
-        progress: Boolean(progressFn)
-      }),
-      onUploadProgress,
-      signal,
-      headers,
-      body
-    })
+      // In browser response body only starts streaming once upload is
+      // complete, at which point all the progress updates are invalid. If
+      // length of the content is computable we can interpret progress from
+      // `{ total, loaded}` passed to `onUploadProgress` and `multipart.total`
+      // in which case we disable progress updates to be written out.
+      const [progressFn, onUploadProgress] = typeof options.progress === 'function'
+        ? createProgressHandler(total, options.progress, parts)
+        : [undefined, undefined]
 
-    for await (let file of res.ndjson()) {
-      file = objectToCamel(file)
+      const res = await client.post('add', {
+        searchParams: toUrlSearchParams({
+          'stream-channels': true,
+          ...options,
+          progress: Boolean(progressFn)
+        }),
+        onUploadProgress,
+        signal,
+        headers,
+        body
+      })
 
-      if (file.hash !== undefined) {
-        yield toCoreInterface(file)
-      } else if (progressFn) {
-        progressFn(file.bytes || 0, file.name)
+      for await (let file of res.ndjson()) {
+        file = objectToCamel(file)
+
+        if (file.hash !== undefined) {
+          yield toCoreInterface(file)
+        } else if (progressFn != null) {
+          progressFn(file.bytes ?? 0, file.name)
+        }
       }
+    } finally {
+      signal.clear()
     }
   }
-  return addAll
-})
+}
 
 /**
  * Returns simple progress callback when content length isn't computable or a
  * progress event handler that calculates progress from upload progress events.
- *
- * @param {number} total
- * @param {{name:string, start:number, end:number}[]|null} parts
- * @param {import('./types.js').IPFSCoreAddProgressFn} progress
- * @returns {[import('./types.js').IPFSCoreAddProgressFn|undefined, import('./types.js').IPFSUtilsHttpUploadProgressFn|undefined]}
  */
-const createProgressHandler = (total, parts, progress) =>
-  parts ? [undefined, createOnUploadProgress(total, parts, progress)] : [progress, undefined]
+const createProgressHandler = (total: number, progress: AddProgressFn, parts?: Array<{ name?: string, start: number, end: number }>): [AddProgressFn, undefined] | [undefined, UploadProgressFn] =>
+  parts != null ? [undefined, createOnUploadProgress(total, parts, progress)] : [progress, undefined]
 
 /**
  * Creates a progress handler that interpolates progress from upload progress
  * events and total size of the content that is added.
- *
- * @param {number} size - actual content size
- * @param {{name:string, start:number, end:number}[]} parts
- * @param {import('./types.js').IPFSCoreAddProgressFn} progress
- * @returns {import('./types.js').IPFSUtilsHttpUploadProgressFn}
  */
-const createOnUploadProgress = (size, parts, progress) => {
+const createOnUploadProgress = (size: number, parts: Array<{ name?: string, start: number, end: number }>, progress: AddProgressFn): UploadProgressFn => {
   let index = 0
   const count = parts.length
   return ({ loaded, total }) => {
@@ -93,18 +85,8 @@ const createOnUploadProgress = (size, parts, progress) => {
   }
 }
 
-/**
- * @param {object} input
- * @param {string} input.name
- * @param {string} input.hash
- * @param {string} input.size
- * @param {string} [input.mode]
- * @param {number} [input.mtime]
- * @param {number} [input.mtimeNsecs]
- */
-function toCoreInterface ({ name, hash, size, mode, mtime, mtimeNsecs }) {
-  /** @type {import('./types.js').AddResult} */
-  const output = {
+function toCoreInterface ({ name, hash, size, mode, mtime, mtimeNsecs }: any): AddResult {
+  const output: AddResult = {
     path: name,
     cid: CID.parse(hash),
     size: parseInt(size)
@@ -117,7 +99,7 @@ function toCoreInterface ({ name, hash, size, mode, mtime, mtimeNsecs }) {
   if (mtime != null) {
     output.mtime = {
       secs: mtime,
-      nsecs: mtimeNsecs || 0
+      nsecs: mtimeNsecs ?? 0
     }
   }
 

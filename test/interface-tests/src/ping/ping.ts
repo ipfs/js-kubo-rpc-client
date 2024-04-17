@@ -1,21 +1,15 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { expectIsPingResponse, isPong } from './utils.js'
 import all from 'it-all'
-import { isWebWorker } from 'ipfs-utils/src/env.js'
+import { isWebWorker } from 'wherearewe'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { expectIsPingResponse, isPong } from './utils.js'
+import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPing (factory, options) {
+export function testPing (factory: KuboRPCFactory, options: MochaConfig): void {
   const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -23,12 +17,9 @@ export function testPing (factory, options) {
   describe('.ping', function () {
     this.timeout(60 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsA
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfsB
-    /** @type {import('ipfs-core-types/src/root').IDResult} */
-    let nodeBId
+    let ipfsA: KuboRPCClient
+    let ipfsB: KuboRPCClient
+    let nodeBId: IDResult
 
     before(async function () {
       ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
@@ -38,7 +29,9 @@ export function testPing (factory, options) {
       await ipfsA.swarm.connect(nodeBId.addresses[0])
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should send the specified number of packets', async () => {
       const count = 3

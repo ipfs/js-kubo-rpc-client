@@ -1,14 +1,15 @@
-
 /* eslint-env browser */
 
-import { isMultiaddr } from '@multiformats/multiaddr'
-import { isBrowser, isWebWorker, isNode } from 'ipfs-utils/src/env.js'
-import parseDuration from 'parse-duration'
 import { logger } from '@libp2p/logger'
-import HTTP from 'ipfs-utils/src/http.js'
+import { isMultiaddr } from '@multiformats/multiaddr'
 import mergeOpts from 'merge-options'
-import { toUrlString } from 'ipfs-core-utils/to-url-string'
-import getAgent from 'ipfs-core-utils/agent'
+import parseDuration from 'parse-duration'
+import { isBrowser, isWebWorker, isNode } from 'wherearewe'
+import getAgent from './agent.js'
+import { HTTP, type ExtendedResponse, type HTTPOptions } from './http.js'
+import { toUrlString } from './to-url-string.js'
+import type { Options } from '../index.js'
+import type { Multiaddr } from '@multiformats/multiaddr'
 
 const log = logger('js-kubo-rpc-client:lib:error-handler')
 const merge = mergeOpts.bind({ ignoreUndefined: true })
@@ -17,22 +18,9 @@ const DEFAULT_PROTOCOL = isBrowser || isWebWorker ? location.protocol : 'http'
 const DEFAULT_HOST = isBrowser || isWebWorker ? location.hostname : 'localhost'
 const DEFAULT_PORT = isBrowser || isWebWorker ? location.port : '5001'
 
-/**
- * @typedef {import('../types').Options} Options
- */
-
-/**
- * @typedef {import('../types').Multiaddr} Multiaddr
- */
-
-/**
- * @param {Options|URL|Multiaddr|string} [options]
- * @returns {Options}
- */
-const normalizeOptions = (options = {}) => {
+const normalizeOptions = (options: Options | URL | Multiaddr | string = {}): Options => {
   let url
-  /** @type {Options} */
-  let opts = {}
+  let opts: Options = {}
   let agent
 
   if (typeof options === 'string' || isMultiaddr(options)) {
@@ -46,16 +34,16 @@ const normalizeOptions = (options = {}) => {
     url = options.url
     opts = options
   } else {
-    opts = options || {}
+    opts = options ?? {}
 
-    const protocol = (opts.protocol || DEFAULT_PROTOCOL).replace(':', '')
-    const host = (opts.host || DEFAULT_HOST).split(':')[0]
-    const port = (opts.port || DEFAULT_PORT)
+    const protocol = (opts.protocol ?? DEFAULT_PROTOCOL).replace(':', '')
+    const host = (opts.host ?? DEFAULT_HOST).split(':')[0]
+    const port = (opts.port ?? DEFAULT_PORT)
 
     url = new URL(`${protocol}://${host}:${port}`)
   }
 
-  if (opts.apiPath) {
+  if (opts.apiPath != null) {
     url.pathname = opts.apiPath
   } else if (url.pathname === '/' || url.pathname === undefined) {
     url.pathname = 'api/v0'
@@ -64,7 +52,7 @@ const normalizeOptions = (options = {}) => {
   if (isNode) {
     const Agent = getAgent(url)
 
-    agent = opts.agent || new Agent({
+    agent = opts.agent ?? new Agent({
       keepAlive: true,
       // Similar to browsers which limit connections to six per host
       maxSockets: 6
@@ -82,48 +70,42 @@ const normalizeOptions = (options = {}) => {
   }
 }
 
-/**
- * @param {Response} response
- */
-export const errorHandler = async (response) => {
-  let msg
+export const errorHandler = async (response: Response): Promise<void> => {
+  let msg: string | undefined
 
   try {
-    if ((response.headers.get('Content-Type') || '').startsWith('application/json')) {
+    if ((response.headers.get('Content-Type') ?? '').startsWith('application/json')) {
       const data = await response.json()
       log(data)
-      msg = data.Message || data.message
+      msg = data.Message ?? data.message
     } else {
       msg = await response.text()
     }
-  } catch (/** @type {any} */ err) {
+  } catch (err: any) {
     log('Failed to parse error response', err)
     // Failed to extract/parse error message from response
     msg = err.message
   }
 
-  /** @type {Error} */
-  let error = new HTTP.HTTPError(response)
+  let error: Error = new HTTP.HTTPError(response)
 
-  if (msg) {
+  if (msg != null) {
     // This is what rs-ipfs returns where there's a timeout
     if (msg.includes('deadline has elapsed')) {
       error = new HTTP.TimeoutError()
     }
 
     // This is what go-ipfs returns where there's a timeout
-    if (msg && msg.includes('context deadline exceeded')) {
+    if (msg.includes('context deadline exceeded')) {
       error = new HTTP.TimeoutError()
     }
-  }
 
-  // This also gets returned
-  if (msg && msg.includes('request timed out')) {
-    error = new HTTP.TimeoutError()
-  }
+    // This also gets returned
+    if (msg.includes('request timed out')) {
+      error = new HTTP.TimeoutError()
+    }
 
-  // If we managed to extract a message from the response, use it
-  if (msg) {
+    // If we managed to extract a message from the response, use it
     error.message = msg
   }
 
@@ -132,74 +114,64 @@ export const errorHandler = async (response) => {
 
 const KEBAB_REGEX = /[A-Z\u00C0-\u00D6\u00D8-\u00DE]/g
 
-/**
- * @param {string} str
- */
-const kebabCase = (str) => {
+const kebabCase = (str: string): string => {
   return str.replace(KEBAB_REGEX, function (match) {
     return '-' + match.toLowerCase()
   })
 }
 
-/**
- * @param {string | number} value
- */
-const parseTimeout = (value) => {
-  return typeof value === 'string' ? parseDuration(value) : value
+const parseTimeout = (value: string | number): number => {
+  return typeof value === 'string' ? parseDuration(value) ?? 0 : value
 }
 
-export class Client extends HTTP {
-  /**
-   * @param {Options|URL|Multiaddr|string} [options]
-   */
-  constructor (options = {}) {
+export interface HTTPRPCClient extends Exclude<HTTP, 'put' | 'get' | 'delete' | 'options'> {
+
+}
+
+export class Client extends HTTP implements HTTPRPCClient {
+  constructor (options: Options | URL | Multiaddr | string = {}) {
     const opts = normalizeOptions(options)
 
     super({
-      timeout: parseTimeout(opts.timeout || 0) || undefined,
+      timeout: opts.timeout != null ? parseTimeout(opts.timeout) : undefined,
       headers: opts.headers,
       base: `${opts.url}`,
       handleError: errorHandler,
-      transformSearchParams: (search) => {
+      transformSearchParams: (search: URLSearchParams) => {
         const out = new URLSearchParams()
 
         for (const [key, value] of search) {
           if (
             value !== 'undefined' &&
             value !== 'null' &&
-            key !== 'signal'
+            key !== 'signal' &&
+            key !== 'timeout'
           ) {
             out.append(kebabCase(key), value)
           }
 
-          // @ts-expect-error server timeouts are strings
-          if (key === 'timeout' && !isNaN(value)) {
+          if (key === 'timeout' && !isNaN(parseInt(value))) {
             out.append(kebabCase(key), value)
           }
         }
 
         return out
       },
-      // @ts-expect-error this can be a https agent or a http agent
       agent: opts.agent
     })
 
-    // @ts-expect-error - cannot delete no-optional fields
+    // @ts-expect-error - cannot delete non-optional fields
     delete this.get
-    // @ts-expect-error - cannot delete no-optional fields
+    // @ts-expect-error - cannot delete non-optional fields
     delete this.put
-    // @ts-expect-error - cannot delete no-optional fields
+    // @ts-expect-error - cannot delete non-optional fields
     delete this.delete
-    // @ts-expect-error - cannot delete no-optional fields
+    // @ts-expect-error - cannot delete non-optional fields
     delete this.options
 
     const fetch = this.fetch
 
-    /**
-     * @param {string | Request} resource
-     * @param {import('../types').HTTPOptions} options
-     */
-    this.fetch = (resource, options = {}) => {
+    this.fetch = async (resource: string | Request, options: HTTPOptions = {}): Promise<ExtendedResponse> => {
       if (typeof resource === 'string' && !resource.startsWith('/')) {
         resource = `${opts.url}/${resource}`
       }

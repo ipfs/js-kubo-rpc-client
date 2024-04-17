@@ -1,13 +1,11 @@
-import { configure } from '../lib/configure.js'
+import { HTTPError } from '../lib/errors.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import HTTP from 'ipfs-utils/src/http.js'
+import type { FilesAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createRm = configure(api => {
-  /**
-   * @type {import('../types').FilesAPI["rm"]}
-   */
-  async function rm (path, options = {}) {
-    const res = await api.post('files/rm', {
+export function createRm (client: HTTPRPCClient): FilesAPI['rm'] {
+  return async function rm (path, options = {}) {
+    const res = await client.post('files/rm', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: path,
@@ -20,11 +18,9 @@ export const createRm = configure(api => {
     // we don't expect text body to be ever present
     // (if so, it means an error such as https://github.com/ipfs/go-ipfs/issues/8606)
     if (body !== '') {
-      /** @type {Error} */
-      const error = new HTTP.HTTPError(res)
+      const error = new HTTPError(res)
       error.message = body
       throw error
     }
   }
-  return rm
-})
+}

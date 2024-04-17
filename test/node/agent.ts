@@ -1,26 +1,28 @@
 /* eslint-env mocha */
 
+import http, { Agent } from 'node:http'
 import { expect } from 'aegir/chai'
 import delay from 'delay'
-import { create as httpClient } from '../../src/index.js'
-import http, { Agent } from 'http'
+import { create as httpClient, type IDResult } from '../../src/index.js'
+import type { IncomingMessage } from 'node:http'
 
-/**
- *
- * @param {(message: import('http').IncomingMessage) => Promise<any>} handler
- * @returns {Promise<{port: number, close: (...args: Parameters<http.Server['close']) => ReturnType<http.Server['close']}}
- */
-function startServer (handler) {
+export interface TestServer {
+  port: number
+  close(...args: Parameters<http.Server['close']>): ReturnType<http.Server['close']>
+}
+
+async function startServer (handler: (message: IncomingMessage) => Promise<any>): Promise<TestServer> {
   return new Promise((resolve) => {
     // spin up a test http server to inspect the requests made by the library
     const server = http.createServer((req, res) => {
       req.on('data', () => {})
-      req.on('end', async () => {
-        const out = await handler(req)
-
-        res.writeHead(200)
-        res.write(JSON.stringify(out))
-        res.end()
+      req.on('end', () => {
+        void handler(req)
+          .then((out) => {
+            res.writeHead(200)
+            res.write(JSON.stringify(out))
+            res.end()
+          })
       })
     })
 
@@ -28,7 +30,7 @@ function startServer (handler) {
       const addressInfo = server.address()
 
       resolve({
-        port: addressInfo && (typeof addressInfo === 'string' ? addressInfo : addressInfo.port),
+        port: parseInt(`${addressInfo != null && (typeof addressInfo === 'string' ? addressInfo : addressInfo.port)}`),
         close: (...args) => server.close(...args)
       })
     })
@@ -48,8 +50,7 @@ function startServer (handler) {
  * @see https://github.com/ipfs/js-kubo-rpc-client/tree/investigateConcurrencyTest
  */
 describe.skip('agent', function () {
-  /** @type {Agent} */
-  let agent
+  let agent: Agent
 
   before(function () {
     agent = new Agent({
@@ -58,10 +59,9 @@ describe.skip('agent', function () {
   })
 
   it('restricts the number of concurrent connections', async function () {
-    /** @type {((arg: any) => void)[]} */
-    const responses = []
+    const responses: Array<(arg: any) => void> = []
 
-    const server = await startServer(() => {
+    const server = await startServer(async () => {
       const p = new Promise((resolve) => {
         responses.push(resolve)
       })
@@ -123,13 +123,12 @@ describe.skip('agent', function () {
       }
     }
 
-    let results = await requests
-    results = results.map(r => r.res)
+    const results: IDResult[] = await requests
     expect(results).to.have.lengthOf(3)
     expect(results).to.include(0)
     expect(results).to.include(1)
     expect(results).to.include(2)
 
-    return new Promise((resolve, reject) => server.close((err) => err != null ? reject(err) : resolve()))
+    return new Promise((resolve, reject) => server.close((err) => { err != null ? reject(err) : resolve() }))
   })
 })

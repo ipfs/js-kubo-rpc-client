@@ -1,20 +1,19 @@
-import { CID } from 'multiformats/cid'
 import errCode from 'err-code'
+import { CID } from 'multiformats/cid'
+import type { BlockAPI } from '../block/index.js'
+import type { Codecs } from '../index.js'
+import type { AbortOptions } from '@libp2p/interface'
+
+export interface ResolveResult {
+  value: any
+  remainderPath?: string
+}
 
 /**
- * Retrieves IPLD Nodes along the `path` that is rooted at `cid`.
- *
- * @param {CID} cid - the CID where the resolving starts
- * @param {string} path - the path that should be resolved
- * @param {import('../types').Multicodecs} codecs
- * @param {(cid: CID, options?: import('../types').AbortOptions) => Promise<Uint8Array>} getBlock
- * @param {import('../types').AbortOptions} [options]
+ * Retrieves IPLD Nodes along the `path` that is rooted at `cid`
  */
-export async function * resolve (cid, path, codecs, getBlock, options) {
-  /**
-   * @param {CID} cid
-   */
-  const load = async (cid) => {
+export async function * resolve (cid: CID, path: string, codecs: Codecs, getBlock: BlockAPI['get'], options?: AbortOptions): AsyncGenerator<ResolveResult> {
+  const load = async (cid: CID): Promise<any> => {
     const codec = await codecs.getCodec(cid.code)
     const block = await getBlock(cid, options)
 
@@ -26,10 +25,10 @@ export async function * resolve (cid, path, codecs, getBlock, options) {
   let lastCid = cid
 
   // End iteration if there isn't a CID to follow any more
-  while (parts.length) {
+  while (parts.length > 0) {
     const key = parts.shift()
 
-    if (!key) {
+    if (key == null) {
       throw errCode(new Error(`Could not resolve path "${path}"`), 'ERR_INVALID_PATH')
     }
 
@@ -46,7 +45,7 @@ export async function * resolve (cid, path, codecs, getBlock, options) {
 
     const cid = CID.asCID(value)
 
-    if (cid) {
+    if (cid != null) {
       lastCid = cid
       value = await load(value)
     }

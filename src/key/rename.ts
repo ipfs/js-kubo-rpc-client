@@ -1,13 +1,11 @@
 import { objectToCamel } from '../lib/object-to-camel.js'
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { KeyAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createRename = configure(api => {
-  /**
-   * @type {import('./types.js').KeyAPI['rename']}
-   */
-  async function rename (oldName, newName, options = {}) {
-    const res = await api.post('key/rename', {
+export function createRename (client: HTTPRPCClient): KeyAPI['rename'] {
+  return async function rename (oldName, newName, options = {}) {
+    const res = await client.post('key/rename', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: [
@@ -19,8 +17,6 @@ export const createRename = configure(api => {
       headers: options.headers
     })
 
-    // @ts-expect-error server output is not typed
     return objectToCamel(await res.json())
   }
-  return rename
-})
+}

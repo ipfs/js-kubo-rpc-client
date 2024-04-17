@@ -1,34 +1,29 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { nanoid } from 'nanoid'
-import { getTopic } from './utils.js'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
+import { nanoid } from 'nanoid'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getTopic } from './utils.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testPublish (factory, options) {
+export function testPublish (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.pubsub.publish', function () {
     this.timeout(80 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () {
       ipfs = (await factory.spawn()).api
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('should fail with undefined msg', async () => {
       const topic = getTopic()
@@ -36,9 +31,9 @@ export function testPublish (factory, options) {
       await expect(ipfs.pubsub.publish(topic)).to.eventually.be.rejected()
     })
 
-    it('should publish message from buffer', () => {
+    it('should publish message from buffer', async () => {
       const topic = getTopic()
-      return ipfs.pubsub.publish(topic, uint8ArrayFromString(nanoid()))
+      await ipfs.pubsub.publish(topic, uint8ArrayFromString(nanoid()))
     })
 
     it('should publish 10 times within time limit', async () => {

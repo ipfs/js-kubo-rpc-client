@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { ConfigAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createGetAll = configure(api => {
-  /**
-   * @type {import('../types.js').ConfigAPI["getAll"]}
-   */
-  const getAll = async (options = {}) => {
-    const res = await api.post('config/show', {
+export function createGetAll (client: HTTPRPCClient): ConfigAPI['getAll'] {
+  return async function getAll (options = {}) {
+    const res = await client.post('config/show', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         ...options
@@ -17,6 +15,4 @@ export const createGetAll = configure(api => {
 
     return data
   }
-
-  return getAll
-})
+}

@@ -1,30 +1,28 @@
 /* eslint-env mocha */
 
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
-import { fixtures } from './utils/index.js'
-import { CID } from 'multiformats/cid'
+import { expect } from 'aegir/chai'
+import { importer, type ImportCandidate } from 'ipfs-unixfs-importer'
 import all from 'it-all'
 import drain from 'it-drain'
 import last from 'it-last'
 import map from 'it-map'
-import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from './utils/mocha.js'
-import testTimeout from './utils/test-timeout.js'
-import { importer } from 'ipfs-unixfs-importer'
-import blockstore from './utils/blockstore-adapter.js'
-import { extract } from 'it-tar'
 import { pipe } from 'it-pipe'
+import { extract, type TarEntryHeader } from 'it-tar'
 import toBuffer from 'it-to-buffer'
+import { CID } from 'multiformats/cid'
 import Pako from 'pako'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
+import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
+import blockstore from './utils/blockstore-adapter.js'
+import { fixtures } from './utils/index.js'
+import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
+import testTimeout from './utils/test-timeout.js'
+import type { KuboRPCFactory } from './index.js'
+import type { KuboRPCClient } from '../../../src/index.js'
 
-/**
- * @param {string} name
- * @param {string} [path]
- */
-const content = (name, path) => {
-  if (!path) {
+const content = (name: string, path?: string): ImportCandidate => {
+  if (path == null) {
     path = name
   }
 
@@ -34,33 +32,18 @@ const content = (name, path) => {
   }
 }
 
-/**
- * @param {string} name
- */
-const emptyDir = (name) => ({ path: `test-folder/${name}` })
+const emptyDir = (name: string): ImportCandidate => ({ path: `test-folder/${name}` })
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testGet (factory, options) {
+export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.get', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
-    /**
-     * @param {AsyncIterable<Uint8Array>} source
-     */
-    async function * gzipped (source) {
+    async function * gzipped (source: AsyncIterable<Uint8Array>): AsyncGenerator<Uint8Array> {
       const inflator = new Pako.Inflate()
 
       for await (const buf of source) {
@@ -69,7 +52,7 @@ export function testGet (factory, options) {
 
       inflator.push(new Uint8Array(0), true)
 
-      if (inflator.err) {
+      if (inflator.err > 0) {
         throw new Error(`Error ungzipping - message: "${inflator.msg}" code: ${inflator.err}`)
       }
 
@@ -80,10 +63,7 @@ export function testGet (factory, options) {
       }
     }
 
-    /**
-     * @param {AsyncIterable<Uint8Array>} source
-     */
-    async function * tarballed (source) {
+    async function * tarballed (source: AsyncIterable<Uint8Array>): AsyncGenerator<{ body: Uint8Array, header: TarEntryHeader }> {
       yield * pipe(
         source,
         extract(),
@@ -98,11 +78,7 @@ export function testGet (factory, options) {
       )
     }
 
-    /**
-     * @template T
-     * @param {AsyncIterable<T>} source
-     */
-    async function collect (source) {
+    async function collect <T> (source: AsyncIterable<T>): Promise<T[]> {
       return all(source)
     }
 
@@ -113,13 +89,17 @@ export function testGet (factory, options) {
       await ipfs.add({ content: fixtures.bigFile.data })
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     describe('files', function () {
       it('should respect timeout option when getting files', async function () {
-        await testTimeout(() => drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
-          timeout: 1
-        })))
+        await testTimeout(async () => {
+          await drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
+            timeout: 1
+          }))
+        })
       })
 
       it('should get with a base58 encoded multihash', async () => {
@@ -135,7 +115,10 @@ export function testGet (factory, options) {
 
       it('should get a file added as CIDv0 with a CIDv1', async () => {
         const input = uint8ArrayFromString(`TEST${Math.random()}`)
-        const res = await all(importer({ content: input }, blockstore(ipfs)))
+        const res = await all(importer([{ content: input }], blockstore(ipfs), {
+          cidVersion: 0,
+          rawLeaves: false
+        }))
 
         const cidv0 = res[0].cid
         expect(cidv0.version).to.equal(0)
@@ -154,7 +137,7 @@ export function testGet (factory, options) {
 
       it('should get a file added as CIDv1 with a CIDv0', async () => {
         const input = uint8ArrayFromString(`TEST${Math.random()}`)
-        const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: false }))
+        const res = await all(importer([{ content: input }], blockstore(ipfs), { cidVersion: 1, rawLeaves: false }))
 
         const cidv1 = res[0].cid
         expect(cidv1.version).to.equal(1)
@@ -173,7 +156,7 @@ export function testGet (factory, options) {
 
       it('should get a file added as CIDv1 with rawLeaves', async () => {
         const input = uint8ArrayFromString(`TEST${Math.random()}`)
-        const res = await all(importer({ content: input }, blockstore(ipfs), { cidVersion: 1, rawLeaves: true }))
+        const res = await all(importer([{ content: input }], blockstore(ipfs), { cidVersion: 1, rawLeaves: true }))
 
         const cidv1 = res[0].cid
         expect(cidv1.version).to.equal(1)
@@ -207,7 +190,7 @@ export function testGet (factory, options) {
 
         const fileAdded = await last(importer([file], blockstore(ipfs)))
 
-        if (!fileAdded) {
+        if (fileAdded == null) {
           throw new Error('No file was added')
         }
 
@@ -216,7 +199,7 @@ export function testGet (factory, options) {
         const output = await pipe(
           ipfs.get(`/ipfs/${fileAdded.cid}/testfile.txt`),
           tarballed,
-          collect
+          async (source) => collect(source)
         )
         expect(output).to.be.length(1)
 
@@ -230,7 +213,7 @@ export function testGet (factory, options) {
             compressionLevel: 5
           }),
           gzipped,
-          collect
+          async (source) => collect(source)
         )
         expect(uint8ArrayConcat(output)).to.equalBytes(fixtures.smallFile.data)
       })
@@ -252,6 +235,7 @@ export function testGet (factory, options) {
       it('should compress a file with invalid compression level', async () => {
         await expect(drain(ipfs.get(fixtures.smallFile.cid, {
           compress: true,
+          // @ts-expect-error invalid valu
           compressionLevel: 10
         }))).to.eventually.be.rejected()
       })
@@ -303,12 +287,17 @@ export function testGet (factory, options) {
         ]
 
         const root = await last(ipfs.addAll(dirs))
+
+        if (root == null) {
+          throw new Error('Not enough output')
+        }
+
         const { cid } = root
         expect(`${cid}`).to.equal(fixtures.directory.cid.toString())
         const output = await pipe(
           ipfs.get(cid),
           tarballed,
-          collect
+          async (source) => collect(source)
         )
 
         // Check paths
@@ -339,19 +328,22 @@ export function testGet (factory, options) {
       })
 
       it('should get a nested directory', async function () {
-        const dirs = [
+        const dirs: ImportCandidate[] = [
           content('pp.txt', 'pp.txt'),
           content('holmes.txt', 'foo/holmes.txt'),
           content('jungle.txt', 'foo/bar/jungle.txt')
         ]
 
-        const res = await all(importer(dirs, blockstore(ipfs)))
+        const res = await all(importer(dirs, blockstore(ipfs), {
+          cidVersion: 0,
+          rawLeaves: false
+        }))
         const { cid } = res[res.length - 1]
         expect(`${cid}`).to.equal('QmVMXXo3c2bDPH9ayy2VKoXpykfYJHwAcU5YCJjPf7jg3g')
         const output = await pipe(
           ipfs.get(cid),
           tarballed,
-          collect
+          async (source) => collect(source)
         )
 
         // Check paths
@@ -377,7 +369,10 @@ export function testGet (factory, options) {
           content('files/hello.txt')
         ]
 
-        const res = await all(importer(dirs, blockstore(ipfs)))
+        const res = await all(importer(dirs, blockstore(ipfs), {
+          cidVersion: 0,
+          rawLeaves: false
+        }))
         const { cid } = res[res.length - 1]
         const output = await pipe(
           ipfs.get(cid, {
@@ -387,7 +382,7 @@ export function testGet (factory, options) {
           }),
           gzipped,
           tarballed,
-          collect
+          async (source) => collect(source)
         )
 
         // Check paths

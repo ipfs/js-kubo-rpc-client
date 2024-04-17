@@ -1,12 +1,10 @@
-import { configure } from '../lib/configure.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
+import type { NameAPI } from './index.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
-export const createResolve = configure(api => {
-  /**
-   * @type {import('../types').NameAPI["resolve"]}
-   */
-  async function * resolve (path, options = {}) {
-    const res = await api.post('name/resolve', {
+export function createResolve (client: HTTPRPCClient): NameAPI['resolve'] {
+  return async function * resolve (path, options = {}) {
+    const res = await client.post('name/resolve', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         arg: path,
@@ -20,5 +18,4 @@ export const createResolve = configure(api => {
       yield result.Path
     }
   }
-  return resolve
-})
+}

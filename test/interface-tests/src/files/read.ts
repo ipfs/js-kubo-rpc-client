@@ -1,22 +1,16 @@
 /* eslint-env mocha */
 
-import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
-import drain from 'it-drain'
-import all from 'it-all'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { randomBytes } from 'iso-random-stream'
+import all from 'it-all'
+import drain from 'it-drain'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
+import { createShardedDirectory } from '../utils/create-sharded-directory.js'
+import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCFactory } from '../index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRead (factory, options) {
+export function testRead (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
   const smallFile = randomBytes(13)
@@ -24,12 +18,13 @@ export function testRead (factory, options) {
   describe('.files.read', function () {
     this.timeout(120 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
+    let ipfs: KuboRPCClient
 
     before(async function () { ipfs = (await factory.spawn()).api })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     it('reads a small file', async () => {
       const filePath = '/small-file.txt'
@@ -106,8 +101,7 @@ export function testRead (factory, options) {
     })
 
     describe('with sharding', () => {
-      /** @type {import('ipfs-core-types').IPFS} */
-      let ipfs
+      let ipfs: KuboRPCClient
 
       before(async function () {
         const ipfsd = await factory.spawn({

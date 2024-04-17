@@ -1,36 +1,27 @@
 /* eslint-env mocha */
 
+import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from './utils/mocha.js'
 import loadFixture from 'aegir/fixtures'
-import { CID } from 'multiformats/cid'
+import { UnixFS } from 'ipfs-unixfs'
 import all from 'it-all'
 import drain from 'it-drain'
+import { CID } from 'multiformats/cid'
+import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
 import testTimeout from './utils/test-timeout.js'
-import * as dagPB from '@ipld/dag-pb'
-import { UnixFS } from 'ipfs-unixfs'
+import type { KuboRPCFactory } from './index.js'
+import type { KuboRPCClient } from '../../../src/index.js'
 
-/**
- * @typedef {import('ipfsd-ctl').Factory} Factory
- */
-
-/**
- * @param {Factory} factory
- * @param {object} options
- */
-export function testRefs (factory, options) {
+export function testRefs (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
   describe('.refs', function () {
     this.timeout(60 * 1000)
 
-    /** @type {import('ipfs-core-types').IPFS} */
-    let ipfs
-    /** @type {CID} */
-    let pbRootCid
-    /** @type {CID} */
-    let dagRootCid
+    let ipfs: KuboRPCClient
+    let pbRootCid: CID
+    let dagRootCid: CID
 
     before(async function () {
       ipfs = (await factory.spawn()).api
@@ -44,26 +35,27 @@ export function testRefs (factory, options) {
       dagRootCid = await loadDagContent(ipfs, getMockObjects())
     })
 
-    after(async function () { return await factory.clean() })
+    after(async function () {
+      await factory.clean()
+    })
 
     for (const [name, options] of Object.entries(getRefsTests())) {
       const { path, params, expected, expectError, expectTimeout } = options
       // eslint-disable-next-line no-loop-func
       it(name, async function () {
-        // @ts-ignore this is mocha
         this.timeout(20 * 1000)
 
         // Call out to IPFS
-        const p = (path ? path(pbRootCid) : pbRootCid)
+        const p = (path != null ? path(pbRootCid) : pbRootCid)
 
-        if (expectTimeout) {
+        if (expectTimeout != null) {
           return expect(all(ipfs.refs(p, params))).to.eventually.be.rejected
             .and.be.an.instanceOf(Error)
             .and.to.have.property('name')
             .to.eql('TimeoutError')
         }
 
-        if (expectError) {
+        if (expectError != null) {
           return expect(all(ipfs.refs(p, params))).to.be.eventually.rejected.and.be.an.instanceOf(Error)
         }
 
@@ -74,14 +66,15 @@ export function testRefs (factory, options) {
       })
     }
 
-    it('should respect timeout option when listing refs', () => {
-      return testTimeout(() => drain(ipfs.refs('/ipfs/QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1/foo/bar/baz.txt', {
-        timeout: 1
-      })))
+    it('should respect timeout option when listing refs', async () => {
+      return testTimeout(async () => {
+        await drain(ipfs.refs('/ipfs/QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1/foo/bar/baz.txt', {
+          timeout: 1
+        }))
+      })
     })
 
     it('should get refs with cbor links', async function () {
-      // @ts-ignore this is mocha
       this.timeout(20 * 1000)
 
       // Call out to IPFS
@@ -105,7 +98,7 @@ export function testRefs (factory, options) {
   })
 }
 
-function getMockObjects () {
+function getMockObjects (): any {
   return {
     animals: {
       land: {
@@ -126,10 +119,22 @@ function getMockObjects () {
   }
 }
 
-/**
- * @returns {Record<string, { path?: (cid: CID) => string | string[], params: { edges?: boolean, format?: string, recursive?: boolean, unique?: boolean, maxDepth?: number, timeout?: number }, expected: string[], expectError?: boolean, expectTimeout?: boolean }>}
- */
-function getRefsTests () {
+interface RefTest {
+  path?(cid: CID): string | string[]
+  params: {
+    edges?: boolean
+    format?: string
+    recursive?: boolean
+    unique?: boolean
+    maxDepth?: number
+    timeout?: number
+  }
+  expected: string[]
+  expectError?: boolean
+  expectTimeout?: boolean
+}
+
+function getRefsTests (): Record<string, RefTest> {
   return {
     'should print added files': {
       params: {},
@@ -327,22 +332,14 @@ function getRefsTests () {
   }
 }
 
-/**
- * @typedef {object} Store
- * @property {(data: Uint8Array) => Promise<CID>} putData
- * @property {(links: { name: string, cid: string }[]) => Promise<CID>} putLinks
- */
+interface Store {
+  putData(data: Uint8Array): Promise<CID>
+  putLinks(links: Array<{ name: string, cid: string }>): Promise<CID>
+}
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {any} node
- */
-function loadPbContent (ipfs, node) {
-  /**
-   * @type {Store}
-   */
-  const store = {
-    putData: (data) => {
+async function loadPbContent (ipfs: KuboRPCClient, node: any): Promise<CID> {
+  const store: Store = {
+    putData: async (data) => {
       return ipfs.block.put(
         dagPB.encode({
           Data: data,
@@ -350,7 +347,7 @@ function loadPbContent (ipfs, node) {
         })
       )
     },
-    putLinks: (links) => {
+    putLinks: async (links) => {
       return ipfs.block.put(dagPB.encode({
         Links: links.map(({ name, cid }) => {
           return {
@@ -365,16 +362,9 @@ function loadPbContent (ipfs, node) {
   return loadContent(ipfs, store, node)
 }
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {any} node
- */
-function loadDagContent (ipfs, node) {
-  /**
-   * @type {Store}
-   */
-  const store = {
-    putData: (data) => {
+async function loadDagContent (ipfs: KuboRPCClient, node: any): Promise<CID> {
+  const store: Store = {
+    putData: async (data) => {
       const inner = new UnixFS({ type: 'file', data })
       const serialized = dagPB.encode({
         Data: inner.marshal(),
@@ -382,9 +372,8 @@ function loadDagContent (ipfs, node) {
       })
       return ipfs.block.put(serialized)
     },
-    putLinks: (links) => {
-      /** @type {Record<string, CID>} */
-      const obj = {}
+    putLinks: async (links) => {
+      const obj: Record<string, CID> = {}
       for (const { name, cid } of links) {
         obj[name] = CID.parse(cid)
       }
@@ -394,13 +383,7 @@ function loadDagContent (ipfs, node) {
   return loadContent(ipfs, store, node)
 }
 
-/**
- * @param {import('ipfs-core-types').IPFS} ipfs
- * @param {Store} store
- * @param {any} node
- * @returns {Promise<CID>}
- */
-async function loadContent (ipfs, store, node) {
+async function loadContent (ipfs: KuboRPCClient, store: Store, node: any): Promise<CID> {
   if (node instanceof Uint8Array) {
     return store.putData(node)
   }
@@ -419,7 +402,7 @@ async function loadContent (ipfs, store, node) {
     const res = await all((async function * () {
       for (const [name, child] of sorted) {
         const cid = await loadContent(ipfs, store, child)
-        yield { name, cid: cid && cid.toString() }
+        yield { name, cid: cid?.toString() }
       }
     })())
 
