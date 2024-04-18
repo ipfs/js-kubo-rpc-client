@@ -2,5 +2,8 @@
   "out": "docs",
   "preserveWatchOutput": true,
   "logLevel": "Verbose",
-  "excludeExternals": true
+  "excludeExternals": true,
+  "entryPoints": [
+    "./src/index.ts"
+  ]
 }
