@@ -160,7 +160,7 @@
     "lint": "aegir lint",
     "lint:fix": "aegir lint --fix",
     "clean": "aegir clean",
-    "dep-check": "aegir dep-check -i electron-fetch",
+    "dep-check": "aegir dep-check -i electron-fetch buffer",
     "release": "aegir release"
   },
   "dependencies": {
@@ -205,8 +205,10 @@
     "@types/pako": "^2.0.3",
     "@types/readable-stream": "^4.0.11",
     "@types/sinon": "^17.0.3",
+    "@web-std/file": "^3.0.3",
     "aegir": "^42.2.5",
     "blockstore-core": "^4.4.1",
+    "buffer": "^6.0.3",
     "delay": "^6.0.0",
     "did-jwt": "^8.0.4",
     "interface-blockstore": "^5.2.10",
