@@ -11,6 +11,10 @@
   "bugs": {
     "url": "https://github.com/ipfs/js-kubo-rpc-client/issues"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "keywords": [
     "http",
     "http-client",
@@ -19,28 +23,8 @@
     "rpc",
     "rpc-client"
   ],
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
-  },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "*",
-        "dist/*",
-        "dist/src/*",
-        "dist/src/*/index"
-      ],
-      "src/*": [
-        "*",
-        "dist/*",
-        "dist/src/*",
-        "dist/src/*/index"
-      ]
-    }
-  },
   "files": [
     "src",
     "dist",
@@ -50,13 +34,13 @@
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./src/index.js",
-      "require": "./dist/src/index.js"
+      "import": "./dist/src/index.js"
     }
   },
   "eslintConfig": {
     "extends": "ipfs",
     "parserOptions": {
+      "project": true,
       "sourceType": "module"
     },
     "ignorePatterns": [
@@ -151,86 +135,107 @@
   "scripts": {
     "build": "aegir build",
     "test": "aegir test",
-    "typedoc": "typedoc src/index.js",
-    "test:node": "aegir test -t node --cov --bail=false",
+    "docs": "aegir docs",
+    "test:node": "aegir test -t node --cov",
     "test:chrome": "aegir test -t browser --cov",
     "test:chrome-webworker": "aegir test -t webworker",
     "test:firefox": "aegir test -t browser -- --browser firefox",
     "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
     "lint": "aegir lint",
     "lint:fix": "aegir lint --fix",
-    "check:push": "npm run dep-check && npm run lint && npm run build",
-    "check:push:deep": "npm run check:push && npm run test",
     "clean": "aegir clean",
-    "dep-check": "aegir dep-check",
+    "dep-check": "aegir dep-check -i electron-fetch buffer",
     "release": "aegir release"
   },
   "dependencies": {
     "@ipld/dag-cbor": "^9.0.0",
     "@ipld/dag-json": "^10.0.0",
     "@ipld/dag-pb": "^4.0.0",
-    "@libp2p/crypto": "^1.0.11",
-    "@libp2p/logger": "^2.0.5",
-    "@libp2p/peer-id": "^2.0.0",
-    "@multiformats/multiaddr": "^12.1.10",
-    "any-signal": "^3.0.1",
-    "dag-jose": "^4.0.0",
+    "@libp2p/interface": "^1.2.0",
+    "@libp2p/logger": "^4.0.10",
+    "@libp2p/peer-id": "^4.0.10",
+    "@multiformats/multiaddr": "^12.2.1",
+    "@multiformats/multiaddr-to-uri": "^10.0.1",
+    "any-signal": "^4.1.1",
+    "blob-to-it": "^2.0.5",
+    "browser-readablestream-to-it": "^2.0.5",
+    "dag-jose": "^5.0.0",
+    "electron-fetch": "^1.9.1",
     "err-code": "^3.0.1",
-    "ipfs-core-utils": "^0.18.0",
-    "ipfs-utils": "^9.0.7",
-    "it-first": "^2.0.0",
-    "it-last": "^2.0.0",
+    "ipfs-unixfs": "^11.1.4",
+    "iso-url": "^1.2.1",
+    "it-all": "^3.0.4",
+    "it-first": "^3.0.4",
+    "it-glob": "^2.0.6",
+    "it-last": "^3.0.4",
+    "it-map": "^3.0.5",
+    "it-peekable": "^3.0.3",
+    "it-to-stream": "^1.0.0",
     "merge-options": "^3.0.4",
-    "multiformats": "^11.0.0",
+    "multiformats": "^13.1.0",
+    "nanoid": "^5.0.7",
+    "native-fetch": "^4.0.2",
     "parse-duration": "^1.0.2",
-    "stream-to-it": "^0.2.4",
-    "uint8arrays": "^4.0.3"
+    "react-native-fetch-api": "^3.0.0",
+    "stream-to-it": "^1.0.1",
+    "uint8arrays": "^5.0.3",
+    "wherearewe": "^2.0.1"
   },
   "devDependencies": {
     "@ipld/car": "^5.0.3",
-    "@libp2p/interface-peer-id": "^2.0.0",
-    "@libp2p/interface-peer-info": "^1.0.2",
-    "@libp2p/interface-pubsub": "^3.0.0",
-    "@libp2p/interfaces": "^3.0.3",
-    "@libp2p/websockets": "^5.0.2",
-    "aegir": "^37.5.6",
-    "blockstore-core": "^3.0.0",
-    "delay": "^5.0.0",
-    "did-jwt": "^6.8.0",
-    "go-ipfs": "^0.17.0",
-    "ipfs-core-types": "^0.14.0",
-    "ipfs-unixfs": "^9.0.0",
-    "ipfs-unixfs-importer": "^12.0.0",
-    "ipfsd-ctl": "^12.2.2",
-    "ipns": "^5.0.1",
+    "@libp2p/crypto": "^4.0.6",
+    "@libp2p/peer-id-factory": "^4.0.10",
+    "@libp2p/websockets": "^8.0.19",
+    "@types/pako": "^2.0.3",
+    "@types/readable-stream": "^4.0.11",
+    "@types/sinon": "^17.0.3",
+    "@web-std/file": "^3.0.3",
+    "aegir": "^42.2.5",
+    "blockstore-core": "^4.4.1",
+    "buffer": "^6.0.3",
+    "delay": "^6.0.0",
+    "did-jwt": "^8.0.4",
+    "interface-blockstore": "^5.2.10",
+    "ipfs-unixfs-importer": "^15.2.5",
+    "ipfsd-ctl": "^13.0.0",
+    "ipns": "^9.1.0",
     "is-ipfs": "^8.0.1",
     "iso-random-stream": "^2.0.2",
-    "it-all": "^2.0.0",
     "it-buffer-stream": "^3.0.0",
-    "it-concat": "^3.0.1",
-    "it-drain": "^2.0.0",
-    "it-map": "^2.0.0",
-    "it-pipe": "^2.0.4",
-    "it-pushable": "^3.1.0",
+    "it-drain": "^3.0.5",
+    "it-pipe": "^3.0.1",
     "it-tar": "^6.0.0",
-    "it-to-buffer": "^3.0.0",
+    "it-to-buffer": "^4.0.5",
+    "kubo": "^0.28.0",
     "mock-ipfs-pinning-service": "^0.4.2",
-    "nanoid": "^4.0.0",
     "nock": "^13.2.9",
     "p-defer": "^4.0.0",
-    "p-map": "^5.5.0",
-    "p-retry": "^5.1.1",
-    "p-timeout": "^6.0.0",
+    "p-event": "^6.0.1",
+    "p-retry": "^6.2.0",
     "pako": "^2.0.4",
     "readable-stream": "^4.2.0",
-    "sinon": "^15.0.1",
-    "typedoc": "^0.23.24"
+    "sinon": "^17.0.1"
   },
   "browser": {
-    "ipfs-utils/src/files/glob-source": false,
-    "go-ipfs": false,
-    "ipfs-core-utils/src/files/normalise-input": "ipfs-core-utils/src/files/normalise-input/index.browser.js",
+    "kubo": false,
+    "./dist/src/lib/glob-source.js": false,
+    "./dist/src/lib/files/normalise-content.js": "./dist/src/lib/files/normalise-content.browser.js",
+    "./dist/src/lib/files/normalise-input-multiple.js": "./dist/src/lib/files/normalise-input-multiple.browser.js",
+    "./dist/src/lib/files/normalise-input-single.js": "./dist/src/lib/files/normalise-input-single.browser.js",
+    "./dist/src/lib/agent.js": "./dist/src/lib/agent.browser.js",
+    "./dist/src/lib/multipart-request.node.js": "./dist/src/lib/multipart-request.browser.js",
+    "./dist/src/lib/fetch.js": "./dist/src/lib/fetch.browser.js",
+    "./dist/src/lib/http/fetch.js": "./dist/src/lib/http/fetch.browser.js",
     "http": false,
-    "https": false
-  }
+    "node:http": false,
+    "https": false,
+    "node:https": false,
+    "path": false,
+    "node:path": false,
+    "fs": false,
+    "node:fs": false,
+    "fs/promises": false,
+    "node:fs/promises": false
+  },
+  "sideEffects": false
 }
