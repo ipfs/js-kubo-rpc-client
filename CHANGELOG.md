@@ -1,3 +1,19 @@
+## [4.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.4...v4.0.0) (2024-04-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* parts of the Kubo object and dht APIs have been removed, this project is now TypeScript
+
+### Features
+
+* convert to TypeScript and update Kubo ([#221](https://github.com/ipfs/js-kubo-rpc-client/issues/221)) ([9a623bd](https://github.com/ipfs/js-kubo-rpc-client/commit/9a623bd2bb1b425b0a2a2d39a5e140639a4248bd)), closes [#128](https://github.com/ipfs/js-kubo-rpc-client/issues/128)
+
+
+### Documentation
+
+* update docs config ([0f7cac2](https://github.com/ipfs/js-kubo-rpc-client/commit/0f7cac28072dc80068de93cc3d4c782e1774151c))
+
 ## [3.0.4](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.3...v3.0.4) (2024-02-29)
 
 
