@@ -1,4 +1,3 @@
-import { notImplemented } from '../lib/not-implemented.js'
 import { createGen } from './gen.js'
 import { createImport } from './import.js'
 import { createList } from './list.js'
@@ -98,23 +97,6 @@ export interface KeyAPI {
    *
    * @example
    * ```js
-   * const pem = await ipfs.key.export('self', 'password')
-   *
-   * console.log(pem)
-   * // -----BEGIN ENCRYPTED PRIVATE KEY-----
-   * // MIIFDTA/BgkqhkiG9w0BBQ0wMjAaBgkqhkiG9w0BBQwwDQQIpdO40RVyBwACAWQw
-   * // ...
-   * // YA==
-   * // -----END ENCRYPTED PRIVATE KEY-----
-   * ```
-   */
-  export(name: string, password: string, options?: HTTPRPCOptions): Promise<string>
-
-  /**
-   * Remove a key
-   *
-   * @example
-   * ```js
    * const key = await ipfs.key.import('clone', pem, 'password')
    *
    * console.log(key)
@@ -127,7 +109,6 @@ export interface KeyAPI {
 
 export function createKey (client: HTTPRPCClient): KeyAPI {
   return {
-    export: notImplemented(),
     gen: createGen(client),
     import: createImport(client),
     list: createList(client),

@@ -1,4 +1,3 @@
-import { notImplemented } from '../lib/not-implemented.js'
 import { createAdd } from './add.js'
 import { createList } from './list.js'
 import { createRm } from './rm.js'
@@ -21,19 +20,6 @@ export interface BootstrapAPI {
    * ```
    */
   add(addr: Multiaddr, options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
-
-  /**
-   * Reset the bootstrap list to contain only the default bootstrap nodes
-   *
-   * @example
-   * ```js
-   * const res = await ipfs.bootstrap.list()
-   * console.log(res.Peers)
-   * // Logs:
-   * // [address1, address2, ...]
-   * ```
-   */
-  reset(options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
 
   /**
    * List all peer addresses in the bootstrap list
@@ -60,27 +46,12 @@ export interface BootstrapAPI {
    * ```
    */
   rm(addr: Multiaddr, options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
-
-  /**
-   * Remove all peer addresses from the bootstrap list
-   *
-   * @example
-   * ```js
-   * const res = await ipfs.bootstrap.clear()
-   * console.log(res.Peers)
-   * // Logs:
-   * // [address1, address2, ...]
-   * ```
-   */
-  clear(options?: HTTPRPCOptions): Promise<{ Peers: Multiaddr[] }>
 }
 
 export function createBootstrap (client: HTTPRPCClient): BootstrapAPI {
   return {
     add: createAdd(client),
     list: createList(client),
-    rm: createRm(client),
-    reset: notImplemented(),
-    clear: notImplemented()
+    rm: createRm(client)
   }
 }
