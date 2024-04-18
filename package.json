@@ -252,5 +252,6 @@
     "node:fs": false,
     "fs/promises": false,
     "node:fs/promises": false
-  }
+  },
+  "sideEffects": false
 }
