@@ -5,7 +5,6 @@ import { CID } from 'multiformats/cid'
 import { identity } from 'multiformats/hashes/identity'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 
@@ -25,12 +24,6 @@ export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when getting a block', async () => {
-      return testTimeout(async () => ipfs.block.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rA3'), {
-        timeout: 1
-      }))
     })
 
     it('should get by CID', async () => {

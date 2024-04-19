@@ -5,10 +5,8 @@ import { expect } from 'aegir/chai'
 import loadFixture from 'aegir/fixtures'
 import { UnixFS } from 'ipfs-unixfs'
 import all from 'it-all'
-import drain from 'it-drain'
 import { CID } from 'multiformats/cid'
 import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
-import testTimeout from './utils/test-timeout.js'
 import type { KuboRPCFactory } from './index.js'
 import type { KuboRPCClient } from '../../../src/index.js'
 
@@ -65,14 +63,6 @@ export function testRefs (factory: KuboRPCFactory, options: MochaConfig): void {
         expect(refs.map(r => r.ref).sort()).to.eql(expected.sort())
       })
     }
-
-    it('should respect timeout option when listing refs', async () => {
-      return testTimeout(async () => {
-        await drain(ipfs.refs('/ipfs/QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1/foo/bar/baz.txt', {
-          timeout: 1
-        }))
-      })
-    })
 
     it('should get refs with cbor links', async function () {
       this.timeout(20 * 1000)

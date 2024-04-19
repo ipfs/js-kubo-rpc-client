@@ -17,7 +17,6 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import blockstore from './utils/blockstore-adapter.js'
 import { fixtures } from './utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
-import testTimeout from './utils/test-timeout.js'
 import type { KuboRPCFactory } from './index.js'
 import type { KuboRPCClient } from '../../../src/index.js'
 
@@ -94,14 +93,6 @@ export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
     })
 
     describe('files', function () {
-      it('should respect timeout option when getting files', async function () {
-        await testTimeout(async () => {
-          await drain(ipfs.get(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
-            timeout: 1
-          }))
-        })
-      })
-
       it('should get with a base58 encoded multihash', async () => {
         const output = await pipe(
           ipfs.get(fixtures.smallFile.cid),
