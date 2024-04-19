@@ -4,8 +4,8 @@ import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { Factory, KuboNode } from 'ipfsd-ctl'
 import type { PeerId } from '@libp2p/interface'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testCancel (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)

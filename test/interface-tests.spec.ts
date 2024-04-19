@@ -235,7 +235,7 @@ function executeTests (commonFactory: Factory<KuboNode>): void {
   tests.pubsub(factory({
     type: 'kubo',
     start: {
-      args: ['--enable-pubsub-experiment']
+      pubsub: true
     }
   }), {
     skip: isWindows

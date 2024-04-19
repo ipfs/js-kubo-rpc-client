@@ -54,7 +54,7 @@ export function testSubscribe (factory: Factory<KuboNode>, options: MochaConfig)
       daemon1 = await factory.spawn({
         test: true,
         start: {
-          args: ['--enable-pubsub-experiment']
+          pubsub: true
         }
       })
       ipfs1 = daemon1.api
@@ -62,7 +62,7 @@ export function testSubscribe (factory: Factory<KuboNode>, options: MochaConfig)
       daemon2 = await factory.spawn({
         test: true,
         start: {
-          args: ['--enable-pubsub-experiment']
+          pubsub: true
         }
       })
       ipfs2 = daemon2.api

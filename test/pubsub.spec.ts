@@ -20,7 +20,7 @@ describe('.pubsub', function () {
 
       ctl = await f.spawn({
         start: {
-          args: ['--enable-pubsub-experiment']
+          pubsub: true
         }
       })
 
