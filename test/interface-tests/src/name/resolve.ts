@@ -9,10 +9,10 @@ import * as Digest from 'multiformats/hashes/digest'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
 import type { PeerId } from '@libp2p/interface'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testResolve (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testResolve (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -22,7 +22,7 @@ export function testResolve (factory: KuboRPCFactory, options: MochaConfig): voi
 
     before(async function () {
       ipfs = (await factory.spawn({
-        ipfsOptions: {
+        init: {
           config: {
             Routing: {
               Type: 'none'

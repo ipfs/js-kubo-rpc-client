@@ -4,10 +4,10 @@ import delay from 'delay'
 import { nanoid } from 'nanoid'
 import pRetry from 'p-retry'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import type { KuboController } from '..'
-import type { KuboRPCClient } from '../../../../src'
-import type { PubSubSubscribeOptions } from '../../../../src/pubsub'
+import type { KuboRPCClient } from '../../../../src/index.js'
+import type { PubSubSubscribeOptions } from '../../../../src/pubsub/index.js'
 import type { Message } from '@libp2p/interface'
+import type { KuboNode } from 'ipfsd-ctl'
 import type { Options as RetryOptions } from 'p-retry'
 
 const log = logger('js-kubo-rpc-client:pubsub:utils:test')
@@ -42,14 +42,17 @@ const retryOptions: RetryOptions = {
 /**
  * This function does not wait properly when waiting for itself as a peer
  */
-export const waitForTopicPeer = async (topic: string, peer: KuboController['peer'], daemon: KuboController, rOpts: RetryOptions = {}): Promise<void> => {
+export const waitForTopicPeer = async (topic: string, peer: KuboNode, daemon: KuboNode, rOpts: RetryOptions = {}): Promise<void> => {
+  const peerId = (await peer.api.id()).id.toString()
+  const daemonDeerId = (await daemon.api.id()).id.toString()
+
   return pRetry(async () => {
-    log(`waitForTopicPeer(${topic}): waiting for topic ${topic} from peer ${peer.id.toString()} on ${daemon.peer.id.toString()}`)
+    log(`waitForTopicPeer(${topic}): waiting for topic ${topic} from peer ${peerId} on ${daemonDeerId}`)
     const peers = await daemon.api.pubsub.peers(topic)
     const peerStrings = peers.map(p => p.toString())
     log(`waitForTopicPeer(${topic}): peers(${peers.length}): ${peerStrings}`)
-    if (!peerStrings.includes(peer.id.toString())) {
-      throw new Error(`Could not find peer ${peer.id}`)
+    if (!peerStrings.includes(peerId)) {
+      throw new Error(`Could not find peer ${peerId}`)
     } else {
       log(`waitForTopicPeer(${topic}): Peer found`)
     }
@@ -64,8 +67,8 @@ export function getTopic (): string {
 }
 
 interface SubscriptionTestObjectArgs {
-  subscriber: KuboController
-  publisher: KuboController
+  subscriber: KuboNode
+  publisher: KuboNode
   topic: string
   timeout: number
   options?: PubSubSubscribeOptions
@@ -96,15 +99,16 @@ interface SubscriptionTestObject {
 }
 
 export async function getSubscriptionTestObject ({ subscriber, subscriptionListener, publisher, topic, options, timeout }: SubscriptionTestObjectArgs): Promise<SubscriptionTestObject> {
+  const subscriberId = await subscriber.api.id()
   const allMessages: Message[] = []
   timeout = timeout ?? 10000
-  log(`${topic}: ${subscriber.peer.id.toString()} is subscribing`)
+  log(`${topic}: ${subscriberId.id} is subscribing`)
   const subscriptionHandler = (msg: Message): void => {
     // log(`${topic}: received message`)
     if (msg.type !== 'signed') {
       throw new Error('Message was unsigned')
     }
-    log(`${topic}: ${subscriber.peer.id.toString()} message content: '${uint8ArrayToString(msg.data)}'`)
+    log(`${topic}: ${subscriberId.id} message content: '${uint8ArrayToString(msg.data)}'`)
     allMessages.push(msg)
 
     void subscriptionListener?.(msg)
@@ -136,7 +140,7 @@ export async function getSubscriptionTestObject ({ subscriber, subscriptionListe
         await publisher.api.pubsub.publish(topic, data)
         log(`${topic}: message published.`)
       } catch (err) {
-        log(`${topic}: Error publishing message from ${publisher.peer.id.toString()}`, err)
+        log(`${topic}: Error publishing message from ${(await publisher.api.id()).id}`, err)
       }
     },
     unsubscribe: async () => {

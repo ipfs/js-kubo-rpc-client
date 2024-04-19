@@ -3,18 +3,14 @@
 import { expect } from 'aegir/chai'
 import { ipfsPath } from 'is-ipfs'
 import all from 'it-all'
-import merge from 'merge-options'
 import { base64url } from 'multiformats/bases/base64'
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { isWebWorker } from 'wherearewe'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testResolve (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testResolve (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -25,14 +21,14 @@ export function testResolve (factory: KuboRPCFactory, options: MochaConfig): voi
 
     before(async function () {
       ipfs = (await factory.spawn({
-        type: 'go',
-        ipfsOptions: merge(ipfsOptions, {
+        type: 'kubo',
+        init: {
           config: {
             Routing: {
               Type: 'none'
             }
           }
-        })
+        }
       })).api
       ipfsId = await ipfs.id()
     })
@@ -99,10 +95,9 @@ export function testResolve (factory: KuboRPCFactory, options: MochaConfig): voi
     // TODO: fails on recent kubo
     it.skip('should resolve IPNS link recursively by default', async function () {
       this.timeout(20 * 1000)
-      // webworkers are not dialable because webrtc is not available
       const node = (await factory.spawn({
-        type: isWebWorker ? 'go' : undefined,
-        ipfsOptions: {
+        type: 'kubo',
+        init: {
           config: {
             Routing: {
               Type: 'none'
@@ -125,10 +120,9 @@ export function testResolve (factory: KuboRPCFactory, options: MochaConfig): voi
     // TODO: fails on recent kubo
     it.skip('should resolve IPNS link non-recursively if recursive==false', async function () {
       this.timeout(20 * 1000)
-      // webworkers are not dialable because webrtc is not available
       const node = (await factory.spawn({
-        type: isWebWorker ? 'go' : undefined,
-        ipfsOptions: {
+        type: 'kubo',
+        init: {
           config: {
             Routing: {
               Type: 'none'

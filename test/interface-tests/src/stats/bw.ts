@@ -6,9 +6,9 @@ import last from 'it-last'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { expectIsBandwidth } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testBw (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testBw (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

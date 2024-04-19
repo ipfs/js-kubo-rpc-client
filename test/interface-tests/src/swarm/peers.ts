@@ -4,15 +4,12 @@ import { peerIdFromString } from '@libp2p/peer-id'
 import { isMultiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
 import delay from 'delay'
-import { isBrowser, isWebWorker } from 'wherearewe'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { Config } from '../../../../src/config/index.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testPeers (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -24,13 +21,10 @@ export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void 
     let ipfsBId: IDResult
 
     before(async function () {
-      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
-      ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
+      ipfsA = (await factory.spawn()).api
+      ipfsB = (await factory.spawn()).api
       ipfsBId = await ipfsB.id()
       await ipfsA.swarm.connect(ipfsBId.addresses[0])
-      /* TODO: Seen if we still need this after this is fixed
-         https://github.com/ipfs/js-ipfs/issues/2601 gets resolved */
-      // await delay(60 * 1000) // wait for open streams in the connection available
     })
 
     after(async function () {
@@ -99,8 +93,8 @@ export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void 
     }
 
     it('should list peers only once', async () => {
-      const nodeA = (await factory.spawn({ type: 'go', ipfsOptions })).api
-      const nodeB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
+      const nodeA = (await factory.spawn()).api
+      const nodeB = (await factory.spawn()).api
       const nodeBId = await nodeB.id()
       await nodeA.swarm.connect(nodeBId.addresses[0])
       await delay(1000)
@@ -111,28 +105,24 @@ export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void 
     })
 
     it('should list peers only once even if they have multiple addresses', async () => {
-      // TODO: Change to port 0, needs: https://github.com/ipfs/interface-ipfs-core/issues/152
-      const config = getConfig(isBrowser && factory.opts.type !== 'go'
-        ? [
-            `${process.env.SIGNALA_SERVER}`,
-            `${process.env.SIGNALB_SERVER}`
-          ]
-        : [
-            '/ip4/127.0.0.1/tcp/26545/ws',
-            '/ip4/127.0.0.1/tcp/26546/ws'
-          ])
+      const config = getConfig([
+        '/ip4/127.0.0.1/tcp/0/ws',
+        '/ip4/127.0.0.1/tcp/0/ws'
+      ])
 
       const nodeA = (await factory.spawn({
         // browser nodes have webrtc-star addresses which can't be dialled by go so make the other
         // peer a js-ipfs node to get a tcp address that can be dialled. Also, webworkers are not
         // diable so don't use a in-proc node for webworkers
-        type: 'go',
-        ipfsOptions
+        type: 'kubo',
+        init: {
+          config
+        }
       })).api
       const nodeAId = await nodeA.id()
       const nodeB = (await factory.spawn({
-        type: isWebWorker ? 'go' : undefined,
-        ipfsOptions: {
+        type: 'kubo',
+        init: {
           config
         }
       })).api

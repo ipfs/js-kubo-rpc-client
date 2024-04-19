@@ -4,8 +4,8 @@ import { expect } from 'aegir/chai'
 import defer from 'p-defer'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { factory } from './utils/factory.js'
-import type { KuboController } from './interface-tests/src/index.js'
 import type { KuboRPCClient } from '../src/index.js'
+import type { KuboNode } from 'ipfsd-ctl'
 
 const f = factory()
 
@@ -13,7 +13,7 @@ describe('.pubsub', function () {
   this.timeout(20 * 1000)
   describe('.subscribe', function () {
     let ipfs: KuboRPCClient
-    let ctl: KuboController
+    let ctl: KuboNode
 
     beforeEach(async function () {
       this.timeout(30 * 1000) // slow CI

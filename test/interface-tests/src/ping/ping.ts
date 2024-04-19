@@ -2,15 +2,12 @@
 
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { isWebWorker } from 'wherearewe'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { expectIsPingResponse, isPong } from './utils.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testPing (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testPing (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -22,9 +19,8 @@ export function testPing (factory: KuboRPCFactory, options: MochaConfig): void {
     let nodeBId: IDResult
 
     before(async function () {
-      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
-      // webworkers are not dialable because webrtc is not available
-      ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
+      ipfsA = (await factory.spawn()).api
+      ipfsB = (await factory.spawn()).api
       nodeBId = await ipfsB.id()
       await ipfsA.swarm.connect(nodeBId.addresses[0])
     })

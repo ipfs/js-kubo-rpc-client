@@ -14,21 +14,20 @@ import { isNode } from 'wherearewe'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import waitFor from '../utils/wait-for.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
 import type { Message } from '@libp2p/interface'
+import type { Factory, KuboNode, KuboOptions } from 'ipfsd-ctl'
 
 const namespace = '/record/'
 const ipfsRef = '/ipfs/QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU'
 
-const daemonsOptions = {
-  ipfsOptions: {
-    EXPERIMENTAL: {
-      ipnsPubsub: true
-    }
+const daemonsOptions: KuboOptions = {
+  type: 'kubo',
+  start: {
+    ipnsPubsub: true
   }
 }
 
-export function testPubsub (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

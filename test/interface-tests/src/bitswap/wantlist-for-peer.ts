@@ -1,15 +1,12 @@
 /* eslint-env mocha */
 
 import { CID } from 'multiformats/cid'
-import { isWebWorker } from 'wherearewe'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { waitForWantlistKey } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testWantlistForPeer (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testWantlistForPeer (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -21,9 +18,8 @@ export function testWantlistForPeer (factory: KuboRPCFactory, options: MochaConf
     const key = 'QmUBdnXXPyoDFXj3Hj39dNJ5VkN3QFRskXxcGaYFBB8CNR'
 
     before(async function () {
-      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
-      // webworkers are not dialable because webrtc is not available
-      ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
+      ipfsA = (await factory.spawn()).api
+      ipfsB = (await factory.spawn()).api
       // Add key to the wantlist for ipfsB
       ipfsB.block.get(CID.parse(key)).catch(() => { /* is ok, expected on teardown */ })
 

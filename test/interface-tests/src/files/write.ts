@@ -15,7 +15,7 @@ import isShardAtPath from '../utils/is-shard-at-path.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 interface WriteTestArg {
   type: string
@@ -24,7 +24,7 @@ interface WriteTestArg {
   contentSize: number
 }
 
-export function testWrite (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testWrite (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
   const smallFile: Uint8Array = randomBytes(13)
@@ -489,11 +489,7 @@ export function testWrite (factory: KuboRPCFactory, options: MochaConfig): void 
 
       before(async function () {
         const ipfsd = await factory.spawn({
-          ipfsOptions: {
-            EXPERIMENTAL: {
-              // enable sharding for js
-              sharding: true
-            },
+          init: {
             config: {
               // enable sharding for go with automatic threshold dropped to the minimum so it shards everything
               Internal: {

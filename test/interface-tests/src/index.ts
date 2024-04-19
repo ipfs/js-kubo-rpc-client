@@ -25,8 +25,6 @@ import testRouting from './routing/index.js'
 import testStats from './stats/index.js'
 import testSwarm from './swarm/index.js'
 import { createSuite } from './utils/suite.js'
-import type { KuboRPCClient } from '../../../src/index.js'
-import type { Controller, ControllerOptions, Factory } from 'ipfsd-ctl'
 
 export const root = createSuite({
   add: testAdd,
@@ -57,11 +55,3 @@ export const miscellaneous = testMiscellaneous
 export const repo = testRepo
 export const routing = testRouting
 export const stats = testStats
-
-export interface KuboController extends Omit<Controller<'go'>, 'api'> {
-  api: KuboRPCClient
-}
-
-export interface KuboRPCFactory extends Omit<Factory, 'spawn'> {
-  spawn(options?: ControllerOptions): Promise<KuboController>
-}

@@ -9,9 +9,9 @@ import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { fixtures } from '../utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testStat (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
   const smallFile = randomBytes(13)
@@ -24,7 +24,7 @@ export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
 
     before(async function () {
       ipfs = (await factory.spawn({
-        args: factory.opts.type === 'go' ? [] : ['--enable-sharding-experiment']
+        args: factory.options.type === 'kubo' ? [] : ['--enable-sharding-experiment']
       })).api
       await ipfs.add(fixtures.smallFile.data)
     })
@@ -180,11 +180,7 @@ export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
 
       before(async function () {
         const ipfsd = await factory.spawn({
-          ipfsOptions: {
-            EXPERIMENTAL: {
-              // enable sharding for js
-              sharding: true
-            },
+          init: {
             config: {
               // enable sharding for go with automatic threshold dropped to the minimum so it shards everything
               Internal: {

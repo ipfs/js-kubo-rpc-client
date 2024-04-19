@@ -7,9 +7,9 @@ import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { fixtures, clearPins } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { PinAddInput } from '../../../../src/pin/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testAddAll (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testAddAll (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

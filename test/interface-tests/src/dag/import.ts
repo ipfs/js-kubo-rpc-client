@@ -12,7 +12,7 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { byCID } from '../utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 async function createBlocks (num: number): Promise<Array<{ bytes: Uint8Array, cid: CID }>> {
   const blocks = []
@@ -52,7 +52,7 @@ async function createCar (blocks: Array<{ cid: CID, bytes: Uint8Array }>): Promi
  * @param {Factory} factory
  * @param {object} options
  */
-export function testImport (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testImport (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
