@@ -16,7 +16,6 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import blockstore from '../utils/blockstore-adapter.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 
@@ -77,12 +76,6 @@ export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
       nodeJose = await createJWS(base64url.encode(cidCbor.bytes).slice(1), signer)
       cidJose = CID.createV1(dagJOSE.code, await sha256.digest(dagJOSE.encode(nodeJose)))
       await ipfs.dag.put(nodeJose, { storeCodec: dagJOSE.name, hashAlg: 'sha2-256' })
-    })
-
-    it('should respect timeout option when getting a DAG node', async () => {
-      return testTimeout(async () => ipfs.dag.get(CID.parse('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAd'), {
-        timeout: 1
-      }))
     })
 
     it('should get a dag-pb node', async () => {

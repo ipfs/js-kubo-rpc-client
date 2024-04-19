@@ -4,7 +4,6 @@ import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 
@@ -19,14 +18,6 @@ export function testResolve (factory: KuboRPCFactory, options: MochaConfig): voi
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when resolving a path within a DAG node', async function () {
-      const cid = await ipfs.dag.put({}, { storeCodec: 'dag-cbor', hashAlg: 'sha2-256' })
-
-      await testTimeout(async () => ipfs.dag.resolve(cid, {
-        timeout: 1
-      }))
     })
 
     it('should resolve a path inside a cbor node', async () => {

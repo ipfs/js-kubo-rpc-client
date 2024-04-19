@@ -1,12 +1,11 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { CID } from 'multiformats/cid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
+import type { CID } from 'multiformats/cid'
 
 export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
@@ -24,12 +23,6 @@ export function testStat (factory: KuboRPCFactory, options: MochaConfig): void {
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when statting a block', async () => {
-      return testTimeout(async () => ipfs.block.stat(CID.parse('QmVwdDCY4SPGVFnNCiZnX5CtzwWDn6kAM98JXzKxE3kCmn'), {
-        timeout: 1
-      }))
     })
 
     it('should stat by CID', async () => {

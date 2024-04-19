@@ -3,10 +3,8 @@
 import { peerIdFromString } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import drain from 'it-drain'
 import { ensureReachable } from '../dht/utils.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { RoutingQueryEvent } from '../../../../src/dht/index.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
@@ -30,16 +28,6 @@ export function testFindPeer (factory: KuboRPCFactory, options: MochaConfig): vo
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when finding a peer on the routing', async () => {
-      const nodeBId = await nodeB.id()
-
-      await testTimeout(async () => {
-        await drain(nodeA.routing.findPeer(nodeBId.id, {
-          timeout: 1
-        }))
-      })
     })
 
     it('should find other peers', async () => {

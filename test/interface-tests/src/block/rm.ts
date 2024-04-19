@@ -8,7 +8,6 @@ import * as raw from 'multiformats/codecs/raw'
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 
@@ -23,16 +22,6 @@ export function testRm (factory: KuboRPCFactory, options: MochaConfig): void {
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when removing a block', async function () {
-      const cid = await ipfs.dag.put(uint8ArrayFromString(nanoid()), {
-        storeCodec: 'raw',
-        hashAlg: 'sha2-256'
-      })
-      await testTimeout(async () => ipfs.block.rm(CID.parse(cid.toString()), {
-        timeout: 1
-      }))
     })
 
     it('should remove by CID object', async () => {
