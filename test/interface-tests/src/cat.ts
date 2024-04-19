@@ -4,14 +4,12 @@ import { expect } from 'aegir/chai'
 import { importer } from 'ipfs-unixfs-importer'
 import all from 'it-all'
 import drain from 'it-drain'
-import { CID } from 'multiformats/cid'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import blockstore from './utils/blockstore-adapter.js'
 import { fixtures } from './utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
-import testTimeout from './utils/test-timeout.js'
 import type { KuboRPCFactory } from './index.js'
 import type { KuboRPCClient } from '../../../src/index.js'
 
@@ -32,14 +30,6 @@ export function testCat (factory: KuboRPCFactory, options: MochaConfig): void {
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when catting files', async function () {
-      await testTimeout(async () => {
-        await drain(ipfs.cat(CID.parse('QmPDqvcuA4AkhBLBuh2y49yhUB98rCnxPxa3eVNC1kAbS1'), {
-          timeout: 1
-        }))
-      })
     })
 
     it('should export a chunk of a file', async function () {

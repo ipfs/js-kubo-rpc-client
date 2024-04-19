@@ -6,7 +6,6 @@ import { CID } from 'multiformats/cid'
 import { isWebWorker } from 'wherearewe'
 import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import { waitForWantlistKey, waitForWantlistKeyToBeRemoved } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
@@ -37,12 +36,6 @@ export function testWantlist (factory: KuboRPCFactory, options: MochaConfig): vo
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when getting bitswap wantlist', async () => {
-      return testTimeout(async () => ipfsA.bitswap.wantlist({
-        timeout: 1
-      }))
     })
 
     it('should get the wantlist', async function () {

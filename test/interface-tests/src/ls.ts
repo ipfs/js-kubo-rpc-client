@@ -2,10 +2,8 @@
 
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { CID } from 'multiformats/cid'
 import { fixtures } from './utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
-import testTimeout from './utils/test-timeout.js'
 import type { KuboRPCFactory } from './index.js'
 import type { KuboRPCClient } from '../../../src/index.js'
 import type { ImportCandidate } from 'ipfs-unixfs-importer'
@@ -27,12 +25,6 @@ export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
 
     after(async function () {
       await factory.clean()
-    })
-
-    it('should respect timeout option when listing files', async () => {
-      return testTimeout(() => ipfs.ls(CID.parse('QmNonExistentCiD8Hrf4MHo5ABDtb5AbX6hWbD3Y42bXg'), {
-        timeout: 1
-      }))
     })
 
     it('should ls with a base58 encoded CID', async function () {

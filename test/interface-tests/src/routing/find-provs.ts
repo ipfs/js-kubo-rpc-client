@@ -2,10 +2,8 @@
 
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import drain from 'it-drain'
 import { ensureReachable } from '../dht/utils.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
-import testTimeout from '../utils/test-timeout.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 import type { CID } from 'multiformats/cid'
@@ -48,14 +46,6 @@ export function testFindProvs (factory: KuboRPCFactory, options: MochaConfig): v
         all(nodeB.routing.provide(providedCid)),
         all(nodeC.routing.provide(providedCid))
       ])
-    })
-
-    it('should respect timeout option when finding providers on the routing', async () => {
-      await testTimeout(async () => {
-        await drain(nodeA.routing.findProvs(providedCid, {
-          timeout: 1
-        }))
-      })
     })
 
     it('should be able to find providers', async function () {

@@ -515,3 +515,23 @@ export async function * readURLContent (url: string, options?: HTTPOptions): Asy
 
   yield * response.iterator()
 }
+
+export * from './bitswap/index.js'
+export * from './block/index.js'
+export * from './bootstrap/index.js'
+export * from './config/index.js'
+export * from './dag/index.js'
+export * from './dht/index.js'
+export * from './diag/index.js'
+export * from './files/index.js'
+export * from './key/index.js'
+export * from './log/index.js'
+export * from './name/index.js'
+export * from './object/index.js'
+export * from './pin/index.js'
+export * from './pubsub/index.js'
+export * from './refs/index.js'
+export * from './repo/index.js'
+export * from './routing/index.js'
+export * from './stats/index.js'
+export * from './swarm/index.js'
