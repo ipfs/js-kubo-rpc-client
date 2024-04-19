@@ -198,7 +198,7 @@
     "did-jwt": "^8.0.4",
     "interface-blockstore": "^5.2.10",
     "ipfs-unixfs-importer": "^15.2.5",
-    "ipfsd-ctl": "^13.0.0",
+    "ipfsd-ctl": "^14.0.0",
     "ipns": "^9.1.0",
     "is-ipfs": "^8.0.1",
     "iso-random-stream": "^2.0.2",
