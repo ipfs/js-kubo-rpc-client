@@ -6,8 +6,12 @@ export function createIsOnline (client: HTTPRPCClient): KuboRPCClient['isOnline'
   const id = createId(client)
 
   return async function isOnline (options = {}) {
-    const res = await id(options)
+    try {
+      const res = await id(options)
 
-    return Boolean(res?.addresses?.length)
+      return Boolean(res?.addresses?.length)
+    } catch {
+      return false
+    }
   }
 }
