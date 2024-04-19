@@ -19,7 +19,9 @@ describe('.pubsub', function () {
       this.timeout(30 * 1000) // slow CI
 
       ctl = await f.spawn({
-        args: ['--enable-pubsub-experiment']
+        start: {
+          args: ['--enable-pubsub-experiment']
+        }
       })
 
       ipfs = ctl.api
