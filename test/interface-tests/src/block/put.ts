@@ -10,6 +10,8 @@ import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KuboRPCFactory } from '../index.js'
 
+const ONE_MEG = 1024 * 1024
+
 export function testPut (factory: KuboRPCFactory, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
@@ -63,6 +65,24 @@ export function testPut (factory: KuboRPCFactory, options: MochaConfig): void {
       const cid = await ipfs.block.put(b)
 
       expect(cid.multihash.bytes).to.equalBytes(expectedCID.multihash.bytes)
+    })
+
+    it('should fail to put a big block', async () => {
+      await expect(ipfs.block.put(new Uint8Array(ONE_MEG + 1)))
+        .to.eventually.be.rejected()
+        .with.property('message')
+        .that.include('produced block is over 1MiB')
+    })
+
+    it('should put a big block with `allowBigBlock`', async () => {
+      const expectedHash = 'bafkreibmw5hnxj2uvaorehe5w2btobfi47kbpznrhunbt5fff4ah2zccmq'
+      const expectedCID = CID.parse(expectedHash)
+
+      const cid = await ipfs.block.put(new Uint8Array(ONE_MEG + 1), {
+        allowBigBlock: true
+      })
+
+      expect(cid.toString()).to.equal(expectedCID.toString())
     })
   })
 }
