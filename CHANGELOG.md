@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.0...v4.1.1) (2024-04-23)
+
+
+### Dependencies
+
+* **dev:** bump ipfsd-ctl from 13.0.0 to 14.0.0 ([#225](https://github.com/ipfs/js-kubo-rpc-client/issues/225)) ([66efeaf](https://github.com/ipfs/js-kubo-rpc-client/commit/66efeafbd8ea88ff80f3a82de28acea58c9c654a))
+
 ## [4.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.0.1...v4.1.0) (2024-04-23)
 
 
