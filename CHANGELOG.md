@@ -1,3 +1,10 @@
+## [4.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.0.1...v4.1.0) (2024-04-23)
+
+
+### Features
+
+* expose allowBigBlock option ([#227](https://github.com/ipfs/js-kubo-rpc-client/issues/227)) ([50a4c80](https://github.com/ipfs/js-kubo-rpc-client/commit/50a4c80713839289b2a07fd4c9668fde029b7552))
+
 ## [4.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.0.0...v4.0.1) (2024-04-19)
 
 
