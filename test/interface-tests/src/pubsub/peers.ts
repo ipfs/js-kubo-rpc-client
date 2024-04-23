@@ -2,14 +2,12 @@
 
 import { expect } from 'aegir/chai'
 import delay from 'delay'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { getTopic, waitForTopicPeer } from './utils.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboController, KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testPeers (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -23,17 +21,16 @@ export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void 
     let ipfs2Id: IDResult
     let ipfs3Id: IDResult
 
-    let daemon1: KuboController
-    let daemon2: KuboController
-    let daemon3: KuboController
+    let daemon1: KuboNode
+    let daemon2: KuboNode
+    let daemon3: KuboNode
 
     before(async function () {
-      daemon1 = (await factory.spawn({ ipfsOptions }))
+      daemon1 = (await factory.spawn())
       ipfs1 = daemon1.api
-      // webworkers are not dialable because webrtc is not available
-      daemon2 = (await factory.spawn({ type: 'go', ipfsOptions }))
+      daemon2 = (await factory.spawn())
       ipfs2 = daemon2.api
-      daemon3 = (await factory.spawn({ type: 'go', ipfsOptions }))
+      daemon3 = (await factory.spawn())
       ipfs3 = daemon3.api
 
       ipfs2Id = await ipfs2.id()
@@ -104,7 +101,7 @@ export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void 
       await ipfs2.pubsub.subscribe(topic, sub2)
       await ipfs3.pubsub.subscribe(topic, sub3)
 
-      await waitForTopicPeer(topic, daemon2.peer, daemon1, { maxRetryTime: 30000 })
+      await waitForTopicPeer(topic, daemon2, daemon1, { maxRetryTime: 30000 })
     })
 
     it('should return peers for a topic - multiple peers', async () => {
@@ -119,8 +116,8 @@ export function testPeers (factory: KuboRPCFactory, options: MochaConfig): void 
       await ipfs2.pubsub.subscribe(topic, sub2)
       await ipfs3.pubsub.subscribe(topic, sub3)
 
-      await waitForTopicPeer(topic, daemon2.peer, daemon1, { maxRetryTime: 30000 })
-      await waitForTopicPeer(topic, daemon3.peer, daemon1, { maxRetryTime: 30000 })
+      await waitForTopicPeer(topic, daemon2, daemon1, { maxRetryTime: 30000 })
+      await waitForTopicPeer(topic, daemon3, daemon1, { maxRetryTime: 30000 })
     })
   })
 }

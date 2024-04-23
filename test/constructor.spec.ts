@@ -5,8 +5,8 @@ import { expect } from 'aegir/chai'
 import { isBrowser } from 'wherearewe'
 import { create as ipfsClient } from '../src/index.js'
 import { factory } from './utils/factory.js'
-import type { KuboController } from './interface-tests/src/index.js'
 import type { KuboRPCClient } from '../src/index.js'
+import type { KuboNode } from 'ipfsd-ctl'
 
 const f = factory()
 
@@ -168,7 +168,7 @@ describe('js-kubo-rpc-client constructor tests', function () {
   })
 
   describe('integration', function () {
-    let ipfsd: KuboController
+    let ipfsd: KuboNode
 
     before(async function () {
       this.timeout(60 * 1000) // slow CI
@@ -179,7 +179,8 @@ describe('js-kubo-rpc-client constructor tests', function () {
     after(async function () { return f.clean() })
 
     it('can connect to an ipfs http api', async function () {
-      await clientWorks(ipfsClient(ipfsd.apiAddr))
+      const info = await ipfsd.info()
+      await clientWorks(ipfsClient(info.api))
     })
   })
 })

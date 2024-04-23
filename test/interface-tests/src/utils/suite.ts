@@ -1,5 +1,5 @@
 import { isSkip, type Skip } from './mocha.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export interface CreateSuiteOptions {
   skip?: boolean | Skip | string[] | Skip[]
@@ -7,7 +7,7 @@ export interface CreateSuiteOptions {
 }
 
 export function createSuite (tests: any, parent?: any): any {
-  const suite = (factory: KuboRPCFactory, options = {}): void => {
+  const suite = (factory: Factory<KuboNode>, options = {}): void => {
     Object.keys(tests).forEach(t => {
       const opts: CreateSuiteOptions = Object.assign({}, options)
       const suiteName = parent != null ? `${parent}.${t}` : t

@@ -4,9 +4,9 @@ import { expect } from 'aegir/chai'
 import { nanoid } from 'nanoid'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testRename (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testRename (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

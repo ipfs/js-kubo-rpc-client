@@ -24,9 +24,9 @@ export default {
       const server = createServer({
         port: 0
       }, {
-        type: 'go',
-        kuboRpcModule: await import('./dist/src/index.js'),
-        ipfsBin: (await import('kubo')).default.path()
+        type: 'kubo',
+        rpc: (await import('./dist/src/index.js')).create,
+        bin: (await import('kubo')).default.path()
       })
 
       const echoServer = new EchoServer()

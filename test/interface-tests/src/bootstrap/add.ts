@@ -4,12 +4,12 @@ import { multiaddr, isMultiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const invalidArg = 'this/Is/So/Invalid/'
 const validIp4 = multiaddr('/ip4/104.236.176.52/tcp/4001/p2p/QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z')
 
-export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testAdd (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

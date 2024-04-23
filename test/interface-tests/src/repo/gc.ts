@@ -8,7 +8,7 @@ import { CID } from 'multiformats/cid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 async function getBaseEncodedMultihashes (ipfs: KuboRPCClient): Promise<string[]> {
   const refs = await all(ipfs.refs.local())
@@ -24,7 +24,7 @@ async function shouldNotHaveRef (ipfs: KuboRPCClient, cid: CID): Promise<void> {
   return expect(getBaseEncodedMultihashes(ipfs)).to.eventually.not.include(base64.encode(cid.multihash.bytes))
 }
 
-export function testGc (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testGc (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

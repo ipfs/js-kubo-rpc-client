@@ -1,12 +1,11 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { isWebWorker } from 'wherearewe'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testLocalAddrs (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testLocalAddrs (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -27,15 +26,7 @@ export function testLocalAddrs (factory: KuboRPCFactory, options: MochaConfig): 
       const multiaddrs = await ipfs.swarm.localAddrs()
 
       expect(multiaddrs).to.be.an.instanceOf(Array)
-
-      /**
-       * Conditional tests are bad, mmmkay.
-       */
-      if (isWebWorker && factory.opts.type === 'proc') {
-        expect(multiaddrs).to.have.lengthOf(0)
-      } else {
-        expect(multiaddrs).to.not.be.empty()
-      }
+      expect(multiaddrs).to.not.be.empty()
     })
   })
 }

@@ -17,8 +17,8 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import blockstore from './utils/blockstore-adapter.js'
 import { fixtures } from './utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
-import type { KuboRPCFactory } from './index.js'
 import type { KuboRPCClient } from '../../../src/index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const content = (name: string, path?: string): ImportCandidate => {
   if (path == null) {
@@ -33,7 +33,7 @@ const content = (name: string, path?: string): ImportCandidate => {
 
 const emptyDir = (name: string): ImportCandidate => ({ path: `test-folder/${name}` })
 
-export function testGet (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testGet (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

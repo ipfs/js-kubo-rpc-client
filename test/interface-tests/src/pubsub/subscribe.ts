@@ -9,16 +9,15 @@ import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { isNode } from 'wherearewe'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { getTopic, getSubscriptionTestObject } from './utils.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboController, KuboRPCFactory } from '../index.js'
-import type { Message } from '@libp2p/interface'
+import type { Message, PeerId } from '@libp2p/interface'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const log = logger('js-kubo-rpc-client:pubsub:subscribe:test')
 
-const validateSubscriptionMessage = (publisher: KuboController, topic: string, msg: Message, data: Uint8Array): void => {
+const validateSubscriptionMessage = (publisher: PeerId, topic: string, msg: Message, data: Uint8Array): void => {
   if (msg.type !== 'signed') {
     throw new Error('Message was not signed')
   }
@@ -28,15 +27,14 @@ const validateSubscriptionMessage = (publisher: KuboController, topic: string, m
   expect(msg.sequenceNumber).to.be.a('bigint')
   expect(msg).to.have.property('topic', topic)
   expect(isPeerId(msg.from)).to.be.true()
-  expect(msg.from.toString()).to.equal(publisher.peer.id.toString())
+  expect(msg.from.toString()).to.equal(publisher.toString())
 }
 
 /**
  * @param {Factory} factory
  * @param {object} options
  */
-export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testSubscribe (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -44,33 +42,43 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
     this.timeout(80 * 1000)
 
     let ipfs1: KuboRPCClient
-    let daemon1: KuboController
+    let daemon1: KuboNode
     let ipfs2: KuboRPCClient
-    let daemon2: KuboController
+    let daemon2: KuboNode
     let topic: string
     let ipfs1Id: IDResult
     let ipfs2Id: IDResult
 
     beforeEach(async function () {
       log('beforeEach start')
-      daemon1 = await factory.spawn({ ipfsOptions, test: true, args: ['--enable-pubsub-experiment'] })
+      daemon1 = await factory.spawn({
+        test: true,
+        start: {
+          pubsub: true
+        }
+      })
       ipfs1 = daemon1.api
 
-      daemon2 = await factory.spawn({ ipfsOptions, test: true, args: ['--enable-pubsub-experiment'] })
+      daemon2 = await factory.spawn({
+        test: true,
+        start: {
+          pubsub: true
+        }
+      })
       ipfs2 = daemon2.api
 
       ipfs1Id = await ipfs1.id()
       ipfs2Id = await ipfs2.id()
-      await ipfs1.swarm.connect(daemon2.peer.addresses[0])
-      await ipfs2.swarm.connect(daemon1.peer.addresses[0])
+      await ipfs1.swarm.connect(ipfs2Id.addresses[0])
+      await ipfs2.swarm.connect(ipfs1Id.addresses[0])
 
       const peers = await Promise.all([
         ipfs1.swarm.peers(),
         ipfs2.swarm.peers()
       ])
 
-      expect(peers[0].map((p) => p.peer.toString())).to.include(daemon2.peer.id.toString())
-      expect(peers[1].map((p) => p.peer.toString())).to.include(daemon1.peer.id.toString())
+      expect(peers[0].map((p) => p.peer.toString())).to.include(ipfs2Id.id.toString())
+      expect(peers[1].map((p) => p.peer.toString())).to.include(ipfs1Id.id.toString())
       topic = getTopic()
       log('beforeEach done')
     })
@@ -99,7 +107,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         await subscriptionTestObj.publishMessage(data)
         const [msg] = await subscriptionTestObj.waitForMessages()
 
-        validateSubscriptionMessage(daemon1, topic, msg, data)
+        validateSubscriptionMessage(ipfs1Id.id, topic, msg, data)
         await subscriptionTestObj.unsubscribe()
       })
 
@@ -117,7 +125,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         await subscriptionTestObj.publishMessage(data)
         const [msg] = await subscriptionTestObj.waitForMessages()
 
-        validateSubscriptionMessage(daemon1, topic, msg, data)
+        validateSubscriptionMessage(ipfs1Id.id, topic, msg, data)
         await subscriptionTestObj.unsubscribe()
       })
 
@@ -148,8 +156,8 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         const [msg1] = await subscriptionTestObj1.waitForMessages()
         const [msg2] = await subscriptionTestObj2.waitForMessages()
 
-        validateSubscriptionMessage(daemon1, topic, msg1, data)
-        validateSubscriptionMessage(daemon1, topic, msg2, data)
+        validateSubscriptionMessage(ipfs1Id.id, topic, msg1, data)
+        validateSubscriptionMessage(ipfs1Id.id, topic, msg2, data)
 
         expect(stub1).to.have.property('callCount', 1)
         expect(stub2).to.have.property('callCount', 1)
@@ -171,7 +179,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         await subscriptionTestObj.publishMessage(data)
         const [msg] = await subscriptionTestObj.waitForMessages()
 
-        validateSubscriptionMessage(daemon1, topic, msg, data)
+        validateSubscriptionMessage(ipfs1Id.id, topic, msg, data)
         await subscriptionTestObj.unsubscribe()
       })
     })
@@ -186,7 +194,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         const data = uint8ArrayFromString(expectedString)
         const topic = `floodsub-${nanoid()}`
         const daemon1 = await factory.spawn({
-          ipfsOptions: {
+          init: {
             config: {
               Pubsub: {
                 Router: 'floodsub'
@@ -196,7 +204,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         })
         const ipfs1 = daemon1.api
         const daemon2 = await factory.spawn({
-          ipfsOptions: {
+          init: {
             config: {
               Pubsub: {
                 Router: 'floodsub'
@@ -229,8 +237,8 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         const [sub1Msg] = await subscriptionTestObj1.waitForMessages()
         const [sub2Msg] = await subscriptionTestObj2.waitForMessages()
 
-        validateSubscriptionMessage(daemon2, topic, sub1Msg, data)
-        validateSubscriptionMessage(daemon2, topic, sub2Msg, data)
+        validateSubscriptionMessage(ipfs2Id.id, topic, sub1Msg, data)
+        validateSubscriptionMessage(ipfs2Id.id, topic, sub2Msg, data)
         abort1.abort()
         abort2.abort()
         await subscriptionTestObj1.unsubscribe()
@@ -252,7 +260,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
         let [msg] = await subscriptionTestObj1.waitForMessages()
         await subscriptionTestObj1.unsubscribe()
 
-        validateSubscriptionMessage(daemon1, topic, msg, data)
+        validateSubscriptionMessage(ipfs1Id.id, topic, msg, data)
 
         const subscriptionTestObj2 = await getSubscriptionTestObject({
           subscriber: daemon1,
@@ -263,7 +271,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
 
         await subscriptionTestObj2.publishMessage(data);
         [msg] = await subscriptionTestObj2.waitForMessages()
-        validateSubscriptionMessage(daemon2, topic, msg, data)
+        validateSubscriptionMessage(ipfs2Id.id, topic, msg, data)
         await subscriptionTestObj2.unsubscribe()
       })
 
@@ -286,7 +294,7 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
 
         expect(uint8ArrayToString(sub1Msg.data, 'base16')).to.be.eql(expectedHex)
         expect(sub1Msg.from.toString()).to.eql(ipfs1Id.id.toString())
-        validateSubscriptionMessage(daemon1, topic, sub1Msg, buffer)
+        validateSubscriptionMessage(ipfs1Id.id, topic, sub1Msg, buffer)
         await subscriptionTestObj.unsubscribe()
       })
 
@@ -309,7 +317,9 @@ export function testSubscribe (factory: KuboRPCFactory, options: MochaConfig): v
           const dataItem = uint8ArrayFromString(string)
           // keep a map of the string value to the validation function because we can't depend on ordering.
           // eslint-disable-next-line max-nested-callbacks
-          validationMap.set(string, (msg: Message) => { validateSubscriptionMessage(daemon1, topic, msg, dataItem) })
+          validationMap.set(string, (msg: Message) => {
+            validateSubscriptionMessage(ipfs1Id.id, topic, msg, dataItem)
+          })
           await subscriptionTestObj.publishMessage(dataItem)
         })
         await Promise.all(publishPromises)

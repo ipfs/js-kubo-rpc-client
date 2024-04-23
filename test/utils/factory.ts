@@ -1,26 +1,20 @@
-import { createFactory } from 'ipfsd-ctl'
+import { createFactory, type Factory, type KuboNode, type KuboOptions } from 'ipfsd-ctl'
 import { path } from 'kubo'
 import mergeOpts from 'merge-options'
 import { isNode } from 'wherearewe'
-import * as kuboRpcModule from '../../src/index.js'
-import type { KuboRPCFactory } from '../interface-tests/src/index.js'
+import { create } from '../../src/index.js'
 
 const merge = mergeOpts.bind({ ignoreUndefined: true })
 
-const commonOptions = {
+const commonOptions: KuboOptions = {
   test: true,
-  type: 'go',
-  kuboRpcModule,
-  endpoint: process.env.IPFSD_SERVER
+  type: 'kubo',
+  rpc: create,
+  endpoint: process.env.IPFSD_SERVER,
+  bin: isNode ? (process.env.IPFS_GO_EXEC ?? path()) : undefined
 }
 
-const commonOverrides = {
-  go: {
-    ipfsBin: isNode ? (process.env.IPFS_GO_EXEC ?? path()) : undefined
-  }
-}
-
-export const factory = (options: any = {}, overrides: any = {}): KuboRPCFactory => createFactory(
+export const factory = (options: any = {}, overrides: any = {}): Factory<KuboNode> => createFactory(
   merge(commonOptions, options),
-  merge(commonOverrides, overrides)
-) as unknown as KuboRPCFactory
+  overrides
+)

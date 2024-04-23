@@ -7,8 +7,8 @@ import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import isShardAtPath from '../utils/is-shard-at-path.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
-export function testMkdir (factory: KuboRPCFactory, options: MochaConfig): void {
+import type { Factory, KuboNode } from 'ipfsd-ctl'
+export function testMkdir (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -145,11 +145,7 @@ export function testMkdir (factory: KuboRPCFactory, options: MochaConfig): void 
 
       before(async function () {
         const ipfsd = await factory.spawn({
-          ipfsOptions: {
-            EXPERIMENTAL: {
-              // enable sharding for js
-              sharding: true
-            },
+          init: {
             config: {
               // enable sharding for go with automatic threshold dropped to the minimum so it shards everything
               Internal: {

@@ -1,14 +1,11 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { isWebWorker } from 'wherearewe'
-import { ipfsOptionsWebsocketsFilterAll } from '../utils/ipfs-options-websockets-filter-all.js'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testConnect (factory: KuboRPCFactory, options: MochaConfig): void {
-  const ipfsOptions = ipfsOptionsWebsocketsFilterAll()
+export function testConnect (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -19,9 +16,8 @@ export function testConnect (factory: KuboRPCFactory, options: MochaConfig): voi
     let ipfsBId: IDResult
 
     before(async function () {
-      ipfsA = (await factory.spawn({ type: 'go', ipfsOptions })).api
-      // webworkers are not dialable because webrtc is not available
-      ipfsB = (await factory.spawn({ type: isWebWorker ? 'go' : undefined })).api
+      ipfsA = (await factory.spawn()).api
+      ipfsB = (await factory.spawn()).api
       ipfsBId = await ipfsB.id()
     })
 

@@ -6,9 +6,9 @@ import drain from 'it-drain'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
 import { fixtures, clearPins } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
-import type { KuboRPCFactory } from '../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-export function testRmAll (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testRmAll (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 

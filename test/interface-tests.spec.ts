@@ -3,8 +3,9 @@
 import { isWindows, isFirefox, isChrome } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-function executeTests (commonFactory: tests.KuboRPCFactory): void {
+function executeTests (commonFactory: Factory<KuboNode>): void {
   tests.root(commonFactory, {
     skip: [
       {
@@ -135,18 +136,16 @@ function executeTests (commonFactory: tests.KuboRPCFactory): void {
   tests.miscellaneous(commonFactory)
 
   tests.name(factory({
-    type: 'go',
-    ipfsOptions: {
+    type: 'kubo',
+    start: {
       offline: true
     }
   }))
 
   tests.namePubsub(factory({
-    type: 'go',
-    ipfsOptions: {
-      EXPERIMENTAL: {
-        ipnsPubsub: true
-      }
+    type: 'kubo',
+    start: {
+      ipnsPubsub: true
     }
   }), {
     skip: [
@@ -234,10 +233,9 @@ function executeTests (commonFactory: tests.KuboRPCFactory): void {
   })
 
   tests.pubsub(factory({
-    type: 'go'
-  }, {
-    go: {
-      args: ['--enable-pubsub-experiment']
+    type: 'kubo',
+    start: {
+      pubsub: true
     }
   }), {
     skip: isWindows
@@ -267,21 +265,10 @@ describe('kubo-rpc-client tests against kubo', function () {
     /**
      * @type {string|undefined}
      */
-    let ipfsBin
-    try {
-      ipfsBin = path()
-    } catch {
-      ipfsBin = undefined
-    }
-
     const commonFactory = factory({
-      type: 'go',
-      ipfsBin,
+      type: 'kubo',
+      bin: path(),
       test: true
-    }, {
-      go: {
-        ipfsBin
-      }
     })
     describe('kubo RPC client interface tests', function () {
       executeTests(commonFactory)

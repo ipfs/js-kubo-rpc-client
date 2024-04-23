@@ -12,13 +12,13 @@ import { isFirefox } from '../../constants.js'
 import { supportsFileReader } from '../fixtures/supports.js'
 import { fixtures } from './utils/index.js'
 import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
-import type { KuboRPCFactory } from './index.js'
 import type { AddProgressFn, KuboRPCClient } from '../../../src/index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const echoUrl = (text: string): string => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`
 const redirectUrl = (url: string): string => `${process.env.ECHO_SERVER}/redirect?to=${encodeURI(url)}`
 
-export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testAdd (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
@@ -359,11 +359,7 @@ export function testAdd (factory: KuboRPCFactory, options: MochaConfig): void {
 
       before(async function () {
         const ipfsd = await factory.spawn({
-          ipfsOptions: {
-            EXPERIMENTAL: {
-              // enable sharding for js
-              sharding: true
-            },
+          init: {
             config: {
               // enable sharding for go with automatic threshold dropped to the minimum so it shards everything
               Internal: {

@@ -8,7 +8,7 @@ import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
 import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
 import type { KuboRPCClient } from '../../../../../src/index.js'
 import type { RemotePinStatus } from '../../../../../src/pin/remote/index.js'
-import type { KuboRPCFactory } from '../../index.js'
+import type { Factory, KuboNode } from 'ipfsd-ctl'
 import type { Version } from 'multiformats/cid'
 
 interface TestCIDObject {
@@ -49,7 +49,7 @@ function getTestCIDsAsObject (...names: string[]): Record<string, CID<unknown, n
   return object
 }
 
-export function testLs (factory: KuboRPCFactory, options: MochaConfig): void {
+export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
 
