@@ -26,6 +26,13 @@ export interface BlockPutOptions extends HTTPRPCOptions {
    * Pin this block when adding. (Defaults to `false`)
    */
   pin?: boolean
+
+  /**
+   * Allow creating blocks larger than 1MB
+   *
+   * @default false
+   */
+  allowBigBlock?: boolean
 }
 
 export interface BlockRmOptions extends HTTPRPCOptions {

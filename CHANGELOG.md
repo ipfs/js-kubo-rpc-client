@@ -1,3 +1,16 @@
+## [4.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.0.0...v4.0.1) (2024-04-19)
+
+
+### Bug Fixes
+
+* export api types from module root ([#223](https://github.com/ipfs/js-kubo-rpc-client/issues/223)) ([7266128](https://github.com/ipfs/js-kubo-rpc-client/commit/7266128efb87a231e259090b873c7f1dbbce5797))
+* isOnline should return false when node is offline ([#222](https://github.com/ipfs/js-kubo-rpc-client/issues/222)) ([e9436ca](https://github.com/ipfs/js-kubo-rpc-client/commit/e9436ca5989741b253b502d356fabade884ca9e1))
+
+
+### Trivial Changes
+
+* remove timeout tests ([#226](https://github.com/ipfs/js-kubo-rpc-client/issues/226)) ([d0c2820](https://github.com/ipfs/js-kubo-rpc-client/commit/d0c2820bd28f9c1fe17f697634c796dfa9bf799b))
+
 ## [4.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v3.0.4...v4.0.0) (2024-04-18)
 
 
