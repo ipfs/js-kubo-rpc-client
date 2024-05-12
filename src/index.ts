@@ -494,6 +494,7 @@ export function create (options: string | Multiaddr | URL | Options = {}): KuboR
   return createKuboRPCClient(options)
 }
 
+export { create as createKuboRPCClient }
 export { CID } from 'multiformats/cid'
 export { multiaddr } from '@multiformats/multiaddr'
 export * from './lib/glob-source.js'
