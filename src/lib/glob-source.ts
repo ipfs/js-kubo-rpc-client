@@ -4,6 +4,7 @@ import Path from 'node:path'
 import { CodeError } from '@libp2p/interface'
 import glob from 'it-glob'
 import type { MtimeLike } from 'ipfs-unixfs'
+import type { Options as GlobOptions } from 'it-glob'
 
 export interface GlobSourceOptions {
   /**
@@ -58,15 +59,19 @@ export async function * globSource (cwd: string, pattern: string, options?: Glob
     cwd = Path.resolve(process.cwd(), cwd)
   }
 
-  const globOptions = Object.assign({}, {
-    nodir: false,
-    realpath: false,
+  const globOptions: GlobOptions = Object.assign({}, {
+    onlyFiles: false,
     absolute: true,
     dot: Boolean(options.hidden),
-    follow: options.followSymlinks ?? true
-  })
+    followSymbolicLinks: options.followSymlinks ?? true
+  } satisfies GlobOptions)
 
   for await (const p of glob(cwd, pattern, globOptions)) {
+    // Workaround for https://github.com/micromatch/micromatch/issues/251
+    if (Path.basename(p).startsWith('.') && options.hidden !== true) {
+      continue
+    }
+
     const stat = await fsp.stat(p)
 
     let mode = options.mode
