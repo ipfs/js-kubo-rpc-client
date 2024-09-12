@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import fsp from 'node:fs/promises'
+import os from 'node:os'
 import Path from 'node:path'
 import { CodeError } from '@libp2p/interface'
 import glob from 'it-glob'
@@ -59,6 +60,10 @@ export async function * globSource (cwd: string, pattern: string, options?: Glob
     cwd = Path.resolve(process.cwd(), cwd)
   }
 
+  if (os.platform() === 'win32') {
+    cwd = toPosix(cwd)
+  }
+
   const globOptions: GlobOptions = Object.assign({}, {
     onlyFiles: false,
     absolute: true,
@@ -87,7 +92,7 @@ export async function * globSource (cwd: string, pattern: string, options?: Glob
     }
 
     yield {
-      path: toPosix(p.replace(cwd, '')),
+      path: p.replace(cwd, ''),
       content: stat.isFile() ? fs.createReadStream(p) : undefined,
       mode,
       mtime
