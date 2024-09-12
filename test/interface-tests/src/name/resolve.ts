@@ -59,7 +59,7 @@ export function testResolve (factory: Factory<KuboNode>, options: MochaConfig): 
 
       // Represent Peer ID as CIDv1 Base32
       // https://github.com/libp2p/specs/blob/master/RFC/0001-text-peerid-cid.md
-      const keyCid = CID.createV1(0x72, Digest.decode(peerIdFromString(peerId.toString()).toBytes()))
+      const keyCid = CID.createV1(0x72, Digest.decode(peerIdFromString(peerId.toString()).toMultihash().bytes))
       const resolvedPath = await last(ipfs.name.resolve(`/ipns/${keyCid}`))
 
       expect(resolvedPath).to.equal(`/ipfs/${cid}`)

@@ -1,4 +1,4 @@
-import { CodeError } from '@libp2p/interface'
+import { TimeoutError } from '@libp2p/interface'
 import delay from 'delay'
 
 export interface Test {
@@ -25,7 +25,7 @@ export default async function waitFor (test: Test, options?: Options): Promise<v
     }
 
     if (Date.now() > start + opts.timeout) {
-      throw new CodeError(`Timed out waiting for ${opts.name}`, 'ERR_TIMEOUT')
+      throw new TimeoutError(`Timed out waiting for ${opts.name}`)
     }
 
     await delay(opts.interval)

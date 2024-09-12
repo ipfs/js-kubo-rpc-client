@@ -1,4 +1,4 @@
-import { CodeError } from '@libp2p/interface'
+import { InvalidMtimeError } from '../errors.js'
 import type { ImportCandidate } from '../../index.js'
 import type { Mtime, MtimeLike } from 'ipfs-unixfs'
 
@@ -103,7 +103,7 @@ export function parseMtime (mtime?: MtimeLike): Mtime | undefined {
   }
 
   if (mtime.nsecs != null && (mtime.nsecs < 0 || mtime.nsecs > 999999999)) {
-    throw new CodeError('mtime-nsecs must be within the range [0,999999999]', 'ERR_INVALID_MTIME_NSECS')
+    throw new InvalidMtimeError('mtime-nsecs must be within the range [0,999999999]')
   }
 
   return mtime
