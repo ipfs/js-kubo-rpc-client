@@ -21,3 +21,10 @@ export class HTTPError extends Error {
     this.response = response
   }
 }
+
+export class InvalidMtimeError extends Error {
+  constructor (message = 'Invalid mtime') {
+    super(message)
+    this.name = 'InvalidMtimeError'
+  }
+}

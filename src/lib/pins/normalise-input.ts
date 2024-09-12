@@ -1,4 +1,4 @@
-import { CodeError } from '@libp2p/interface'
+import { InvalidParametersError } from '@libp2p/interface'
 import { CID } from 'multiformats/cid'
 
 export interface Pinnable {
@@ -56,7 +56,7 @@ function isCID (thing: any): thing is CID {
 export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
   // must give us something
   if (input === null || input === undefined) {
-    throw new CodeError(`Unexpected input: ${input}`, 'ERR_UNEXPECTED_INPUT')
+    throw new InvalidParametersError(`Unexpected input: ${input}`)
   }
 
   // CID
@@ -115,7 +115,7 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
       return
     }
 
-    throw new CodeError(`Unexpected input: ${typeof input}`, 'ERR_UNEXPECTED_INPUT')
+    throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
   }
 
   // AsyncIterable<?>
@@ -151,17 +151,17 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
       return
     }
 
-    throw new CodeError(`Unexpected input: ${typeof input}`, 'ERR_UNEXPECTED_INPUT')
+    throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
   }
 
-  throw new CodeError(`Unexpected input: ${typeof input}`, 'ERR_UNEXPECTED_INPUT')
+  throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
 }
 
 function toPin (input: Pinnable): Pin {
   const path = input.cid ?? `${input.path}`
 
   if (path == null) {
-    throw new CodeError('Unexpected input: Please path either a CID or an IPFS path', 'ERR_UNEXPECTED_INPUT')
+    throw new InvalidParametersError('Unexpected input: Please path either a CID or an IPFS path')
   }
 
   const pin: Pin = {

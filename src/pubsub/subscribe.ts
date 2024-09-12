@@ -1,3 +1,4 @@
+import { publicKeyFromProtobuf } from '@libp2p/crypto/keys'
 import { logger } from '@libp2p/logger'
 import { peerIdFromString } from '@libp2p/peer-id'
 import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.js'
@@ -104,7 +105,7 @@ async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onE
             data: rpcToBytes(msg.data),
             sequenceNumber: rpcToBigInt(msg.seqno),
             topic: rpcToText(msg.topicIDs[0]),
-            key: rpcToBytes(msg.key ?? 'u'),
+            key: publicKeyFromProtobuf(rpcToBytes(msg.key ?? 'u')),
             signature: rpcToBytes(msg.signature ?? 'u')
           })
         } else {

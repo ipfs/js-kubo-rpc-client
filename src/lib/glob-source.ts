@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import fsp from 'node:fs/promises'
 import os from 'node:os'
 import Path from 'node:path'
-import { CodeError } from '@libp2p/interface'
+import { InvalidParametersError } from '@libp2p/interface'
 import glob from 'it-glob'
 import type { MtimeLike } from 'ipfs-unixfs'
 import type { Options as GlobOptions } from 'it-glob'
@@ -53,7 +53,7 @@ export async function * globSource (cwd: string, pattern: string, options?: Glob
   options = options ?? {}
 
   if (typeof pattern !== 'string') {
-    throw new CodeError('Pattern must be a string', 'ERR_INVALID_PATH', { pattern })
+    throw new InvalidParametersError('Pattern must be a string')
   }
 
   if (!Path.isAbsolute(cwd)) {

@@ -1,4 +1,4 @@
-import { CodeError } from '@libp2p/interface'
+import { InvalidParametersError } from '@libp2p/interface'
 import blobToIt from 'blob-to-it'
 import browserStreamToIt from 'browser-readablestream-to-it'
 import all from 'it-all'
@@ -66,7 +66,7 @@ export async function normaliseContent (input: ToContent): Promise<AsyncIterable
   }
 
   // eslint-disable-next-line @typescript-eslint/no-base-to-string
-  throw new CodeError(`Unexpected input: ${input}`, 'ERR_UNEXPECTED_INPUT')
+  throw new InvalidParametersError(`Unexpected input: ${input}`)
 }
 
 function toBytes (chunk: ArrayBuffer | ArrayBufferView | string | InstanceType<typeof window.String> | number[]): Uint8Array {

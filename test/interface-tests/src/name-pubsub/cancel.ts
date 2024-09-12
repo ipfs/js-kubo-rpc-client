@@ -1,5 +1,6 @@
 /* eslint-env mocha */
-import { createEd25519PeerId } from '@libp2p/peer-id-factory'
+import { generateKeyPair } from '@libp2p/crypto/keys'
+import { peerIdFromPrivateKey } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
@@ -37,7 +38,7 @@ export function testCancel (factory: Factory<KuboNode>, options: MochaConfig): v
     it('should cancel a subscription correctly returning true', async function () {
       this.timeout(300 * 1000)
 
-      const peerId = await createEd25519PeerId()
+      const peerId = peerIdFromPrivateKey(await generateKeyPair('Ed25519'))
       const id = peerId.toString()
       const ipnsPath = `/ipns/${id}`
 

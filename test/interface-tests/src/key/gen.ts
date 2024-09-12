@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 
-import { keys } from '@libp2p/crypto'
 import { expect } from 'aegir/chai'
 import { nanoid } from 'nanoid'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
@@ -8,14 +7,11 @@ import type { KuboRPCClient } from '../../../../src/index.js'
 import type { KeyType } from '../../../../src/key/index.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-const { supportedKeys } = keys
-
 interface KeyTest {
   opts: {
     type?: KeyType
     size?: number
   }
-  expectedType: any
 }
 
 export function testGen (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -25,12 +21,10 @@ export function testGen (factory: Factory<KuboNode>, options: MochaConfig): void
   describe('.key.gen', () => {
     const keyTypes: KeyTest[] = [
       {
-        opts: { type: 'ed25519' },
-        expectedType: supportedKeys.ed25519.Ed25519PrivateKey
+        opts: { type: 'ed25519' }
       },
       {
-        opts: { },
-        expectedType: supportedKeys.ed25519.Ed25519PrivateKey
+        opts: { }
       }
     ]
 

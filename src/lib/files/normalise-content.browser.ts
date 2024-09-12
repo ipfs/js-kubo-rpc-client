@@ -1,4 +1,4 @@
-import { CodeError } from '@libp2p/interface'
+import { InvalidParametersError } from '@libp2p/interface'
 import browserStreamToIt from 'browser-readablestream-to-it'
 import all from 'it-all'
 import itPeekable from 'it-peekable'
@@ -59,7 +59,7 @@ export async function normaliseContent (input: ToContent): Promise<Blob> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-base-to-string
-  throw new CodeError(`Unexpected input: ${input}`, 'ERR_UNEXPECTED_INPUT')
+  throw new InvalidParametersError(`Unexpected input: ${input}`)
 }
 
 async function itToBlob (stream: AsyncIterable<BlobPart> | Iterable<BlobPart>): Promise<Blob> {

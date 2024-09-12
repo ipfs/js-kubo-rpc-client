@@ -1,9 +1,10 @@
 /* eslint-env mocha */
 
-import { peerIdFromKeys, peerIdFromString } from '@libp2p/peer-id'
+import { publicKeyFromProtobuf } from '@libp2p/crypto/keys'
+import { peerIdFromPublicKey, peerIdFromString } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import delay from 'delay'
-import * as ipns from 'ipns'
+import { multihashToIPNSRoutingKey, unmarshalIPNSRecord } from 'ipns'
 import { ipnsValidator } from 'ipns/validator'
 import last from 'it-last'
 import { base58btc } from 'multiformats/bases/base58'
@@ -80,7 +81,7 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         return subscribed
       }
 
-      const routingKey = ipns.peerIdToRoutingKey(idA.id)
+      const routingKey = multihashToIPNSRoutingKey(idA.id.toMultihash())
       const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
       await expect(last(nodeB.name.resolve(idA.id)))
@@ -147,7 +148,7 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         'ipns-base': 'b58mh'
       })
 
-      const routingKey = ipns.peerIdToRoutingKey(peerIdFromString(testAccount.id))
+      const routingKey = multihashToIPNSRoutingKey(peerIdFromString(testAccount.id).toMultihash())
       const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
       await nodeB.pubsub.subscribe(topic, checkMessage)
@@ -159,7 +160,7 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         throw new Error('Pubsub handler not invoked')
       }
 
-      const publishedMessageData = ipns.unmarshal(publishedMessage.data)
+      const publishedMessageData = unmarshalIPNSRecord(publishedMessage.data)
 
       if (publishedMessageData.pubKey == null) {
         throw new Error('No public key found in message data')
@@ -170,7 +171,8 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
       }
 
       const messageKey = publishedMessage.from
-      const pubKeyPeerId = await peerIdFromKeys(publishedMessageData.pubKey)
+      const publicKey = publicKeyFromProtobuf(publishedMessageData.pubKey)
+      const pubKeyPeerId = peerIdFromPublicKey(publicKey)
 
       expect(pubKeyPeerId.toString()).not.to.equal(messageKey.toString())
       expect(pubKeyPeerId.toString()).to.equal(testAccount.id)
