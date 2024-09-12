@@ -1,3 +1,13 @@
+## [5.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.3...v5.0.0) (2024-09-12)
+
+### ⚠ BREAKING CHANGES
+
+* can only be used with the latest versions of `@libp2p/peer-id`, `@libp2p/interface` etc
+
+### Dependencies
+
+* update to libp2p@2.x.x deps ([#241](https://github.com/ipfs/js-kubo-rpc-client/issues/241)) ([ea07f0b](https://github.com/ipfs/js-kubo-rpc-client/commit/ea07f0bc848c4697350c6bd4c8ec0169423f3bd2))
+
 ## [4.1.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.2...v4.1.3) (2024-09-12)
 
 ### Dependencies
