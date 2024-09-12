@@ -196,7 +196,7 @@
     "did-jwt": "^8.0.4",
     "interface-blockstore": "^5.2.10",
     "ipfs-unixfs-importer": "^15.2.5",
-    "ipfsd-ctl": "^14.1.3",
+    "ipfsd-ctl": "^15.0.0",
     "ipns": "^10.0.0",
     "is-ipfs": "^8.0.1",
     "iso-random-stream": "^2.0.2",
@@ -236,9 +236,5 @@
     "fs/promises": false,
     "node:fs/promises": false
   },
-  "sideEffects": false,
-  "overrides": {
-    "@libp2p/interface": "^2.0.0",
-    "@libp2p/logger": "^5.0.0"
-  }
+  "sideEffects": false
 }
