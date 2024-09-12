@@ -1,3 +1,20 @@
+## [4.1.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.1...v4.1.2) (2024-09-12)
+
+### Bug Fixes
+
+* export createKuboRPCClient function ([#224](https://github.com/ipfs/js-kubo-rpc-client/issues/224)) ([fb1249a](https://github.com/ipfs/js-kubo-rpc-client/commit/fb1249a8677cb5b22f35d91bc066d730d01e4051))
+
+### Trivial Changes
+
+* rename master to main ([5c7e42e](https://github.com/ipfs/js-kubo-rpc-client/commit/5c7e42ef02e9c9f8a509905fb22589107b158d2c))
+* Update .github/workflows/stale.yml [skip ci] ([39f1bf2](https://github.com/ipfs/js-kubo-rpc-client/commit/39f1bf2e25038e95cf60067adeee60d799a87997))
+
+### Dependencies
+
+* **dev:** bump aegir from 42.2.11 to 44.0.1 ([#240](https://github.com/ipfs/js-kubo-rpc-client/issues/240)) ([17d702b](https://github.com/ipfs/js-kubo-rpc-client/commit/17d702b4a1ab6789d735713440f0f1a031d69021))
+* **dev:** bump kubo from 0.28.0 to 0.29.0 ([#238](https://github.com/ipfs/js-kubo-rpc-client/issues/238)) ([0d7729e](https://github.com/ipfs/js-kubo-rpc-client/commit/0d7729e241c492efa9dcc28ce3a6fb613082d989))
+* **dev:** bump sinon from 17.0.2 to 18.0.0 ([#234](https://github.com/ipfs/js-kubo-rpc-client/issues/234)) ([a4459dc](https://github.com/ipfs/js-kubo-rpc-client/commit/a4459dcb3993a07adcd2ea27adba383ee224b34f))
+
 ## [4.1.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.0...v4.1.1) (2024-04-23)
 
 
