@@ -1,9 +1,11 @@
 import fs from 'node:fs'
 import fsp from 'node:fs/promises'
+import os from 'node:os'
 import Path from 'node:path'
 import { CodeError } from '@libp2p/interface'
 import glob from 'it-glob'
 import type { MtimeLike } from 'ipfs-unixfs'
+import type { Options as GlobOptions } from 'it-glob'
 
 export interface GlobSourceOptions {
   /**
@@ -58,15 +60,23 @@ export async function * globSource (cwd: string, pattern: string, options?: Glob
     cwd = Path.resolve(process.cwd(), cwd)
   }
 
-  const globOptions = Object.assign({}, {
-    nodir: false,
-    realpath: false,
+  if (os.platform() === 'win32') {
+    cwd = toPosix(cwd)
+  }
+
+  const globOptions: GlobOptions = Object.assign({}, {
+    onlyFiles: false,
     absolute: true,
     dot: Boolean(options.hidden),
-    follow: options.followSymlinks ?? true
-  })
+    followSymbolicLinks: options.followSymlinks ?? true
+  } satisfies GlobOptions)
 
   for await (const p of glob(cwd, pattern, globOptions)) {
+    // Workaround for https://github.com/micromatch/micromatch/issues/251
+    if (Path.basename(p).startsWith('.') && options.hidden !== true) {
+      continue
+    }
+
     const stat = await fsp.stat(p)
 
     let mode = options.mode
@@ -82,7 +92,7 @@ export async function * globSource (cwd: string, pattern: string, options?: Glob
     }
 
     yield {
-      path: toPosix(p.replace(cwd, '')),
+      path: p.replace(cwd, ''),
       content: stat.isFile() ? fs.createReadStream(p) : undefined,
       mode,
       mtime
