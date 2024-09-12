@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+import { path } from 'kubo'
 import { isWindows, isFirefox, isChrome } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
@@ -261,13 +262,12 @@ function executeTests (commonFactory: Factory<KuboNode>): void {
 
 describe('kubo-rpc-client tests against kubo', function () {
   void (async function () {
-    const { path } = await import('kubo')
     /**
      * @type {string|undefined}
      */
     const commonFactory = factory({
       type: 'kubo',
-      bin: typeof path === 'function' ? path() : undefined,
+      bin: path?.(),
       test: true
     })
     describe('kubo RPC client interface tests', function () {
