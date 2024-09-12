@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { peerIdFromString } from '@libp2p/peer-id'
+import { peerIdFromCID, peerIdFromString } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import last from 'it-last'
 import { nanoid } from 'nanoid'
@@ -10,6 +10,8 @@ import { fixture } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { PeerId } from '@libp2p/interface'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
+import { CID } from 'multiformats/cid'
+import { base36 } from 'multiformats/bases/base36'
 
 export function testPublish (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
@@ -53,7 +55,7 @@ export function testPublish (factory: Factory<KuboNode>, options: MochaConfig): 
       const res = await ipfs.name.publish(value, { allowOffline: true })
       expect(res).to.exist()
 
-      expect(peerIdFromString(res.name).toString()).to.equal(peerIdFromString(self.id).toString())
+      expect(peerIdFromCID(CID.parse(res.name, base36)).toString()).to.equal(peerIdFromCID(CID.parse(self.id, base36)).toString())
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
@@ -84,7 +86,7 @@ export function testPublish (factory: Factory<KuboNode>, options: MochaConfig): 
 
       const res = await ipfs.name.publish(value, options)
       expect(res).to.exist()
-      expect(peerIdFromString(res.name).toString()).to.equal(peerIdFromString(self.id).toString())
+      expect(peerIdFromCID(CID.parse(res.name, base36)).toString()).to.equal(peerIdFromCID(CID.parse(self.id, base36)).toString())
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
 
@@ -104,7 +106,7 @@ export function testPublish (factory: Factory<KuboNode>, options: MochaConfig): 
       const res = await ipfs.name.publish(value, options)
 
       expect(res).to.exist()
-      expect(peerIdFromString(res.name).toString()).to.equal(peerIdFromString(key.id).toString())
+      expect(peerIdFromCID(CID.parse(res.name, base36)).toString()).to.equal(peerIdFromCID(CID.parse(key.id, base36)).toString())
       expect(res.value).to.equal(`/ipfs/${value}`)
     })
   })

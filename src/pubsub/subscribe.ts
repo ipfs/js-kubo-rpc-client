@@ -105,7 +105,8 @@ async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onE
             data: rpcToBytes(msg.data),
             sequenceNumber: rpcToBigInt(msg.seqno),
             topic: rpcToText(msg.topicIDs[0]),
-            key: publicKeyFromProtobuf(rpcToBytes(msg.key ?? 'u')),
+            // @ts-expect-error kubo does not supply the key
+            key: msg.key != null ? publicKeyFromProtobuf(rpcToBytes(msg.key ?? 'u')) : undefined,
             signature: rpcToBytes(msg.signature ?? 'u')
           })
         } else {
