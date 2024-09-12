@@ -1,8 +1,10 @@
 /* eslint-env mocha */
 
-import { peerIdFromCID, peerIdFromString } from '@libp2p/peer-id'
+import { peerIdFromCID } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import last from 'it-last'
+import { base36 } from 'multiformats/bases/base36'
+import { CID } from 'multiformats/cid'
 import { nanoid } from 'nanoid'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
@@ -10,8 +12,6 @@ import { fixture } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { PeerId } from '@libp2p/interface'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
-import { CID } from 'multiformats/cid'
-import { base36 } from 'multiformats/bases/base36'
 
 export function testPublish (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
