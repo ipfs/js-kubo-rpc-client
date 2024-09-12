@@ -1,3 +1,9 @@
+## [5.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.0...v5.0.1) (2024-09-12)
+
+### Bug Fixes
+
+* update ipfsd-ctl dep and remove overrides ([#242](https://github.com/ipfs/js-kubo-rpc-client/issues/242)) ([f9935bc](https://github.com/ipfs/js-kubo-rpc-client/commit/f9935bcb8e455c88f7fc8bb4aa557d3400010878))
+
 ## [5.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.3...v5.0.0) (2024-09-12)
 
 ### ⚠ BREAKING CHANGES
