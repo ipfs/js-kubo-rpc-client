@@ -49,7 +49,7 @@ export class PinningService {
 
   async stop (): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.server.close((err: any) => {
+      this.server.close((err?: Error | undefined) => {
         if (err != null) {
           reject(err)
         } else {
