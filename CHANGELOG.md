@@ -1,3 +1,9 @@
+## [4.1.3](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.2...v4.1.3) (2024-09-12)
+
+### Dependencies
+
+* bump it-glob from 2.0.7 to 3.0.1 ([#231](https://github.com/ipfs/js-kubo-rpc-client/issues/231)) ([500b9c1](https://github.com/ipfs/js-kubo-rpc-client/commit/500b9c17839e8ca2227fa0104d986ce20c7719be))
+
 ## [4.1.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v4.1.1...v4.1.2) (2024-09-12)
 
 ### Bug Fixes
