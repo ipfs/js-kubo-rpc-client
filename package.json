@@ -190,7 +190,7 @@
     "@types/readable-stream": "^4.0.11",
     "@types/sinon": "^17.0.3",
     "@web-std/file": "^3.0.3",
-    "aegir": "^42.2.5",
+    "aegir": "^44.0.1",
     "blockstore-core": "^4.4.1",
     "buffer": "^6.0.3",
     "delay": "^6.0.0",
@@ -206,7 +206,7 @@
     "it-pipe": "^3.0.1",
     "it-tar": "^6.0.0",
     "it-to-buffer": "^4.0.5",
-    "kubo": "^0.28.0",
+    "kubo": "^0.29.0",
     "mock-ipfs-pinning-service": "^0.4.2",
     "nock": "^13.2.9",
     "p-defer": "^4.0.0",
@@ -214,7 +214,7 @@
     "p-retry": "^6.2.0",
     "pako": "^2.0.4",
     "readable-stream": "^4.2.0",
-    "sinon": "^17.0.1"
+    "sinon": "^18.0.0"
   },
   "browser": {
     "kubo": false,
