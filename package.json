@@ -213,7 +213,7 @@
     "p-retry": "^6.2.0",
     "pako": "^2.0.4",
     "readable-stream": "^4.2.0",
-    "sinon": "^18.0.0"
+    "sinon": "^19.0.0"
   },
   "browser": {
     "kubo": false,
