@@ -1,3 +1,10 @@
+## [5.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.1...v5.0.2) (2024-10-29)
+
+### Dependencies
+
+* **dev:** bump aegir from 44.1.4 to 45.0.0 ([#248](https://github.com/ipfs/js-kubo-rpc-client/issues/248)) ([72910b3](https://github.com/ipfs/js-kubo-rpc-client/commit/72910b35ebe6a5f9d54528276bbe7c217bd1be78))
+* **dev:** bump sinon from 18.0.1 to 19.0.2 ([#245](https://github.com/ipfs/js-kubo-rpc-client/issues/245)) ([c612761](https://github.com/ipfs/js-kubo-rpc-client/commit/c61276134c0a333e4addae98504c8492d041cf9e))
+
 ## [5.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.0...v5.0.1) (2024-09-12)
 
 ### Bug Fixes
