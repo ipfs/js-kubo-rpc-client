@@ -205,7 +205,7 @@
     "it-pipe": "^3.0.1",
     "it-tar": "^6.0.0",
     "it-to-buffer": "^4.0.5",
-    "kubo": "^0.29.0",
+    "kubo": "^0.32.1",
     "mock-ipfs-pinning-service": "^0.4.2",
     "nock": "^13.2.9",
     "p-defer": "^4.0.0",
