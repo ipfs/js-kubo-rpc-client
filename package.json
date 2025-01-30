@@ -207,7 +207,7 @@
     "it-to-buffer": "^4.0.5",
     "kubo": "^0.29.0",
     "mock-ipfs-pinning-service": "^0.4.2",
-    "nock": "^13.2.9",
+    "nock": "^14.0.0",
     "p-defer": "^4.0.0",
     "p-event": "^6.0.1",
     "p-retry": "^6.2.0",
