@@ -74,6 +74,7 @@ export interface PinLsResult {
   cid: CID
   type: PinType | string
   metadata?: Record<string, any>
+  name?: string
 }
 
 export interface PinRmOptions extends HTTPRPCOptions {
