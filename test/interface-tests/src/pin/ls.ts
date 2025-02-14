@@ -38,11 +38,9 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
     it('should list all recursive pins', async () => {
       const pinset = await all(ipfs.pin.ls({ type: 'recursive' }))
 
-      console.log(pinset)
-
       expect(pinset).to.deep.include({
         type: 'recursive',
-        cid: fixtures.files[0].cid,
+        cid: fixtures.files[0].cid
       })
       expect(pinset).to.deep.include({
         type: 'recursive',
