@@ -77,6 +77,7 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       const pinset = await all(ipfs.pin.ls())
 
       expect(pinset).to.not.be.empty()
+
       // check the three "roots"
       expect(pinset).to.deep.include({
         type: 'recursive',
@@ -98,6 +99,11 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
         type: 'indirect',
         cid: fixtures.directory.files[1].cid
       })
+
+      // Verify each pin has no name property
+      for (const pin of pinset) {
+        expect(pin).to.not.have.property('name')
+      }
     })
 
     it('should list all direct pins', async () => {
