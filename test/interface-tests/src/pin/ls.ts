@@ -38,9 +38,11 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
     it('should list all recursive pins', async () => {
       const pinset = await all(ipfs.pin.ls({ type: 'recursive' }))
 
+      console.log(pinset)
+
       expect(pinset).to.deep.include({
         type: 'recursive',
-        cid: fixtures.files[0].cid
+        cid: fixtures.files[0].cid,
       })
       expect(pinset).to.deep.include({
         type: 'recursive',
@@ -182,6 +184,9 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       const cids = pinset.map(p => p.cid.toString())
       expect(cids).to.include(fixtures.files[0].cid.toString())
       expect(cids).to.include(fixtures.files[1].cid.toString())
+      const names = pinset.map(p => p.name)
+      expect(names).to.include(fixtures.files[0].pinName)
+      expect(names).to.include(fixtures.files[1].pinName)
     })
 
     it('should list specific named pin', async () => {
@@ -191,6 +196,8 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       expect(pinset).to.have.lengthOf(1)
       const cids = pinset.map(p => p.cid.toString())
       expect(cids).to.include(fixtures.files[0].cid.toString())
+      const names = pinset.map(p => p.name)
+      expect(names).to.include(fixtures.files[0].pinName)
     })
 
     it('should throw error for invalid non-string pin type option', () => {
