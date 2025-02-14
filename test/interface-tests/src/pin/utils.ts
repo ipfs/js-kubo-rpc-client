@@ -27,19 +27,21 @@ export const fixtures = Object.freeze({
     files: Object.freeze([Object.freeze({
       path: 'test-folder/ipfs-add.js',
       data: loadFixture('test/interface-tests/fixtures/test-folder/ipfs-add.js'),
-      cid: CID.parse('QmdWJndBCczwPQeiKiSBzef8TyWigApDqY3q8p7jg9CiQK')
+      cid: CID.parse('QmdWJndBCczwPQeiKiSBzef8TyWigApDqY3q8p7jg9CiQK'),
     }), Object.freeze({
       path: 'test-folder/files/ipfs.txt',
       data: loadFixture('test/interface-tests/fixtures/test-folder/files/ipfs.txt'),
-      cid: CID.parse('QmdFyxZXsFiP4csgfM5uPu99AvFiKH62CSPDw5TP92nr7w')
+      cid: CID.parse('QmdFyxZXsFiP4csgfM5uPu99AvFiKH62CSPDw5TP92nr7w'),
     })])
   }),
   files: Object.freeze([Object.freeze({
     data: uint8ArrayFromString('Plz add me!\n'),
-    cid: CID.parse('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
+    cid: CID.parse('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'),
+    pinName: 'file-1'
   }), Object.freeze({
     data: loadFixture('test/interface-tests/fixtures/test-folder/files/hello.txt'),
-    cid: CID.parse('QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu')
+    cid: CID.parse('QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu'),
+    pinName: 'file-2'
   })])
 })
 
