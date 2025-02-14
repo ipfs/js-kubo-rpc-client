@@ -25,8 +25,8 @@ export interface PinAddOptions extends HTTPRPCOptions {
   lock?: boolean
 
   /**
-  * An optional name for created pin(s)
-  */
+   * An optional name for created pin(s)
+   */
   name?: string
 }
 
