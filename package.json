@@ -1,6 +1,6 @@
 {
   "name": "kubo-rpc-client",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "A client library for the Kubo RPC API",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-kubo-rpc-client#readme",
