@@ -36,10 +36,12 @@ export const fixtures = Object.freeze({
   }),
   files: Object.freeze([Object.freeze({
     data: uint8ArrayFromString('Plz add me!\n'),
-    cid: CID.parse('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP')
+    cid: CID.parse('Qma4hjFTnCasJ8PVp3mZbZK5g2vGDT4LByLJ7m8ciyRFZP'),
+    pinName: 'file-1'
   }), Object.freeze({
     data: loadFixture('test/interface-tests/fixtures/test-folder/files/hello.txt'),
-    cid: CID.parse('QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu')
+    cid: CID.parse('QmY9cxiHqTFoWamkQVkpmmqzBrY3hCBEL2XNu3NtX74Fuu'),
+    pinName: 'file-2'
   })])
 })
 

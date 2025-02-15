@@ -23,6 +23,11 @@ export interface PinAddOptions extends HTTPRPCOptions {
    * Internal option used to control whether to create a repo write lock during a pinning operation
    */
   lock?: boolean
+
+  /**
+   * An optional name for created pin(s)
+   */
+  name?: string
 }
 
 export interface PinAddAllOptions extends HTTPRPCOptions {
@@ -68,12 +73,14 @@ export type PinQueryType = 'recursive' | 'direct' | 'indirect' | 'all'
 export interface PinLsOptions extends HTTPRPCOptions {
   paths?: CID | CID[] | string | string[]
   type?: PinQueryType
+  name?: string
 }
 
 export interface PinLsResult {
   cid: CID
   type: PinType | string
   metadata?: Record<string, any>
+  name?: string
 }
 
 export interface PinRmOptions extends HTTPRPCOptions {

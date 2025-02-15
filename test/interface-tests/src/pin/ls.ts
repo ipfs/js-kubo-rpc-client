@@ -24,10 +24,10 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       await ipfs.pin.add(fixtures.directory.cid, { recursive: true })
       // a file (CID pinned recursively)
       await ipfs.add(fixtures.files[0].data, { pin: false, cidVersion: 0 })
-      await ipfs.pin.add(fixtures.files[0].cid, { recursive: true })
+      await ipfs.pin.add(fixtures.files[0].cid, { recursive: true, name: fixtures.files[0].pinName })
       // a single CID (pinned directly)
       await ipfs.add(fixtures.files[1].data, { pin: false, cidVersion: 0 })
-      await ipfs.pin.add(fixtures.files[1].cid, { recursive: false })
+      await ipfs.pin.add(fixtures.files[1].cid, { recursive: false, name: fixtures.files[1].pinName })
     })
 
     after(async function () {
@@ -77,6 +77,7 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       const pinset = await all(ipfs.pin.ls())
 
       expect(pinset).to.not.be.empty()
+
       // check the three "roots"
       expect(pinset).to.deep.include({
         type: 'recursive',
@@ -98,6 +99,11 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
         type: 'indirect',
         cid: fixtures.directory.files[1].cid
       })
+
+      // Verify each pin has no name property
+      for (const pin of pinset) {
+        expect(pin).to.not.have.property('name')
+      }
     })
 
     it('should list all direct pins', async () => {
@@ -172,6 +178,30 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       const cids = pinset.map(p => p.cid.toString())
       expect(cids).to.include(fixtures.files[0].cid.toString())
       expect(cids).to.include(fixtures.files[1].cid.toString())
+    })
+
+    it('should list multiple partially matched named pins', async () => {
+      const pinset = await all(ipfs.pin.ls({
+        name: 'file'
+      }))
+      expect(pinset).to.have.lengthOf(2)
+      const cids = pinset.map(p => p.cid.toString())
+      expect(cids).to.include(fixtures.files[0].cid.toString())
+      expect(cids).to.include(fixtures.files[1].cid.toString())
+      const names = pinset.map(p => p.name)
+      expect(names).to.include(fixtures.files[0].pinName)
+      expect(names).to.include(fixtures.files[1].pinName)
+    })
+
+    it('should list specific named pin', async () => {
+      const pinset = await all(ipfs.pin.ls({
+        name: fixtures.files[0].pinName
+      }))
+      expect(pinset).to.have.lengthOf(1)
+      const cids = pinset.map(p => p.cid.toString())
+      expect(cids).to.include(fixtures.files[0].cid.toString())
+      const names = pinset.map(p => p.name)
+      expect(names).to.include(fixtures.files[0].pinName)
     })
 
     it('should throw error for invalid non-string pin type option', () => {
