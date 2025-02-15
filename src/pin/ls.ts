@@ -3,7 +3,7 @@ import { toUrlSearchParams } from '../lib/to-url-search-params.js'
 import type { PinAPI, PinLsResult } from './index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 
-function toPin (type: string, cid: string, metadata: Record<string, string>): PinLsResult {
+function toPin (type: string, cid: string, metadata: Record<string, string>, name: string): PinLsResult {
   const pin: PinLsResult = {
     type,
     cid: CID.parse(cid)
@@ -11,6 +11,9 @@ function toPin (type: string, cid: string, metadata: Record<string, string>): Pi
 
   if (metadata != null) {
     pin.metadata = metadata
+  }
+  if (name != null) {
+    pin.name = name
   }
 
   return pin
@@ -37,12 +40,12 @@ export function createLs (client: HTTPRPCClient): PinAPI['ls'] {
     for await (const pin of res.ndjson()) {
       if (pin.Keys != null) { // non-streaming response
         for (const cid of Object.keys(pin.Keys)) {
-          yield toPin(pin.Keys[cid].Type, cid, pin.Keys[cid].Metadata)
+          yield toPin(pin.Keys[cid].Type, cid, pin.Keys[cid].Metadata, pin.Keys[cid].Name)
         }
         return
       }
 
-      yield toPin(pin.Type, pin.Cid, pin.Metadata)
+      yield toPin(pin.Type, pin.Cid, pin.Metadata, pin.Name)
     }
   }
 }
