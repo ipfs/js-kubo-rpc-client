@@ -222,7 +222,7 @@ export interface DAGAPI {
    * Import all blocks from one or more CARs and optionally recursively pin the roots identified
    * within the CARs.
    */
-  import(sources: Iterable<Uint8Array> | AsyncIterable<Uint8Array> | AsyncIterable<AsyncIterable<Uint8Array>> | Iterable<AsyncIterable<Uint8Array>>, options?: DAGImportOptions): AsyncIterable<DAGImportResult>
+  import(sources: ReadableStream<Uint8Array> | Iterable<Uint8Array> | AsyncIterable<Uint8Array> | AsyncIterable<AsyncIterable<Uint8Array>> | Iterable<AsyncIterable<Uint8Array>>, options?: DAGImportOptions): AsyncIterable<DAGImportResult>
 }
 
 export function createDAG (client: HTTPRPCClient, codecs: Codecs): DAGAPI {
