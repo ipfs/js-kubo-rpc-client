@@ -44,7 +44,7 @@ async function createCar (blocks: Array<{ cid: CID, bytes: Uint8Array }>): Promi
   return out
 }
 
-async function createReadableStreamFromCar(car: AsyncIterable<Uint8Array>): Promise<ReadableStream> {
+async function createReadableStreamFromCar (car: AsyncIterable<Uint8Array>): Promise<ReadableStream> {
   const stream = new ReadableStream({
     async start (controller) {
       try {
