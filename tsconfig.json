@@ -1,7 +1,11 @@
 {
   "extends": "aegir/src/config/tsconfig.aegir.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "kubo-rpc-client": ["./src/index.ts"]
+    }
   },
   "include": [
     "src",
