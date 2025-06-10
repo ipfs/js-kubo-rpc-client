@@ -96,7 +96,9 @@ export interface PinRmAllInput {
 
 export interface PinUpdateOptions extends HTTPRPCOptions {
   /**
-   * Remove the old pin. Default: true
+   * Remove the old pin
+   *
+   * @default true
    */
   unpin?: boolean
 }
