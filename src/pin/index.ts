@@ -4,6 +4,7 @@ import { createLs } from './ls.js'
 import { createRemote, type PinRemoteAPI } from './remote/index.js'
 import { createRmAll } from './rm-all.js'
 import { createRm } from './rm.js'
+import { createUpdate } from './update.js'
 import type { AwaitIterable, HTTPRPCOptions } from '../index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 import type { CID } from 'multiformats/cid'
@@ -91,6 +92,15 @@ export interface PinRmAllInput {
   cid?: CID
   path?: string
   recursive?: boolean
+}
+
+export interface PinUpdateOptions extends HTTPRPCOptions {
+  /**
+   * Remove the old pin
+   *
+   * @default true
+   */
+  unpin?: boolean
 }
 
 export interface PinAPI {
@@ -183,6 +193,20 @@ export interface PinAPI {
    */
   rmAll(source: AwaitIterable<PinRmAllInput>, options?: HTTPRPCOptions): AsyncIterable<CID>
 
+  /**
+   * Update a recursive pin
+   *
+   * @example
+   * ```js
+   * const oldCid = CID.parse('bafyreigdnpedjym3lvesqlllbry7zxjcp6fdvsusrh2mesqsdhd4idmzoq')
+   * const newCid = CID.parse('bafyreibt45jsjrdasabryzkzn7muhvigwyn2mmuw4hk26zr23fzyitmmy4')
+   * const result = await ipfs.pin.update(oldCid, newCid)
+   * console.log(result)
+   * // [CID('bafyreigdnpedjym3lvesqlllbry7zxjcp6fdvsusrh2mesqsdhd4idmzoq'), CID('bafyreibt45jsjrdasabryzkzn7muhvigwyn2mmuw4hk26zr23fzyitmmy4')]
+   * ```
+   */
+  update(from: string | CID, to: string | CID, options?: PinUpdateOptions): Promise<CID[]>
+
   remote: PinRemoteAPI
 }
 
@@ -193,6 +217,7 @@ export function createPin (client: HTTPRPCClient): PinAPI {
     ls: createLs(client),
     rmAll: createRmAll(client),
     rm: createRm(client),
+    update: createUpdate(client),
     remote: createRemote(client)
   }
 }

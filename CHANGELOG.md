@@ -1,3 +1,15 @@
+## [5.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.2...v5.1.0) (2025-02-15)
+
+### Features
+
+* support name in pin.ls ([#260](https://github.com/ipfs/js-kubo-rpc-client/issues/260)) ([df1d483](https://github.com/ipfs/js-kubo-rpc-client/commit/df1d48389132a89d0b6784ff3f94449272fdb86e)), closes [/docs.ipfs.tech/reference/kubo/rpc/#api-v0](https://github.com/ipfs//docs.ipfs.tech/reference/kubo/rpc//issues/api-v0)
+
+### Dependencies
+
+* bump @multiformats/multiaddr-to-uri from 10.1.2 to 11.0.0 ([#249](https://github.com/ipfs/js-kubo-rpc-client/issues/249)) ([dafa529](https://github.com/ipfs/js-kubo-rpc-client/commit/dafa5292ea223965ad43bad6ba7511147a92a7d9))
+* bump parse-duration from 1.1.2 to 2.1.2 ([#257](https://github.com/ipfs/js-kubo-rpc-client/issues/257)) ([3d28859](https://github.com/ipfs/js-kubo-rpc-client/commit/3d28859e6bd2f50629d136fe41d9f5b4683b240a))
+* **dev:** bump nock from 13.5.6 to 14.0.1 ([#259](https://github.com/ipfs/js-kubo-rpc-client/issues/259)) ([06f6f1e](https://github.com/ipfs/js-kubo-rpc-client/commit/06f6f1e62ffe9153dbfd896413507561aea60b57))
+
 ## [5.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.1...v5.0.2) (2024-10-29)
 
 ### Dependencies
