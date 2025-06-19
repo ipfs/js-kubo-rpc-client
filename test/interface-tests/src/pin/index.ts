@@ -5,6 +5,7 @@ import { testLs } from './ls.js'
 import testRemote from './remote/index.js'
 import { testRmAll } from './rm-all.js'
 import { testRm } from './rm.js'
+import { testUpdate } from './update.js'
 
 const tests = {
   add: testAdd,
@@ -12,7 +13,8 @@ const tests = {
   ls: testLs,
   rm: testRm,
   rmAll: testRmAll,
-  remote: testRemote
+  remote: testRemote,
+  update: testUpdate
 }
 
 export default createSuite(tests)
