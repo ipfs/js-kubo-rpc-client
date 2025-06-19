@@ -1,3 +1,13 @@
+## [5.2.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.1.0...v5.2.0) (2025-06-19)
+
+### Features
+
+* support pin.update ([#337](https://github.com/ipfs/js-kubo-rpc-client/issues/337)) ([c66360a](https://github.com/ipfs/js-kubo-rpc-client/commit/c66360aedc2961a834d1987eda1aa572fc757b8f))
+
+### Trivial Changes
+
+* Create FUNDING.json for OP RPF ([#273](https://github.com/ipfs/js-kubo-rpc-client/issues/273)) ([1ab7941](https://github.com/ipfs/js-kubo-rpc-client/commit/1ab7941819dd1a48df653ee159e6983608e72132))
+
 ## [5.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.2...v5.1.0) (2025-02-15)
 
 ### Features
