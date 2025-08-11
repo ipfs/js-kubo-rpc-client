@@ -175,7 +175,7 @@
     "it-to-stream": "^1.0.0",
     "merge-options": "^3.0.4",
     "multiformats": "^13.1.0",
-    "nanoid": "^5.0.7",
+    "nanoid": "^5.1.5",
     "native-fetch": "^4.0.2",
     "parse-duration": "^2.1.4",
     "react-native-fetch-api": "^3.0.0",
