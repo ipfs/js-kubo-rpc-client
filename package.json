@@ -177,7 +177,7 @@
     "multiformats": "^13.1.0",
     "nanoid": "^5.0.7",
     "native-fetch": "^4.0.2",
-    "parse-duration": "^2.1.2",
+    "parse-duration": "^2.1.4",
     "react-native-fetch-api": "^3.0.0",
     "stream-to-it": "^1.0.1",
     "uint8arrays": "^5.0.3",
