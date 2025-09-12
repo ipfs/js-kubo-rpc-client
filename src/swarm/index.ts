@@ -45,6 +45,7 @@ export interface SwarmPeersOptions extends HTTPRPCOptions {
   streams?: boolean
   verbose?: boolean
   latency?: boolean
+  identify?: boolean
 }
 
 export interface SwarmPeersResult {
@@ -55,6 +56,13 @@ export interface SwarmPeersResult {
   streams?: string[]
   direction?: 'inbound' | 'outbound'
   error?: Error
+  identify?: {
+    ID: string
+    PublicKey?: string
+    Addresses?: string[]
+    AgentVersion?: string
+    Protocols?: string[]
+  }
 }
 
 export function createSwarm (client: HTTPRPCClient): SwarmAPI {
