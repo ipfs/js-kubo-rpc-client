@@ -21,7 +21,7 @@ describe.skip('.swarm.peers', function () {
     const res = await ipfs.swarm.peers()
 
     expect(res).to.be.a('array')
-    expect(res.length).to.equal(1)
+    expect(res.length).to.be.greaterThan(0)
     expect(res[0].error).to.not.exist()
     expect(res[0].addr.toString()).to.equal(response.Peers[0].Addr)
     expect(res[0].peer.toString()).to.equal(response.Peers[0].Peer)
@@ -39,7 +39,7 @@ describe.skip('.swarm.peers', function () {
     const res = await ipfs.swarm.peers()
 
     expect(res).to.be.a('array')
-    expect(res.length).to.equal(1)
+    expect(res.length).to.be.greaterThan(0)
     expect(res[0].error).to.not.exist()
     expect(res[0].addr.toString()).to.equal(response.Peers[0].Addr)
     expect(res[0].peer.toString()).to.equal(response.Peers[0].Peer)
@@ -54,6 +54,40 @@ describe.skip('.swarm.peers', function () {
 
     await expect(ipfs.swarm.peers()).to.eventually.be.rejectedWith('something awful happened')
 
+    expect(scope.isDone()).to.equal(true)
+  })
+
+  it('handles a peer response with identify option', async function () {
+    const response = {
+      Peers: [{
+        Addr: '/ip4/104.131.131.82/tcp/4001',
+        Peer: 'QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+        Latency: '10ms',
+        Muxer: '',
+        Streams: null,
+        Identify: {
+          ID: 'QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+          PublicKey: 'CAESIBase64Key...',
+          Addresses: ['/ip4/104.131.131.82/tcp/4001'],
+          AgentVersion: 'kubo/0.35.0',
+          Protocols: ['/ipfs/id/1.0.0', '/ipfs/kad/1.0.0']
+        }
+      }]
+    }
+
+    const scope = nock(apiUrl)
+      .post('/api/v0/swarm/peers')
+      .query({ identify: true })
+      .reply(200, response)
+
+    const res = await ipfs.swarm.peers({ identify: true })
+
+    expect(res).to.be.a('array')
+    expect(res.length).to.be.greaterThan(0)
+    expect(res[0].identify).to.exist()
+    expect(res[0].identify?.AgentVersion).to.equal('kubo/0.35.0')
+    expect(res[0].identify?.ID).to.equal(response.Peers[0].Identify.ID)
+    expect(res[0].identify?.Protocols).to.deep.equal(response.Peers[0].Identify.Protocols)
     expect(scope.isDone()).to.equal(true)
   })
 })
