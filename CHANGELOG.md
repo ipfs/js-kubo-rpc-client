@@ -1,3 +1,9 @@
+## [5.3.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.2.0...v5.3.0) (2025-09-15)
+
+### Features
+
+* add identify field support to swarm.peers API ([#342](https://github.com/ipfs/js-kubo-rpc-client/issues/342)) ([2b10137](https://github.com/ipfs/js-kubo-rpc-client/commit/2b10137f307c5d01f81af5555518aa1d470462bb))
+
 ## [5.2.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.1.0...v5.2.0) (2025-06-19)
 
 ### Features
