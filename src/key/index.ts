@@ -93,18 +93,23 @@ export interface KeyAPI {
   rename(oldName: string, newName: string, options?: HTTPRPCOptions): Promise<KeyRenameResult>
 
   /**
-   * Remove a key
+   * import a key
+   *
+   * @param name - The name of the key
+   * @param file - The file to import
+   * @param ipnsBase - The base of the IPNS name default is base36, Takes {b58mh|base36|k|base32|b...}
+   * @param format - The format of the key, either  libp2p-protobuf-cleartext or pem-pkcs8-cleartext
    *
    * @example
    * ```js
-   * const key = await ipfs.key.import('clone', pem, 'password')
+   * const key = await ipfs.key.import('clone', new File(['keycontent'], 'test.key', { type: 'text/plain' }))
    *
    * console.log(key)
    * // { id: 'QmQRiays958UM7norGRQUG3tmrLq8pJdmJarwYSk2eLthQ',
    * //   name: 'clone' }
    * ```
    */
-  import(name: string, pem: string, password: string, options?: HTTPRPCOptions): Promise<Key>
+  import(name: string, file: File, ipnsBase?: string, format?: string, options?: HTTPRPCOptions): Promise<Key>
 }
 
 export function createKey (client: HTTPRPCClient): KeyAPI {
