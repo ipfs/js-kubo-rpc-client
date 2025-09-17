@@ -6,6 +6,7 @@ export interface Pinnable {
   cid?: CID
   recursive?: boolean
   metadata?: any
+  name?: string
 }
 
 export type ToPin = CID | string | Pinnable
@@ -15,6 +16,7 @@ export interface Pin {
   path: string | CID
   recursive: boolean
   metadata?: any
+  name?: string
 }
 
 function isIterable (thing: any): thing is IterableIterator<any> & Iterator<any> {
@@ -110,7 +112,14 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
     if (first.value.cid != null || first.value.path != null) {
       yield toPin(first.value)
       for (const obj of iterator) {
-        yield toPin(obj)
+        // Handle mixed iterables - obj could be CID or Pinnable
+        if (isCID(obj)) {
+          yield toPin({ cid: obj })
+        } else if (typeof obj === 'string') {
+          yield toPin({ path: obj })
+        } else {
+          yield toPin(obj)
+        }
       }
       return
     }
@@ -146,7 +155,14 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
     if (first.value.cid != null || first.value.path != null) {
       yield toPin(first.value)
       for await (const obj of iterator) {
-        yield toPin(obj)
+        // Handle mixed async iterables - obj could be CID or Pinnable
+        if (isCID(obj)) {
+          yield toPin({ cid: obj })
+        } else if (typeof obj === 'string') {
+          yield toPin({ path: obj })
+        } else {
+          yield toPin(obj)
+        }
       }
       return
     }
@@ -158,10 +174,10 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
 }
 
 function toPin (input: Pinnable): Pin {
-  const path = input.cid ?? `${input.path}`
+  const path = input.cid ?? (input.path != null ? `${input.path}` : undefined)
 
   if (path == null) {
-    throw new InvalidParametersError('Unexpected input: Please path either a CID or an IPFS path')
+    throw new InvalidParametersError('Unexpected input: Please pass either a CID or an IPFS path')
   }
 
   const pin: Pin = {
@@ -171,6 +187,10 @@ function toPin (input: Pinnable): Pin {
 
   if (input.metadata != null) {
     pin.metadata = input.metadata
+  }
+
+  if (input.name != null) {
+    pin.name = input.name
   }
 
   return pin
