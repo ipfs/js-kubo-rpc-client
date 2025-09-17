@@ -18,7 +18,7 @@ export function createStat (client: HTTPRPCClient): BitswapAPI['stat'] {
 
 function toCoreInterface (res: any): BitswapStats {
   return {
-    provideBufLen: res.ProvideBufLen,
+    provideBufLen: res.ProvideBufLen ?? 0,
     wantlist: (res.Wantlist ?? []).map((k: any) => CID.parse(k['/'])),
     peers: (res.Peers ?? []).map((str: any) => peerIdFromString(str)),
     blocksReceived: BigInt(res.BlocksReceived),
