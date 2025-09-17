@@ -2,8 +2,8 @@
 
 import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { UnixFS } from 'ipfs-unixfs'
+import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { factory } from './utils/factory.js'
 import type { KuboRPCClient } from '../src/index.js'
 
