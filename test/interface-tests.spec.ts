@@ -267,7 +267,7 @@ describe('kubo-rpc-client tests against kubo', function () {
      */
     const commonFactory = factory({
       type: 'kubo',
-      bin: kubo?.path(),
+      bin: process.env.IPFS_GO_EXEC ?? kubo?.path(),
       test: true
     })
     describe('kubo RPC client interface tests', function () {
