@@ -35,7 +35,15 @@ export function toUrlSearchParams ({ arg, searchParams, hashAlg, mtime, mode, ..
     arg = [arg]
   }
 
-  const urlSearchParams = new URLSearchParams(options)
+  // Filter out undefined and null values to avoid sending "undefined" or "null" as strings
+  const filteredOptions: Record<string, any> = {}
+  for (const [key, value] of Object.entries(options)) {
+    if (value !== undefined && value !== null) {
+      filteredOptions[key] = value
+    }
+  }
+
+  const urlSearchParams = new URLSearchParams(filteredOptions)
 
   arg.forEach((arg: any) => {
     urlSearchParams.append('arg', arg)

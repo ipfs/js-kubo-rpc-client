@@ -20,7 +20,7 @@ export function expectIsBitswap (err: Error | null, stats: BitswapStats): void {
   expect(stats).to.have.a.property('dupBlksReceived')
   expect(stats).to.have.a.property('dupDataReceived')
 
-  expect(stats.provideBufLen).to.a('number')
+  expect(stats.provideBufLen).to.a('number') // Defaults to 0 if not provided by API
   expect(stats.wantlist).to.be.an('array')
   expect(stats.peers).to.be.an('array')
   expect(isBigInt(stats.blocksReceived)).to.eql(true)

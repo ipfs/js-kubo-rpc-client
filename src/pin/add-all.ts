@@ -6,14 +6,15 @@ import type { HTTPRPCClient } from '../lib/core.js'
 
 export function createAddAll (client: HTTPRPCClient): PinAPI['addAll'] {
   return async function * addAll (source, options = {}) {
-    for await (const { path, recursive, metadata } of normaliseInput(source)) {
+    for await (const { path, recursive, metadata, name } of normaliseInput(source)) {
       const res = await client.post('pin/add', {
         signal: options.signal,
         searchParams: toUrlSearchParams({
           ...options,
-          arg: path,
+          arg: path.toString(),
           recursive,
           metadata: metadata != null ? JSON.stringify(metadata) : undefined,
+          name: name ?? options.name,
           stream: true
         }),
         headers: options.headers
