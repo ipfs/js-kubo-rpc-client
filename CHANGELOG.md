@@ -1,3 +1,9 @@
+## [5.4.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.3.0...v5.4.0) (2025-10-02)
+
+### Features
+
+* kubo 0.38 interop and pin name support ([#343](https://github.com/ipfs/js-kubo-rpc-client/issues/343)) ([32efafb](https://github.com/ipfs/js-kubo-rpc-client/commit/32efafb68c187ba25e7f5cc4ea9603d0d8630ea6))
+
 ## [5.3.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.2.0...v5.3.0) (2025-09-15)
 
 ### Features
