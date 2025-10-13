@@ -6,8 +6,9 @@ import all from 'it-all'
 import drain from 'it-drain'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testRead (factory: Factory<KuboNode>, options: MochaConfig): void {

@@ -1,9 +1,10 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt, type MochaConfig } from '../../utils/mocha.js'
+import { getDescribe, getIt } from '../../utils/mocha.js'
 import { clearServices } from '../utils.js'
 import type { KuboRPCClient } from '../../../../../src/index.js'
+import type { MochaConfig } from '../../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testService (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -194,7 +195,7 @@ export function testService (factory: Factory<KuboNode>, options: MochaConfig): 
 
       it('should not fail if service does not registered', async () => {
         expect(await ipfs.pin.remote.service.ls()).to.deep.equal([])
-        // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+
         expect(await ipfs.pin.remote.service.rm('pinbot')).to.equal(undefined)
       })
 

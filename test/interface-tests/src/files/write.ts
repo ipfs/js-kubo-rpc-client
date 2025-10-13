@@ -12,9 +12,10 @@ import { isNode } from 'wherearewe'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import { createTwoShards } from '../utils/create-two-shards.js'
 import isShardAtPath from '../utils/is-shard-at-path.js'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 interface WriteTestArg {
@@ -380,7 +381,6 @@ export function testWrite (factory: Factory<KuboNode>, options: MochaConfig): vo
         })
       }
 
-      // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
       void await Promise.allSettled(
         files.map(async ({ name, source }) => ipfs.files.write(`/concurrent/${name}`, source, {
           create: true,

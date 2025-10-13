@@ -1,9 +1,10 @@
 /* eslint-env mocha */
 
 import { CID } from 'multiformats/cid'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import { waitForWantlistKey } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testWantlistForPeer (factory: Factory<KuboNode>, options: MochaConfig): void {

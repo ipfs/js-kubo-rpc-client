@@ -6,8 +6,9 @@ import { CID } from 'multiformats/cid'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256, sha512 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const ONE_MEG = 1024 * 1024

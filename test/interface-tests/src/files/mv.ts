@@ -7,8 +7,9 @@ import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { createShardedDirectory } from '../utils/create-sharded-directory.js'
 import isShardAtPath from '../utils/is-shard-at-path.js'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 export function testMv (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)

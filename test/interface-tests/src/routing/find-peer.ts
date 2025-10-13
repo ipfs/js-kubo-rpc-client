@@ -4,9 +4,10 @@ import { peerIdFromString } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { ensureReachable } from '../dht/utils.js'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { RoutingQueryEvent } from '../../../../src/dht/index.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testFindPeer (factory: Factory<KuboNode>, options: MochaConfig): void {

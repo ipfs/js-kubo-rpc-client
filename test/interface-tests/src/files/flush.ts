@@ -2,8 +2,9 @@
 
 import { expect } from 'aegir/chai'
 import { nanoid } from 'nanoid'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 export function testFlush (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
