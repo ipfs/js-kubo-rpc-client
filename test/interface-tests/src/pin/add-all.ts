@@ -3,10 +3,11 @@
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import drain from 'it-drain'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import { fixtures, clearPins } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
 import type { PinAddInput } from '../../../../src/pin/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testAddAll (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -73,7 +74,7 @@ export function testAddAll (factory: Factory<KuboNode>, options: MochaConfig): v
     })
 
     it('should add an async generator of CIDs', async () => {
-      return testAddPinInput(async function * () { // eslint-disable-line require-await
+      return testAddPinInput(async function * () {
         yield fixtures.files[0].cid
         yield fixtures.files[1].cid
       }())
@@ -106,7 +107,7 @@ export function testAddAll (factory: Factory<KuboNode>, options: MochaConfig): v
     })
 
     it('should add an async generator of pins with options', async () => {
-      return testAddPinInput(async function * () { // eslint-disable-line require-await
+      return testAddPinInput(async function * () {
         yield {
           cid: fixtures.files[0].cid,
           recursive: false

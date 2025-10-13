@@ -12,10 +12,10 @@ import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { isNode } from 'wherearewe'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import waitFor from '../utils/wait-for.js'
-import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { Message } from '@libp2p/interface'
+import type { IDResult, KuboRPCClient, Message } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode, KuboOptions } from 'ipfsd-ctl'
 
 const namespace = '/record/'
@@ -34,7 +34,7 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
 
   describe('.name.pubsub', () => {
     // TODO make this work in the browser and between daemon and in-proc in nodes
-    if (!isNode) return
+    if (!isNode) { return }
 
     let nodes
     let nodeA: KuboRPCClient

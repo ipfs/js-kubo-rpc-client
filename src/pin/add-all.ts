@@ -25,7 +25,7 @@ export function createAddAll (client: HTTPRPCClient): PinAPI['addAll'] {
           for (const cid of pin.Pins) {
             yield CID.parse(cid)
           }
-          // eslint-disable-next-line no-continue
+
           continue
         }
 

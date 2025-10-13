@@ -54,7 +54,7 @@ function isCID (thing: any): thing is CID {
  * AsyncIterable<{ path: CID|String, recursive:boolean, metadata }>
  * ```
  */
-// eslint-disable-next-line complexity
+
 export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
   // must give us something
   if (input === null || input === undefined) {
@@ -102,7 +102,7 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
   if (isAsyncIterable(input)) {
     const iterator = input[Symbol.asyncIterator]()
     const first = await iterator.next()
-    if (first.done === true) return iterator
+    if (first.done === true) { return iterator }
 
     // AsyncIterable<ToPin>
     yield toPin(toPinnable(first.value))

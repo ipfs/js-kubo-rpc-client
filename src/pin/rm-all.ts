@@ -10,7 +10,7 @@ export function createRmAll (client: HTTPRPCClient): PinAPI['rmAll'] {
       const searchParams = new URLSearchParams(options.searchParams)
       searchParams.append('arg', `${path}`)
 
-      if (recursive != null) searchParams.set('recursive', String(recursive))
+      if (recursive != null) { searchParams.set('recursive', String(recursive)) }
 
       const res = await client.post('pin/rm', {
         signal: options.signal,
@@ -25,7 +25,7 @@ export function createRmAll (client: HTTPRPCClient): PinAPI['rmAll'] {
       for await (const pin of res.ndjson()) {
         if (pin.Pins != null) { // non-streaming response
           yield * pin.Pins.map((cid: string) => CID.parse(cid))
-          // eslint-disable-next-line no-continue
+
           continue
         }
         yield CID.parse(pin)

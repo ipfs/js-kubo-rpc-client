@@ -1,13 +1,13 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { importer, type ImportCandidate } from 'ipfs-unixfs-importer'
+import { importer } from 'ipfs-unixfs-importer'
 import all from 'it-all'
 import drain from 'it-drain'
 import last from 'it-last'
 import map from 'it-map'
 import { pipe } from 'it-pipe'
-import { extract, type TarEntryHeader } from 'it-tar'
+import { extract } from 'it-tar'
 import toBuffer from 'it-to-buffer'
 import { CID } from 'multiformats/cid'
 import Pako from 'pako'
@@ -16,9 +16,12 @@ import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import blockstore from './utils/blockstore-adapter.js'
 import { fixtures } from './utils/index.js'
-import { getDescribe, getIt, type MochaConfig } from './utils/mocha.js'
+import { getDescribe, getIt } from './utils/mocha.js'
+import type { MochaConfig } from './utils/mocha.js'
 import type { KuboRPCClient } from '../../../src/index.js'
+import type { ImportCandidate } from 'ipfs-unixfs-importer'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
+import type { TarEntryHeader } from 'it-tar'
 
 const content = (name: string, path?: string): ImportCandidate => {
   if (path == null) {

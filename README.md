@@ -1,4 +1,4 @@
-# kubo-rpc-client <!-- omit in toc -->
+# kubo-rpc-client
 
 [![ipfs.tech](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
 [![Discuss](https://img.shields.io/discourse/https/discuss.ipfs.tech/posts.svg?style=flat-square)](https://discuss.ipfs.tech)
@@ -6,6 +6,20 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/ipfs/js-kubo-rpc-client/js-test-and-release.yml?branch=main\&style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml?query=branch%3Amain)
 
 > A client library for the Kubo RPC API
+
+# Install
+
+```console
+$ npm i kubo-rpc-client
+```
+
+## Browser `<script>` tag
+
+Loading this module through a script tag will make its exports available as `KuboRpcClient` in the global namespace.
+
+```html
+<script src="https://unpkg.com/kubo-rpc-client/dist/index.min.js"></script>
+```
 
 ## Table of contents <!-- omit in toc -->
 
@@ -15,11 +29,11 @@
 - [Getting Started](#getting-started)
   - [Next Steps](#next-steps)
 - [Usage](#usage)
-    - [`create([options])`](#createoptions)
-    - [Parameters](#parameters)
-    - [Options](#options)
-    - [Returns](#returns)
-    - [Example](#example)
+  - [`create([options])`](#createoptions)
+  - [Parameters](#parameters)
+  - [Options](#options)
+  - [Returns](#returns)
+  - [Example](#example)
   - [API](#api)
   - [Additional Options](#additional-options)
   - [Instance Utils](#instance-utils)
@@ -40,20 +54,6 @@
 - [Historical context](#historical-context)
 - [License](#license)
 - [Contribute](#contribute)
-
-## Install
-
-```console
-$ npm i kubo-rpc-client
-```
-
-### Browser `<script>` tag
-
-Loading this module through a script tag will make it's exports available as `KuboRpcClient` in the global namespace.
-
-```html
-<script src="https://unpkg.com/kubo-rpc-client/dist/index.min.js"></script>
-```
 
 ## Kubo RPC Client
 
@@ -407,14 +407,18 @@ This is particularly useful when developing features that require changes to bot
 
 This module started as a direct mapping from the go-ipfs cli to a JavaScript implementation, although this was useful and familiar to a lot of developers that were coming to IPFS for the first time, it also created some confusion on how to operate the core of IPFS and have access to the full capacity of the protocol. After much consideration, we decided to create `interface-ipfs-core` with the goal of standardizing the interface of a core implementation of IPFS, and keep the utility functions the IPFS community learned to use and love, such as reading files from disk and storing them directly to IPFS.
 
-## License
+# API Docs
+
+- <https://ipfs.github.io/js-kubo-rpc-client>
+
+# License
 
 Licensed under either of
 
-- Apache 2.0, ([LICENSE-APACHE](LICENSE-APACHE) / <http://www.apache.org/licenses/LICENSE-2.0>)
-- MIT ([LICENSE-MIT](LICENSE-MIT) / <http://opensource.org/licenses/MIT>)
+- Apache 2.0, ([LICENSE-APACHE](https://github.com/ipfs/js-kubo-rpc-client/LICENSE-APACHE) / <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT ([LICENSE-MIT](https://github.com/ipfs/js-kubo-rpc-client/LICENSE-MIT) / <http://opensource.org/licenses/MIT>)
 
-## Contribute
+# Contribute
 
 Contributions welcome! Please check out [the issues](https://github.com/ipfs/js-kubo-rpc-client/issues).
 

@@ -45,9 +45,8 @@ export class Multicodecs {
    * Remove support for a block codec
    */
   removeCodec (codec: BlockCodec<any, any>): void {
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this._codecsByName[codec.name]
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
     delete this._codecsByCode[codec.code]
   }
 

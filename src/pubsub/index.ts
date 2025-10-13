@@ -6,7 +6,49 @@ import { SubscriptionTracker } from './subscription-tracker.js'
 import { createUnsubscribe } from './unsubscribe.js'
 import type { HTTPRPCOptions } from '../index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
-import type { EventHandler, PeerId, Message } from '@libp2p/interface'
+import type { EventHandler, PeerId, PublicKey } from '@libp2p/interface'
+
+/**
+ * On the producing side:
+ * - Build messages with the signature, key (from may be enough for certain inlineable public key types), from and seqno fields.
+ *
+ * On the consuming side:
+ * - Enforce the fields to be present, reject otherwise.
+ * - Propagate only if the fields are valid and signature can be verified, reject otherwise.
+ */
+export const StrictSign = 'StrictSign'
+
+/**
+ * On the producing side:
+ * - Build messages without the signature, key, from and seqno fields.
+ * - The corresponding protobuf key-value pairs are absent from the marshaled message, not just empty.
+ *
+ * On the consuming side:
+ * - Enforce the fields to be absent, reject otherwise.
+ * - Propagate only if the fields are absent, reject otherwise.
+ * - A message_id function will not be able to use the above fields, and should instead rely on the data field. A commonplace strategy is to calculate a hash.
+ */
+export const StrictNoSign = 'StrictNoSign'
+
+export type SignaturePolicy = typeof StrictSign | typeof StrictNoSign
+
+export interface SignedMessage {
+  type: 'signed'
+  from: PeerId
+  topic: string
+  data: Uint8Array
+  sequenceNumber: bigint
+  signature: Uint8Array
+  key: PublicKey
+}
+
+export interface UnsignedMessage {
+  type: 'unsigned'
+  topic: string
+  data: Uint8Array
+}
+
+export type Message = SignedMessage | UnsignedMessage
 
 export interface PubSubAPI {
   /**
