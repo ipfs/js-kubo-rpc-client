@@ -220,7 +220,6 @@
     "./dist/src/lib/files/normalise-input-single.js": "./dist/src/lib/files/normalise-input-single.browser.js",
     "./dist/src/lib/agent.js": "./dist/src/lib/agent.browser.js",
     "./dist/src/lib/multipart-request.node.js": "./dist/src/lib/multipart-request.browser.js",
-    "./dist/src/lib/fetch.js": "./dist/src/lib/fetch.browser.js",
     "./dist/src/lib/http/fetch.js": "./dist/src/lib/http/fetch.browser.js",
     "http": false,
     "node:http": false,
