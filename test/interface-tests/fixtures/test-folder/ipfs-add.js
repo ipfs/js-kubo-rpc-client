@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // @ts-nocheck
+/* eslint-disable no-console */
 
 const ipfs = require('../src')('localhost', 5001)
 const files = process.argv.slice(2)
-/* eslint-disable no-console */
 
 ipfs.add(files, { recursive: true }, function (err, res) {
   if (err || !res) { return console.log(err) }

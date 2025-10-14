@@ -1,3 +1,63 @@
+<<<<<<< HEAD
+# kubo-rpc-client
+
+[![ipfs.tech](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
+[![Discuss](https://img.shields.io/discourse/https/discuss.ipfs.tech/posts.svg?style=flat-square)](https://discuss.ipfs.tech)
+[![codecov](https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-kubo-rpc-client)
+[![CI](https://img.shields.io/github/actions/workflow/status/ipfs/js-kubo-rpc-client/js-test-and-release.yml?branch=main\&style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml?query=branch%3Amain)
+
+> A client library for the Kubo RPC API
+
+# Install
+
+```console
+$ npm i kubo-rpc-client
+```
+
+## Browser `<script>` tag
+
+Loading this module through a script tag will make its exports available as `KuboRpcClient` in the global namespace.
+
+```html
+<script src="https://unpkg.com/kubo-rpc-client/dist/index.min.js"></script>
+```
+
+## Table of contents <!-- omit in toc -->
+
+- [Install](#install)
+  - [Browser `<script>` tag](#browser-script-tag)
+- [Kubo RPC Client](#kubo-rpc-client)
+- [Getting Started](#getting-started)
+  - [Next Steps](#next-steps)
+- [Usage](#usage)
+  - [`create([options])`](#createoptions)
+  - [Parameters](#parameters)
+  - [Options](#options)
+  - [Returns](#returns)
+  - [Example](#example)
+  - [API](#api)
+  - [Additional Options](#additional-options)
+  - [Instance Utils](#instance-utils)
+  - [Static Types and Utils](#static-types-and-utils)
+    - [Glob source](#glob-source)
+      - [`globSource(path, pattern, [options])`](#globsourcepath-pattern-options)
+      - [Example](#example-1)
+    - [URL source](#url-source)
+      - [`urlSource(url)`](#urlsourceurl)
+      - [Example](#example-2)
+  - [Running the daemon with the right port](#running-the-daemon-with-the-right-port)
+  - [Importing the module and usage](#importing-the-module-and-usage)
+  - [In a web browser](#in-a-web-browser)
+  - [Custom Headers](#custom-headers)
+  - [Global Timeouts](#global-timeouts)
+- [Development](#development)
+  - [Testing](#testing)
+- [Historical context](#historical-context)
+- [License](#license)
+- [Contribute](#contribute)
+
+=======
+>>>>>>> origin/main
 ## Kubo RPC Client
 
 <h3 align="center">JavaScript client library for the Kubo RPC API</h3>

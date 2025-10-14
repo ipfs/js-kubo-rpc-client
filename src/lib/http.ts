@@ -7,7 +7,7 @@ import all from 'it-all'
 import mergeOpts from 'merge-options'
 import { isBrowser, isWebWorker } from 'wherearewe'
 import { TimeoutError, HTTPError } from './http/error.js'
-import { fetch, Request, Headers } from './http/fetch.js'
+import { fetch } from './http/fetch.js'
 import type { UploadProgressFn } from '../index.js'
 import type { Readable } from 'node:stream'
 
@@ -143,6 +143,7 @@ export class HTTP {
       log.trace('outgoing headers', opts.headers)
       log.trace('%s %s', opts.method, url)
 
+      // @ts-expect-error extra fields are added later
       const response: ExtendedResponse = await fetch(url.toString(), {
         ...opts,
         signal: opts.signal,

@@ -1,5 +1,3 @@
-// @ts-expect-error types are broken
-import { fetch, Response, Request, Headers } from '../fetch.js'
 import { TimeoutError, AbortError } from './error.js'
 import type { FetchOptions } from '../http.js'
 
@@ -120,5 +118,3 @@ class ResponseWithURL extends Response {
 }
 
 export { fetchWith as fetch }
-export { Headers }
-export { Request }

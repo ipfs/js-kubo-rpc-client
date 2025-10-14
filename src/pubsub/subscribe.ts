@@ -3,12 +3,11 @@ import { logger } from '@libp2p/logger'
 import { peerIdFromString } from '@libp2p/peer-id'
 import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.js'
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { PubSubAPI, PubsubApiErrorHandlerFn } from './index.js'
+import type { PubSubAPI, PubsubApiErrorHandlerFn, Message } from './index.js'
 import type { SubscriptionTracker } from './subscription-tracker.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 import type { AbortError } from '../lib/errors.js'
 import type { ExtendedResponse } from '../lib/http.js'
-import type { Message } from '@libp2p/interface'
 
 const log = logger('js-kubo-rpc-client:pubsub:subscribe')
 

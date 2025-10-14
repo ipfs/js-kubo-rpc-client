@@ -1,8 +1,6 @@
 import { Buffer } from 'node:buffer'
 // @ts-expect-error no types
 import toStream from 'it-to-stream'
-// @ts-expect-error types are broken
-import { fetch, Request, Response, Headers } from '../fetch.js'
 import type { UploadProgressFn } from '../../index.js'
 import type { FetchOptions } from '../http.js'
 import type { Readable } from 'node:stream'
@@ -73,5 +71,3 @@ const iterateBodyWithProgress = async function * (body: Readable | null, onUploa
 }
 
 export { fetchWithProgress as fetch }
-export { Request }
-export { Headers }

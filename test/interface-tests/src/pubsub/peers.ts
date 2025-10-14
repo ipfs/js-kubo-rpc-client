@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+import { getNetConfig } from '@libp2p/utils'
 import { expect } from 'aegir/chai'
 import delay from 'delay'
 import { getDescribe, getIt } from '../utils/mocha.js'
@@ -38,9 +39,9 @@ export function testPeers (factory: Factory<KuboNode>, options: MochaConfig): vo
       ipfs3Id = await ipfs3.id()
 
       const ipfs2Addr = ipfs2Id.addresses
-        .find(ma => ma.nodeAddress().address === '127.0.0.1')
+        .find(ma => getNetConfig(ma).host === '127.0.0.1')
       const ipfs3Addr = ipfs3Id.addresses
-        .find(ma => ma.nodeAddress().address === '127.0.0.1')
+        .find(ma => getNetConfig(ma).host === '127.0.0.1')
 
       if (ipfs2Addr == null || ipfs3Addr == null) {
         throw new Error('Could not find addrs')

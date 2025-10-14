@@ -11,9 +11,9 @@ import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { isNode } from 'wherearewe'
 import { getDescribe, getIt } from '../utils/mocha.js'
 import { getTopic, getSubscriptionTestObject } from './utils.js'
-import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
+import type { IDResult, KuboRPCClient, Message } from '../../../../src/index.js'
 import type { MochaConfig } from '../utils/mocha.js'
-import type { Message, PeerId } from '@libp2p/interface'
+import type { PeerId } from '@libp2p/interface'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const log = logger('js-kubo-rpc-client:pubsub:subscribe:test')
