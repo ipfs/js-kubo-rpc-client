@@ -1,3 +1,4 @@
+// @ts-expect-error types are broken
 import { fetch, Response, Request, Headers } from '../fetch.js'
 import { TimeoutError, AbortError } from './error.js'
 import type { FetchOptions } from '../http.js'
@@ -8,7 +9,6 @@ import type { FetchOptions } from '../http.js'
 async function fetchWithProgress (url: string | Request, options: FetchOptions = {}): Promise<ResponseWithURL> {
   const request = new XMLHttpRequest()
 
-  // eslint-disable-next-line @typescript-eslint/no-base-to-string
   request.open(options.method ?? 'GET', url.toString(), true)
 
   const { timeout, headers } = options

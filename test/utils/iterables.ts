@@ -3,7 +3,7 @@ export function iterableOf <T> (thing: T): T[] {
 }
 
 export function asyncIterableOf <T> (thing: T): AsyncIterable<T> {
-  return (async function * () { // eslint-disable-line require-await
+  return (async function * () {
     yield thing
   }())
 }

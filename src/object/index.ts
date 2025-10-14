@@ -1,5 +1,6 @@
-import { createPatch, type ObjectPatchAPI } from './patch/index.js'
+import { createPatch } from './patch/index.js'
 import type { Codecs } from '../index.js'
+import type { ObjectPatchAPI } from './patch/index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 import type { CID } from 'multiformats/cid'
 

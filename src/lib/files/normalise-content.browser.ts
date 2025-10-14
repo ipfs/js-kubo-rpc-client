@@ -46,7 +46,6 @@ export async function normaliseContent (input: ToContent): Promise<Blob> {
 
     // (Async)Iterable<Number>
     if (Number.isInteger(value)) {
-      // @ts-expect-error cannot detect peekable generic type
       // eslint-disable-next-line @typescript-eslint/await-thenable
       return new Blob([Uint8Array.from(await all(peekable))])
     }
@@ -58,7 +57,6 @@ export async function normaliseContent (input: ToContent): Promise<Blob> {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-base-to-string
   throw new InvalidParametersError(`Unexpected input: ${input}`)
 }
 

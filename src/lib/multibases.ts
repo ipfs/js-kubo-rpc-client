@@ -45,9 +45,8 @@ export class Multibases {
    * Remove support for a multibase codec
    */
   removeBase (base: MultibaseCodec<any>): void {
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this._basesByName[base.name]
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
     delete this._basesByPrefix[base.prefix]
   }
 

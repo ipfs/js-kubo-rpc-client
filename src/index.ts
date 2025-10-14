@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-import { isMultiaddr, type Multiaddr } from '@multiformats/multiaddr'
+import { isMultiaddr } from '@multiformats/multiaddr'
 import { createKuboRPCClient } from './client.js'
 import { HTTP } from './lib/http.js'
 import type { BitswapAPI } from './bitswap/index.js'
@@ -27,6 +27,7 @@ import type { RoutingAPI } from './routing/index.js'
 import type { StatsAPI } from './stats/index.js'
 import type { SwarmAPI } from './swarm/index.js'
 import type { AbortOptions, PeerId } from '@libp2p/interface'
+import type { Multiaddr } from '@multiformats/multiaddr'
 import type { Mtime, MtimeLike } from 'ipfs-unixfs'
 import type { MultibaseCodec } from 'multiformats/bases/interface'
 import type { CID, Version } from 'multiformats/cid'

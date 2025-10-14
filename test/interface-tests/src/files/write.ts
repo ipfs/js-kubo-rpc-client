@@ -161,7 +161,9 @@ export function testWrite (factory: Factory<KuboNode>, options: MochaConfig): vo
       }
 
       const filePath = `/small-file-${Math.random()}.txt`
-      const blob = new global.Blob([smallFile.buffer.slice(smallFile.byteOffset, smallFile.byteOffset + smallFile.byteLength)])
+      const blob = new global.Blob([
+        new Uint8Array(smallFile.buffer.slice(smallFile.byteOffset, smallFile.byteOffset + smallFile.byteLength))
+      ])
 
       await ipfs.files.write(filePath, blob, {
         create: true

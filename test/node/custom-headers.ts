@@ -5,7 +5,8 @@ import { expect } from 'aegir/chai'
 import pDefer from 'p-defer'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { isNode } from 'wherearewe'
-import { create as httpClient, type KuboRPCClient } from '../../src/index.js'
+import { create as httpClient } from '../../src/index.js'
+import type { KuboRPCClient } from '../../src/index.js'
 import type { IncomingHttpHeaders } from 'node:http'
 
 async function startServer (fn: () => any): Promise<IncomingHttpHeaders> {

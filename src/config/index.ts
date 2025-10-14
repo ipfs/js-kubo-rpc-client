@@ -1,9 +1,10 @@
 import { createGetAll } from './get-all.js'
 import { createGet } from './get.js'
-import { createProfiles, type ConfigProfilesAPI } from './profiles/index.js'
+import { createProfiles } from './profiles/index.js'
 import { createReplace } from './replace.js'
 import { createSet } from './set.js'
 import type { HTTPRPCOptions } from '../index.js'
+import type { ConfigProfilesAPI } from './profiles/index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 
 export interface Config {

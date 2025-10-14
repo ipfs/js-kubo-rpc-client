@@ -1,10 +1,9 @@
-/* eslint-disable no-undef */
-
 import { logger } from '@libp2p/logger'
 import { anySignal } from 'any-signal'
 import browserReableStreamToIt from 'browser-readablestream-to-it'
 import { URL, URLSearchParams } from 'iso-url'
 import all from 'it-all'
+// @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOpts from 'merge-options'
 import { isBrowser, isWebWorker } from 'wherearewe'
 import { TimeoutError, HTTPError } from './http/error.js'
@@ -106,7 +105,6 @@ export class HTTP {
       throw new TypeError('`resource` must be a string, URL, or Request')
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     const url = new URL(resource.toString(), opts.base)
 
     const {
@@ -145,7 +143,6 @@ export class HTTP {
       log.trace('outgoing headers', opts.headers)
       log.trace('%s %s', opts.method, url)
 
-      // @ts-expect-error extra properties are added later
       const response: ExtendedResponse = await fetch(url.toString(), {
         ...opts,
         signal: opts.signal,
@@ -241,8 +238,8 @@ const ndjson = async function * (source: AsyncIterable<Uint8Array>): AsyncIterab
  * @param {ReadableStream<TChunk> | NodeReadableStream | null} source
  * @returns {AsyncIterable<TChunk>}
  */
-const fromStream = <TChunk> (source: ReadableStream<TChunk> | Readable | null): AsyncIterable<TChunk> => {
-  if (isAsyncIterable(source)) {
+const fromStream = <TChunk> (source: any | null): AsyncIterable<TChunk> => {
+  if (isAsyncIterable<TChunk>(source)) {
     return source
   }
 
@@ -265,7 +262,7 @@ const fromStream = <TChunk> (source: ReadableStream<TChunk> | Readable | null): 
     }
   }
 
-  if (isWebReadableStream(source)) {
+  if (isWebReadableStream<TChunk>(source)) {
     const reader = source.getReader()
     return (async function * () {
       try {
@@ -273,7 +270,7 @@ const fromStream = <TChunk> (source: ReadableStream<TChunk> | Readable | null): 
           // Read from the stream
           const { done, value } = await reader.read()
           // Exit if we're done
-          if (done) return
+          if (done) { return }
           // Else yield the chunk
           if (value != null) {
             yield value
