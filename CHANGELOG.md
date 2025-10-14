@@ -1,3 +1,20 @@
+## [6.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.0.0...v6.0.1) (2025-10-14)
+
+### Documentation
+
+* update readme ([562b223](https://github.com/ipfs/js-kubo-rpc-client/commit/562b22352af60174241c26ce27a5faeb3a801637))
+* update readme ([81fbc09](https://github.com/ipfs/js-kubo-rpc-client/commit/81fbc096fb66cc9e56ef8e6a0afe8af0d3221161))
+
+## [6.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.4.1...v6.0.0) (2025-10-14)
+
+### ⚠ BREAKING CHANGES
+
+* must be used with the latest versions of `@libp2p/*` and/or `@multiformats/multiaddr`
+
+### Bug Fixes
+
+* update libp2p and other deps ([#344](https://github.com/ipfs/js-kubo-rpc-client/issues/344)) ([c1e0c04](https://github.com/ipfs/js-kubo-rpc-client/commit/c1e0c04e655d8355c97aa84034705fa458848446))
+
 ## [5.4.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.4.0...v5.4.1) (2025-10-14)
 
 ### Dependencies
