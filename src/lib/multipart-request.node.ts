@@ -2,6 +2,7 @@ import { logger } from '@libp2p/logger'
 import itPeekable from 'it-peekable'
 // @ts-expect-error no types
 import toStream from 'it-to-stream'
+// @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOpts from 'merge-options'
 import { nanoid } from 'nanoid'
 import { normaliseInput } from './files/normalise-input-multiple.js'

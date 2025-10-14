@@ -13,7 +13,7 @@ import type { Message } from '@libp2p/interface'
 const log = logger('js-kubo-rpc-client:pubsub:subscribe')
 
 export function createSubscribe (client: HTTPRPCClient, subsTracker: SubscriptionTracker): PubSubAPI['subscribe'] {
-  return async function subscribe (topic, handler, options = {}) { // eslint-disable-line require-await
+  return async function subscribe (topic, handler, options = {}) {
     options.signal = subsTracker.subscribe(topic, handler, options.signal)
 
     let done: (value?: any) => void
@@ -94,7 +94,6 @@ async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onE
     for await (const msg of response.ndjson()) {
       try {
         if (msg.from == null) {
-          // eslint-disable-next-line no-continue
           continue
         }
 

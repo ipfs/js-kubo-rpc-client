@@ -1,6 +1,6 @@
 {
-  "out": "docs",
-  "preserveWatchOutput": true,
-  "logLevel": "Verbose",
-  "excludeExternals": true
+  "readme": "none",
+  "entryPoints": [
+    "./src/index.ts"
+  ]
 }

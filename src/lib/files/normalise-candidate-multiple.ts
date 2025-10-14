@@ -23,7 +23,7 @@ import type { ImportCandidate, ImportCandidateStream, ToContent } from '../../in
  * @param {ImportCandidateStream} input
  * @param {(content:ToContent) => Promise<AsyncIterable<Uint8Array>>} normaliseContent
  */
-// eslint-disable-next-line complexity
+
 export async function * normaliseCandidateMultiple (input: ImportCandidateStream, normaliseContent: (content: ToContent) => Promise<AsyncIterable<Uint8Array>>): AsyncGenerator<ImportCandidate, void, undefined> {
   // String
   // Uint8Array|ArrayBuffer|TypedArray

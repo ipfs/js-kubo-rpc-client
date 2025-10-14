@@ -23,11 +23,11 @@ export const pinTypes: Record<string, PinType> = {
 export const fixtures = Object.freeze({
   // NOTE: files under 'directory' need to be different than standalone ones in 'files'
   directory: Object.freeze({
-    cid: CID.parse('QmSjnCov8q2oU54bGE4n9B3BoaBv8ALVZUUkzLjqAN9Roj'),
+    cid: CID.parse('Qmdrp3TnoEh6Wb1Ck3C8KxjyEbS6rbEz5eWh67zz8bcZzz'),
     files: Object.freeze([Object.freeze({
       path: 'test-folder/ipfs-add.js',
       data: loadFixture('test/interface-tests/fixtures/test-folder/ipfs-add.js'),
-      cid: CID.parse('QmdWJndBCczwPQeiKiSBzef8TyWigApDqY3q8p7jg9CiQK')
+      cid: CID.parse('QmcXKoS12Pg8HxKrEB8UGcVN8R62ds3tWfqad5puVsfDRE')
     }), Object.freeze({
       path: 'test-folder/files/ipfs.txt',
       data: loadFixture('test/interface-tests/fixtures/test-folder/files/ipfs.txt'),

@@ -3,9 +3,10 @@
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import last from 'it-last'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import { expectIsBandwidth } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testBw (factory: Factory<KuboNode>, options: MochaConfig): void {

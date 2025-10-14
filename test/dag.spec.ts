@@ -7,8 +7,9 @@ import { expect } from 'aegir/chai'
 import { base32 } from 'multiformats/bases/base32'
 import * as raw from 'multiformats/codecs/raw'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { create as httpClient, type KuboRPCClient } from '../src/index.js'
+import { create as httpClient } from '../src/index.js'
 import { factory } from './utils/factory.js'
+import type { KuboRPCClient } from '../src/index.js'
 const f = factory()
 
 let ipfs: KuboRPCClient

@@ -21,4 +21,6 @@ export { Request }
 export { Response }
 
 */
+
+// @ts-expect-error types are broken
 export * from 'native-fetch'

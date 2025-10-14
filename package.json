@@ -37,16 +37,6 @@
       "import": "./dist/src/index.js"
     }
   },
-  "eslintConfig": {
-    "extends": "ipfs",
-    "parserOptions": {
-      "project": true,
-      "sourceType": "module"
-    },
-    "ignorePatterns": [
-      "test/interface-tests/fixtures/*"
-    ]
-  },
   "release": {
     "branches": [
       "main"
@@ -129,7 +119,15 @@
       "@semantic-release/changelog",
       "@semantic-release/npm",
       "@semantic-release/github",
-      "@semantic-release/git"
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ]
+        }
+      ]
     ]
   },
   "scripts": {
@@ -189,7 +187,7 @@
     "@types/readable-stream": "^4.0.11",
     "@types/sinon": "^17.0.3",
     "@web-std/file": "^3.0.3",
-    "aegir": "^45.0.0",
+    "aegir": "^47.0.22",
     "blockstore-core": "^5.0.0",
     "buffer": "^6.0.3",
     "delay": "^6.0.0",

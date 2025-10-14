@@ -1,11 +1,12 @@
 import { createAddAll } from './add-all.js'
 import { createAdd } from './add.js'
 import { createLs } from './ls.js'
-import { createRemote, type PinRemoteAPI } from './remote/index.js'
+import { createRemote } from './remote/index.js'
 import { createRmAll } from './rm-all.js'
 import { createRm } from './rm.js'
 import { createUpdate } from './update.js'
 import type { AwaitIterable, HTTPRPCOptions } from '../index.js'
+import type { PinRemoteAPI } from './remote/index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 import type { CID } from 'multiformats/cid'
 

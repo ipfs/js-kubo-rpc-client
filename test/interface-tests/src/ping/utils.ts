@@ -1,5 +1,5 @@
 import { expect } from 'aegir/chai'
-import type { PingResult } from '../../../../src'
+import type { PingResult } from '../../../../src/index.js'
 
 export function expectIsPingResponse (obj: any): void {
   expect(obj).to.have.a.property('success')
