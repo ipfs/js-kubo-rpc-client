@@ -45,9 +45,8 @@ export class Multihashes {
    * Remove support for a multibase hasher
    */
   removeHasher (hasher: MultihashHasher): void {
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this._hashersByName[hasher.name]
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
     delete this._hashersByCode[hasher.code]
   }
 

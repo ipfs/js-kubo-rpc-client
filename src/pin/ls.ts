@@ -27,11 +27,25 @@ export function createLs (client: HTTPRPCClient): PinAPI['ls'] {
       paths = Array.isArray(options.paths) ? options.paths : [options.paths]
     }
 
+    // Check for conflicting options
+    if (options.name != null && options.names === false) {
+      throw new Error('Cannot use name filter when names is explicitly set to false')
+    }
+
+    // Check for empty name filter
+    if (options.name === '') {
+      throw new Error('Name filter cannot be empty string')
+    }
+
+    // If name filter is provided, automatically enable names flag
+    const names = options.names ?? (options.name != null)
+
     const res = await client.post('pin/ls', {
       signal: options.signal,
       searchParams: toUrlSearchParams({
         ...options,
         arg: paths.map(path => `${path}`),
+        names,
         stream: true
       }),
       headers: options.headers

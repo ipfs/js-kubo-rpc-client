@@ -11,7 +11,6 @@ import {
 } from './utils.js'
 import type { ImportCandidate, ToContent } from '../../index.js'
 
-// eslint-disable-next-line complexity
 export async function * normaliseCandidateSingle (input: ImportCandidate, normaliseContent: (content: ToContent) => Promise<AsyncIterable<Uint8Array>>): AsyncGenerator<ImportCandidate, void, undefined> {
   if (input === null || input === undefined) {
     throw errCode(new Error(`Unexpected input: ${input}`), 'ERR_UNEXPECTED_INPUT')

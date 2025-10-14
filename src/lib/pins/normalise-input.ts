@@ -6,6 +6,7 @@ export interface Pinnable {
   cid?: CID
   recursive?: boolean
   metadata?: any
+  name?: string
 }
 
 export type ToPin = CID | string | Pinnable
@@ -15,6 +16,7 @@ export interface Pin {
   path: string | CID
   recursive: boolean
   metadata?: any
+  name?: string
 }
 
 function isIterable (thing: any): thing is IterableIterator<any> & Iterator<any> {
@@ -52,7 +54,7 @@ function isCID (thing: any): thing is CID {
  * AsyncIterable<{ path: CID|String, recursive:boolean, metadata }>
  * ```
  */
-// eslint-disable-next-line complexity
+
 export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
   // must give us something
   if (input === null || input === undefined) {
@@ -88,80 +90,49 @@ export async function * normaliseInput (input: Source): AsyncGenerator<Pin> {
       return iterator
     }
 
-    // Iterable<CID>
-    if (isCID(first.value)) {
-      yield toPin({ cid: first.value })
-      for (const cid of iterator) {
-        yield toPin({ cid })
-      }
-      return
+    // Iterable<ToPin>
+    yield toPin(toPinnable(first.value))
+    for (const obj of iterator) {
+      yield toPin(toPinnable(obj))
     }
-
-    // Iterable<String>
-    if (typeof first.value === 'string') {
-      yield toPin({ path: first.value })
-      for (const path of iterator) {
-        yield toPin({ path })
-      }
-      return
-    }
-
-    // Iterable<Pinnable>
-    if (first.value.cid != null || first.value.path != null) {
-      yield toPin(first.value)
-      for (const obj of iterator) {
-        yield toPin(obj)
-      }
-      return
-    }
-
-    throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
+    return
   }
 
   // AsyncIterable<?>
   if (isAsyncIterable(input)) {
     const iterator = input[Symbol.asyncIterator]()
     const first = await iterator.next()
-    if (first.done === true) return iterator
+    if (first.done === true) { return iterator }
 
-    // AsyncIterable<CID>
-    if (isCID(first.value)) {
-      yield toPin({ cid: first.value })
-      for await (const cid of iterator) {
-        yield toPin({ cid })
-      }
-      return
+    // AsyncIterable<ToPin>
+    yield toPin(toPinnable(first.value))
+    for await (const obj of iterator) {
+      yield toPin(toPinnable(obj))
     }
-
-    // AsyncIterable<String>
-    if (typeof first.value === 'string') {
-      yield toPin({ path: first.value })
-      for await (const path of iterator) {
-        yield toPin({ path })
-      }
-      return
-    }
-
-    // AsyncIterable<{ cid: CID|String recursive, metadata }>
-    if (first.value.cid != null || first.value.path != null) {
-      yield toPin(first.value)
-      for await (const obj of iterator) {
-        yield toPin(obj)
-      }
-      return
-    }
-
-    throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
+    return
   }
 
   throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
 }
 
+function toPinnable (input: ToPin): Pinnable {
+  if (isCID(input)) {
+    return { cid: input }
+  }
+  if (typeof input === 'string') {
+    return { path: input }
+  }
+  if (typeof input === 'object' && (input.cid != null || input.path != null)) {
+    return input
+  }
+  throw new InvalidParametersError(`Unexpected input: ${typeof input}`)
+}
+
 function toPin (input: Pinnable): Pin {
-  const path = input.cid ?? `${input.path}`
+  const path = input.cid ?? (input.path != null ? `${input.path}` : undefined)
 
   if (path == null) {
-    throw new InvalidParametersError('Unexpected input: Please path either a CID or an IPFS path')
+    throw new InvalidParametersError('Unexpected input: Please pass either a CID or an IPFS path')
   }
 
   const pin: Pin = {
@@ -171,6 +142,10 @@ function toPin (input: Pinnable): Pin {
 
   if (input.metadata != null) {
     pin.metadata = input.metadata
+  }
+
+  if (input.name != null) {
+    pin.name = input.name
   }
 
   return pin

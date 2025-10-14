@@ -1,10 +1,11 @@
 /* eslint-env mocha */
 
 import { isBrowser, isWebWorker, isElectronRenderer } from 'wherearewe'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import waitFor from '../utils/wait-for.js'
 import { getTopic } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testUnsubscribe (factory: Factory<KuboNode>, options: MochaConfig): void {

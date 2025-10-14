@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import { path } from 'kubo'
+import kubo from 'kubo'
 import { isWindows, isFirefox, isChrome } from './constants.js'
 import * as tests from './interface-tests/src/index.js'
 import { factory } from './utils/factory.js'
@@ -267,7 +267,7 @@ describe('kubo-rpc-client tests against kubo', function () {
      */
     const commonFactory = factory({
       type: 'kubo',
-      bin: path?.(),
+      bin: process.env.IPFS_GO_EXEC ?? kubo?.path(),
       test: true
     })
     describe('kubo RPC client interface tests', function () {

@@ -2,8 +2,9 @@
 
 import { expect } from 'aegir/chai'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testSet (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -23,21 +24,21 @@ export function testSet (factory: Factory<KuboNode>, options: MochaConfig): void
     })
 
     it('should set a new key', async () => {
-      await ipfs.config.set('Fruit', 'banana')
+      await ipfs.config.set('Gateway.RootRedirect', '/test1')
 
-      const fruit = await ipfs.config.get('Fruit')
-      expect(fruit).to.equal('banana')
+      const redirect = await ipfs.config.get('Gateway.RootRedirect')
+      expect(redirect).to.equal('/test1')
     })
 
     it('should set an already existing key', async () => {
-      await ipfs.config.set('Fruit', 'morango')
+      await ipfs.config.set('Gateway.RootRedirect', '/test2')
 
-      const fruit = await ipfs.config.get('Fruit')
-      expect(fruit).to.equal('morango')
+      const redirect = await ipfs.config.get('Gateway.RootRedirect')
+      expect(redirect).to.equal('/test2')
     })
 
     it('should set a number', async () => {
-      const key = 'Discovery.MDNS.Interval'
+      const key = 'Gateway.MaxConcurrentRequests'
       const val = 11
 
       await ipfs.config.set(key, val)
@@ -77,10 +78,15 @@ export function testSet (factory: Factory<KuboNode>, options: MochaConfig): void
       return expect(ipfs.config.set(uint8ArrayFromString('heeey'), '')).to.eventually.be.rejected()
     })
 
+    it('should fail on unknown config key', () => {
+      return expect(ipfs.config.set('Fruit', 'banana')).to.eventually.be.rejected()
+        .with.property('message').that.matches(/Fruit not found/)
+    })
+
     it('should fail on non valid value', () => {
       const val: any = {}
       val.val = val
-      return expect(ipfs.config.set('Fruit', val)).to.eventually.be.rejected()
+      return expect(ipfs.config.set('Gateway.RootRedirect', val)).to.eventually.be.rejected()
     })
   })
 }

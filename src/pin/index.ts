@@ -1,11 +1,12 @@
 import { createAddAll } from './add-all.js'
 import { createAdd } from './add.js'
 import { createLs } from './ls.js'
-import { createRemote, type PinRemoteAPI } from './remote/index.js'
+import { createRemote } from './remote/index.js'
 import { createRmAll } from './rm-all.js'
 import { createRm } from './rm.js'
 import { createUpdate } from './update.js'
 import type { AwaitIterable, HTTPRPCOptions } from '../index.js'
+import type { PinRemoteAPI } from './remote/index.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 import type { CID } from 'multiformats/cid'
 
@@ -41,6 +42,11 @@ export interface PinAddAllOptions extends HTTPRPCOptions {
    * Internal option used to control whether to create a repo write lock during a pinning operation
    */
   lock?: boolean
+
+  /**
+   * An optional name for created pin(s)
+   */
+  name?: string
 }
 
 export type PinAddInput = CID | PinAddInputWithOptions
@@ -65,6 +71,11 @@ export interface PinAddInputWithOptions {
    * A human readable string to store with this pin
    */
   comments?: string
+
+  /**
+   * An optional name for the created pin
+   */
+  name?: string
 }
 
 export type PinType = 'recursive' | 'direct' | 'indirect' | 'all'
@@ -72,9 +83,30 @@ export type PinType = 'recursive' | 'direct' | 'indirect' | 'all'
 export type PinQueryType = 'recursive' | 'direct' | 'indirect' | 'all'
 
 export interface PinLsOptions extends HTTPRPCOptions {
+  /**
+   * Path(s) to specific object(s) to be listed
+   */
   paths?: CID | CID[] | string | string[]
+
+  /**
+   * The type of pinned keys to list. Can be "direct", "indirect", "recursive", or "all".
+   *
+   * @default "all"
+   */
   type?: PinQueryType
+
+  /**
+   * Limit returned pins to ones with names that contain the value provided (case-sensitive, partial match).
+   * Implies names=true.
+   */
   name?: string
+
+  /**
+   * Include pin names in the output (slower, disabled by default).
+   *
+   * @default false
+   */
+  names?: boolean
 }
 
 export interface PinLsResult {

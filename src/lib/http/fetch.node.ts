@@ -1,7 +1,6 @@
 import { Buffer } from 'node:buffer'
 // @ts-expect-error no types
 import toStream from 'it-to-stream'
-import { fetch, Request, Response, Headers } from '../fetch.js'
 import type { UploadProgressFn } from '../../index.js'
 import type { FetchOptions } from '../http.js'
 import type { Readable } from 'node:stream'
@@ -64,7 +63,6 @@ const iterateBodyWithProgress = async function * (body: Readable | null, onUploa
     const lengthComputable = false
     let loaded = 0
     for await (const chunk of body) {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       loaded += chunk.byteLength
       yield chunk
       onUploadProgress({ total, loaded, lengthComputable })
@@ -73,5 +71,3 @@ const iterateBodyWithProgress = async function * (body: Readable | null, onUploa
 }
 
 export { fetchWithProgress as fetch }
-export { Request }
-export { Headers }

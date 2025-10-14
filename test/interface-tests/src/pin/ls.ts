@@ -2,9 +2,10 @@
 
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import { fixtures } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -194,6 +195,7 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
     })
 
     it('should list specific named pin', async () => {
+      // Using name filter automatically enables names
       const pinset = await all(ipfs.pin.ls({
         name: fixtures.files[0].pinName
       }))
@@ -202,6 +204,69 @@ export function testLs (factory: Factory<KuboNode>, options: MochaConfig): void 
       expect(cids).to.include(fixtures.files[0].cid.toString())
       const names = pinset.map(p => p.name)
       expect(names).to.include(fixtures.files[0].pinName)
+    })
+
+    it('should list pins with names when names flag is true', async () => {
+      const pinset = await all(ipfs.pin.ls({ names: true }))
+
+      // Find pins with names
+      const pinWithName1 = pinset.find(p => p.cid.equals(fixtures.files[0].cid))
+      const pinWithName2 = pinset.find(p => p.cid.equals(fixtures.files[1].cid))
+
+      expect(pinWithName1?.name).to.equal(fixtures.files[0].pinName)
+      expect(pinWithName2?.name).to.equal(fixtures.files[1].pinName)
+
+      // Pins without names should have undefined
+      const pinWithoutName = pinset.find(p => p.cid.equals(fixtures.directory.cid))
+      expect(pinWithoutName?.name).to.be.undefined()
+    })
+
+    it('should not return names when names flag is not set', async () => {
+      const pinset = await all(ipfs.pin.ls())
+
+      // All pins should have undefined names when names flag is not set
+      for (const pin of pinset) {
+        expect(pin.name).to.be.undefined()
+      }
+    })
+
+    it('should throw error when name filter is used with names explicitly false', async () => {
+      await expect(all(ipfs.pin.ls({
+        name: 'test',
+        names: false
+      }))).to.be.rejectedWith(/Cannot use name filter when names is explicitly set to false/)
+    })
+
+    it('should throw error for empty name filter', async () => {
+      await expect(all(ipfs.pin.ls({
+        name: ''
+      }))).to.be.rejectedWith(/Name filter cannot be empty string/)
+    })
+
+    it('should return empty array when name filter has no matches', async () => {
+      const pinset = await all(ipfs.pin.ls({
+        name: 'non-existent-pin-name-that-does-not-match-anything'
+      }))
+      expect(pinset).to.have.lengthOf(0)
+    })
+
+    it('should list pins with names flag for specific paths', async () => {
+      // With names flag - should return the name
+      const pinsWithNames = await all(ipfs.pin.ls({
+        paths: fixtures.files[0].cid,
+        names: true
+      }))
+      expect(pinsWithNames).to.have.lengthOf(1)
+      expect(pinsWithNames[0].cid).to.deep.equal(fixtures.files[0].cid)
+      expect(pinsWithNames[0].name).to.equal(fixtures.files[0].pinName)
+
+      // Without names flag - should not return the name
+      const pinsWithoutNames = await all(ipfs.pin.ls({
+        paths: fixtures.files[0].cid
+      }))
+      expect(pinsWithoutNames).to.have.lengthOf(1)
+      expect(pinsWithoutNames[0].cid).to.deep.equal(fixtures.files[0].cid)
+      expect(pinsWithoutNames[0].name).to.be.undefined()
     })
 
     it('should throw error for invalid non-string pin type option', () => {

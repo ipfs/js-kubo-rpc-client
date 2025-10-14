@@ -4,9 +4,10 @@ import { expect } from 'aegir/chai'
 import all from 'it-all'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import { fixtures, clearPins, expectPinned, expectNotPinned, pinTypes } from './utils.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testAdd (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -176,6 +177,64 @@ export function testAdd (factory: Factory<KuboNode>, options: MochaConfig): void
         cid: child,
         type: 'indirect'
       })
+    })
+
+    it('should add a pin with a name', async () => {
+      const pinName = 'test-pin-name'
+      const cid = await ipfs.pin.add(fixtures.files[0].cid, {
+        name: pinName
+      })
+      expect(cid).to.deep.equal(fixtures.files[0].cid)
+
+      // Using name filter automatically enables names flag
+      const pins = await all(ipfs.pin.ls({ name: pinName }))
+      expect(pins).to.have.lengthOf(1)
+      expect(pins[0]).to.deep.include({
+        cid: fixtures.files[0].cid,
+        type: 'recursive',
+        name: pinName
+      })
+    })
+
+    it('should add a pin without a name', async () => {
+      const cid = await ipfs.pin.add(fixtures.files[0].cid)
+      expect(cid).to.deep.equal(fixtures.files[0].cid)
+
+      // Check without names flag - name should be undefined
+      const pins = await all(ipfs.pin.ls({ paths: fixtures.files[0].cid }))
+      expect(pins).to.have.lengthOf(1)
+      expect(pins[0].cid).to.deep.equal(fixtures.files[0].cid)
+      expect(pins[0].name).to.be.undefined()
+
+      // Also verify with names flag - should still be undefined since no name was set
+      const pinsWithNames = await all(ipfs.pin.ls({ paths: fixtures.files[0].cid, names: true }))
+      expect(pinsWithNames).to.have.lengthOf(1)
+      expect(pinsWithNames[0].cid).to.deep.equal(fixtures.files[0].cid)
+      expect(pinsWithNames[0].name).to.be.undefined()
+    })
+
+    it('should update pin name when pinning again with different name', async () => {
+      const firstName = 'first-name'
+      const secondName = 'second-name'
+
+      // Pin with first name
+      await ipfs.pin.add(fixtures.files[0].cid, { name: firstName })
+
+      // Verify first name (name filter automatically enables names flag)
+      let pins = await all(ipfs.pin.ls({ name: firstName }))
+      expect(pins).to.have.lengthOf(1)
+      expect(pins[0].name).to.equal(firstName)
+
+      // Pin again with second name
+      await ipfs.pin.add(fixtures.files[0].cid, { name: secondName })
+
+      // Verify name was updated
+      pins = await all(ipfs.pin.ls({ name: firstName }))
+      expect(pins).to.have.lengthOf(0)
+
+      pins = await all(ipfs.pin.ls({ name: secondName }))
+      expect(pins).to.have.lengthOf(1)
+      expect(pins[0].name).to.equal(secondName)
     })
   })
 }

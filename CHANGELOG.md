@@ -1,3 +1,31 @@
+## [5.4.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.4.0...v5.4.1) (2025-10-14)
+
+### Dependencies
+
+* **dev:** bump aegir from 45.0.9 to 47.0.12 ([#336](https://github.com/ipfs/js-kubo-rpc-client/issues/336)) ([b4f1f52](https://github.com/ipfs/js-kubo-rpc-client/commit/b4f1f523fe66ea175e0f17594b1ae7f760d98436))
+
+## [5.4.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.3.0...v5.4.0) (2025-10-02)
+
+### Features
+
+* kubo 0.38 interop and pin name support ([#343](https://github.com/ipfs/js-kubo-rpc-client/issues/343)) ([32efafb](https://github.com/ipfs/js-kubo-rpc-client/commit/32efafb68c187ba25e7f5cc4ea9603d0d8630ea6))
+
+## [5.3.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.2.0...v5.3.0) (2025-09-15)
+
+### Features
+
+* add identify field support to swarm.peers API ([#342](https://github.com/ipfs/js-kubo-rpc-client/issues/342)) ([2b10137](https://github.com/ipfs/js-kubo-rpc-client/commit/2b10137f307c5d01f81af5555518aa1d470462bb))
+
+## [5.2.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.1.0...v5.2.0) (2025-06-19)
+
+### Features
+
+* support pin.update ([#337](https://github.com/ipfs/js-kubo-rpc-client/issues/337)) ([c66360a](https://github.com/ipfs/js-kubo-rpc-client/commit/c66360aedc2961a834d1987eda1aa572fc757b8f))
+
+### Trivial Changes
+
+* Create FUNDING.json for OP RPF ([#273](https://github.com/ipfs/js-kubo-rpc-client/issues/273)) ([1ab7941](https://github.com/ipfs/js-kubo-rpc-client/commit/1ab7941819dd1a48df653ee159e6983608e72132))
+
 ## [5.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.0.2...v5.1.0) (2025-02-15)
 
 ### Features

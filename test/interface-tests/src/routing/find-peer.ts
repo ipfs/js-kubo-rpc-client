@@ -1,12 +1,14 @@
 /* eslint-env mocha */
 
 import { peerIdFromString } from '@libp2p/peer-id'
+import { getNetConfig } from '@libp2p/utils'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { ensureReachable } from '../dht/utils.js'
-import { getDescribe, getIt, type MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.js'
 import type { RoutingQueryEvent } from '../../../../src/dht/index.js'
 import type { KuboRPCClient } from '../../../../src/index.js'
+import type { MochaConfig } from '../utils/mocha.js'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testFindPeer (factory: Factory<KuboNode>, options: MochaConfig): void {
@@ -41,8 +43,8 @@ export function testFindPeer (factory: Factory<KuboNode>, options: MochaConfig):
       }
 
       const id = finalPeer.peer.id
-      const nodeAddresses = nodeBId.addresses.map((addr) => addr.nodeAddress())
-      const peerAddresses = finalPeer.peer.multiaddrs.map(ma => ma.nodeAddress())
+      const nodeAddresses = nodeBId.addresses.map((addr) => getNetConfig(addr))
+      const peerAddresses = finalPeer.peer.multiaddrs.map(ma => getNetConfig(ma))
 
       expect(id.toString()).to.equal(nodeBId.id.toString())
       expect(peerAddresses).to.deep.include(nodeAddresses[0])
