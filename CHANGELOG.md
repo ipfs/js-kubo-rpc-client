@@ -1,3 +1,9 @@
+## [5.4.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.4.0...v5.4.1) (2025-10-14)
+
+### Dependencies
+
+* **dev:** bump aegir from 45.0.9 to 47.0.12 ([#336](https://github.com/ipfs/js-kubo-rpc-client/issues/336)) ([b4f1f52](https://github.com/ipfs/js-kubo-rpc-client/commit/b4f1f523fe66ea175e0f17594b1ae7f760d98436))
+
 ## [5.4.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v5.3.0...v5.4.0) (2025-10-02)
 
 ### Features
