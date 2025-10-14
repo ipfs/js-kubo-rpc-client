@@ -207,7 +207,7 @@
     "mock-ipfs-pinning-service": "^0.4.2",
     "nock": "^14.0.1",
     "p-defer": "^4.0.0",
-    "p-event": "^6.0.1",
+    "p-event": "^7.0.0",
     "p-retry": "^6.2.0",
     "pako": "^2.0.4",
     "readable-stream": "^4.2.0",
