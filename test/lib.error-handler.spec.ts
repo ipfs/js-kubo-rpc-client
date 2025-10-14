@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
-import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { errorHandler, HTTPError } from '../src/lib/core.js'
 import { throwsAsync } from './utils/throws-async.js'
 
@@ -18,7 +17,7 @@ describe('lib/error-handler', function () {
         Code: 0,
         Type: 'error'
       }),
-      bytes: async () => uint8ArrayFromString('boom'),
+      bytes: async () => Promise.reject(new Error('boom')),
       status: 500,
       redirected: false,
       url: '',
@@ -49,7 +48,7 @@ describe('lib/error-handler', function () {
         'Content-Type': 'application/json'
       }),
       json: async () => 'boom', // not valid json!
-      bytes: async () => uint8ArrayFromString('boom'),
+      bytes: async () => Promise.reject(new Error('boom')),
       status: 500,
       redirected: false,
       url: '',
@@ -77,7 +76,7 @@ describe('lib/error-handler', function () {
       text: async () => Promise.reject(new Error('boom')),
       status: 500,
       json: async () => 'boom', // not valid json!
-      bytes: async () => uint8ArrayFromString('boom'),
+      bytes: async () => Promise.reject(new Error('boom')),
       redirected: false,
       url: '',
       type: 'basic',

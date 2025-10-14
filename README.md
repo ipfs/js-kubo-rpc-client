@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # kubo-rpc-client
 
 [![ipfs.tech](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
@@ -55,6 +56,8 @@ Loading this module through a script tag will make its exports available as `Kub
 - [License](#license)
 - [Contribute](#contribute)
 
+=======
+>>>>>>> origin/main
 ## Kubo RPC Client
 
 <h3 align="center">JavaScript client library for the Kubo RPC API</h3>
@@ -78,22 +81,34 @@ Loading this module through a script tag will make its exports available as `Kub
   <br>
 </p>
 
-## Getting Started
+# kubo-rpc-client
 
-We've come a long way, but this project is still in Alpha, lots of development is happening, APIs might change, beware of 🐉..
+[![ipfs.tech](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
+[![Discuss](https://img.shields.io/discourse/https/discuss.ipfs.tech/posts.svg?style=flat-square)](https://discuss.ipfs.tech)
+[![codecov](https://img.shields.io/codecov/c/github/ipfs/js-kubo-rpc-client.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-kubo-rpc-client)
+[![CI](https://img.shields.io/github/actions/workflow/status/ipfs/js-kubo-rpc-client/js-test-and-release.yml?branch=main\&style=flat-square)](https://github.com/ipfs/js-kubo-rpc-client/actions/workflows/js-test-and-release.yml?query=branch%3Amain)
 
-```bash
-npm install --save kubo-rpc-client
+> A client library for the Kubo RPC API
+
+# Install
+
+```console
+$ npm i kubo-rpc-client
+```
+
+## Browser `<script>` tag
+
+Loading this module through a script tag will make its exports available as `KuboRpcClient` in the global namespace.
+
+```html
+<script src="https://unpkg.com/kubo-rpc-client/dist/index.min.js"></script>
 ```
 
 Both the Current and Active LTS versions of Node.js are supported. Please see [nodejs.org](https://nodejs.org/) for what these currently are.
 
 ### Next Steps
 
-<!-- TODO: currently useless
 - Read the [docs](https://ipfs.github.io/js-kubo-rpc-client)
--->
-
 - Look into the [examples](https://github.com/ipfs-examples/js-ipfs-examples) to learn how to spawn an RPC client or a full IPFS node in Node.js and in the Browser
 - Consult the [Core API docs](https://github.com/ipfs/js-ipfs/tree/master/docs/core-api) to see what you can do with an IPFS node
 - Check out <https://docs.ipfs.tech> for tips, how-tos and more

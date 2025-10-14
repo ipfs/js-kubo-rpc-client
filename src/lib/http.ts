@@ -143,7 +143,7 @@ export class HTTP {
       log.trace('outgoing headers', opts.headers)
       log.trace('%s %s', opts.method, url)
 
-      // @ts-expect-error extra properties are added later
+      // @ts-expect-error extra fields are added later
       const response: ExtendedResponse = await fetch(url.toString(), {
         ...opts,
         signal: opts.signal,
@@ -239,7 +239,7 @@ const ndjson = async function * (source: AsyncIterable<Uint8Array>): AsyncIterab
  * @param {ReadableStream<TChunk> | NodeReadableStream | null} source
  * @returns {AsyncIterable<TChunk>}
  */
-const fromStream = <TChunk> (source?: any | null): AsyncIterable<TChunk> => {
+const fromStream = <TChunk> (source: any | null): AsyncIterable<TChunk> => {
   if (isAsyncIterable<TChunk>(source)) {
     return source
   }
