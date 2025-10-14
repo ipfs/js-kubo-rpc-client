@@ -1,3 +1,9 @@
+## [6.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.0.1...v6.0.2) (2025-10-14)
+
+### Dependencies
+
+* update ipfsd-ctl ([#350](https://github.com/ipfs/js-kubo-rpc-client/issues/350)) ([ca8be85](https://github.com/ipfs/js-kubo-rpc-client/commit/ca8be854f9b8c16b23fa895a86b891210442f5cc))
+
 ## [6.0.1](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.0.0...v6.0.1) (2025-10-14)
 
 ### Documentation
