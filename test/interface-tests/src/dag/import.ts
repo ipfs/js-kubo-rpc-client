@@ -45,6 +45,23 @@ async function createCar (blocks: Array<{ cid: CID, bytes: Uint8Array }>): Promi
   return out
 }
 
+async function createReadableStreamFromCar (car: AsyncIterable<Uint8Array>): Promise<ReadableStream<Uint8Array>> {
+  const stream = new ReadableStream({
+    async start (controller) {
+      try {
+        for await (const chunk of car) {
+          controller.enqueue(chunk)
+        }
+        controller.close()
+      } catch (err) {
+        controller.error(err)
+      }
+    }
+  })
+
+  return stream
+}
+
 /**
  * @typedef {import('ipfsd-ctl').Factory} Factory
  */
@@ -179,6 +196,24 @@ export function testImport (factory: Factory<KuboNode>, options: MochaConfig): v
 
       const result = await all(ipfs.dag.import(async function * () { yield input }()))
       expect(result).to.have.deep.nested.property('[0].root.cid', cids[0])
+    })
+
+    it('should be able to import car file as a ReadableStream', async () => {
+      const blocks = await createBlocks(5)
+      const car = await createCar(blocks)
+
+      const stream = await createReadableStreamFromCar(car)
+
+      const result = await all(ipfs.dag.import(stream))
+      expect(result).to.have.lengthOf(1)
+      expect(result).to.have.deep.nested.property('[0].root.cid', blocks[0].cid)
+
+      for (const { cid } of blocks) {
+        await expect(ipfs.block.get(cid)).to.eventually.be.ok()
+      }
+
+      await expect(all(ipfs.pin.ls({ paths: blocks[0].cid }))).to.eventually.have.lengthOf(1)
+        .and.have.nested.property('[0].type', 'recursive')
     })
   })
 }
