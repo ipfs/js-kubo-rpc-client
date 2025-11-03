@@ -189,7 +189,7 @@
     "aegir": "^47.0.22",
     "blockstore-core": "^6.1.1",
     "buffer": "^6.0.3",
-    "delay": "^6.0.0",
+    "delay": "^7.0.0",
     "did-jwt": "^8.0.4",
     "interface-blockstore": "^6.0.1",
     "ipfs-unixfs-importer": "^16.0.1",
