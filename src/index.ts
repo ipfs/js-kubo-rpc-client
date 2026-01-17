@@ -35,6 +35,7 @@ import type { BlockCodec } from 'multiformats/codecs/interface'
 import type { MultihashHasher } from 'multiformats/hashes/interface'
 import type { Agent as HttpAgent } from 'node:http'
 import type { Agent as HttpsAgent } from 'node:https'
+import type { ProvideAPI } from './provide/index.ts'
 
 export type Await<T> = T | Promise<T>
 export type AwaitIterable<T> = Iterable<T> | AsyncIterable<T>
@@ -337,6 +338,7 @@ export interface KuboRPCClient {
   routing: RoutingAPI
   stats: StatsAPI
   swarm: SwarmAPI
+  provide: ProvideAPI
 
   /**
    * Import a file or data into IPFS

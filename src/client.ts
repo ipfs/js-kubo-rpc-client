@@ -41,6 +41,7 @@ import { createStats } from './stats/index.js'
 import { createStop } from './stop.js'
 import { createSwarm } from './swarm/index.js'
 import { createVersion } from './version.js'
+import { createProvide } from './provide/index.js'
 import type { KuboRPCClient as KuboRPCClientInterface, Options } from './index.ts'
 import type { MultibaseCodec } from 'multiformats/bases/interface'
 import type { BlockCodec } from 'multiformats/codecs/interface'
@@ -70,6 +71,7 @@ class KuboRPCClient implements KuboRPCClientInterface {
   public routing: KuboRPCClientInterface['routing']
   public stats: KuboRPCClientInterface['stats']
   public swarm: KuboRPCClientInterface['swarm']
+  public provide: KuboRPCClientInterface['provide']
 
   public add: KuboRPCClientInterface['add']
   public addAll: KuboRPCClientInterface['addAll']
@@ -141,6 +143,7 @@ class KuboRPCClient implements KuboRPCClientInterface {
     this.routing = createRouting(client)
     this.stats = createStats(client)
     this.swarm = createSwarm(client)
+    this.provide = createProvide(client)
 
     this.add = createAdd(client)
     this.addAll = createAddAll(client)
@@ -156,6 +159,7 @@ class KuboRPCClient implements KuboRPCClientInterface {
     this.mount = createMount(client)
     this.isOnline = createIsOnline(client)
     this.getEndpointConfig = createGetEndpointConfig(client)
+
   }
 }
 
