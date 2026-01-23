@@ -1,21 +1,18 @@
-import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCOptions } from '../index.js'
 
 /**
- * Options supported by `ipfs.provide.stat`.
- * These map directly to the flags supported by
- * `ipfs provide stat` in Kubo.
+ * Options for `ipfs.provide.stat`.
  */
 export interface ProvideStatOptions extends HTTPRPCOptions {
+  /**
+   * Return all statistics (recommended).
+   */
   all?: boolean
+
+  /**
+   * Return LAN-specific statistics.
+   */
   lan?: boolean
-  compact?: boolean
-  connectivity?: boolean
-  network?: boolean
-  queues?: boolean
-  schedule?: boolean
-  timings?: boolean
-  workers?: boolean
-  operations?: boolean
 }
 
 /**

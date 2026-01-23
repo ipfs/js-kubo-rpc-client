@@ -1,5 +1,5 @@
 import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { ProvideAPI } from './index.ts'
+import type { ProvideAPI } from './index.js'
 import type { ProvideStatOptions, ProvideStats } from './types.js'
 import type { HTTPRPCClient } from '../lib/core.js'
 

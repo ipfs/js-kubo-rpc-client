@@ -1,6 +1,9 @@
 import { createProvideStat } from './stat.js'
-import type { ProvideStatOptions, ProvideStats } from './types.js'
 import type { HTTPRPCClient } from '../lib/core.js'
+
+export type { ProvideStatOptions, ProvideStats } from './types.js'
+
+import type { ProvideStatOptions, ProvideStats } from './types.js'
 
 export interface ProvideAPI {
   /**
