@@ -68,7 +68,6 @@ export interface LegacyProvideStats {
   reprovide_interval?: string
 }
 
-
 /**
  * Connectivity status of the provider to the DHT.
  */

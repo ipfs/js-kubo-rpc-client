@@ -32,6 +32,7 @@ import { createName } from './name/index.js'
 import { createObject } from './object/index.js'
 import { createPin } from './pin/index.js'
 import { createPing } from './ping.js'
+import { createProvide } from './provide/index.js'
 import { createPubsub } from './pubsub/index.js'
 import { createRefs } from './refs/index.js'
 import { createRepo } from './repo/index.js'
@@ -41,7 +42,6 @@ import { createStats } from './stats/index.js'
 import { createStop } from './stop.js'
 import { createSwarm } from './swarm/index.js'
 import { createVersion } from './version.js'
-import { createProvide } from './provide/index.js'
 import type { KuboRPCClient as KuboRPCClientInterface, Options } from './index.ts'
 import type { MultibaseCodec } from 'multiformats/bases/interface'
 import type { BlockCodec } from 'multiformats/codecs/interface'
@@ -159,7 +159,6 @@ class KuboRPCClient implements KuboRPCClientInterface {
     this.mount = createMount(client)
     this.isOnline = createIsOnline(client)
     this.getEndpointConfig = createGetEndpointConfig(client)
-
   }
 }
 

@@ -1,6 +1,6 @@
 import { createProvideStat } from './stat.js'
-import type { HTTPRPCClient } from '../lib/core.js'
 import type { ProvideStatOptions, ProvideStats } from './types.js'
+import type { HTTPRPCClient } from '../lib/core.js'
 
 export interface ProvideAPI {
   /**
@@ -9,10 +9,7 @@ export interface ProvideAPI {
   stat(options?: ProvideStatOptions): Promise<ProvideStats>
 }
 
-
-
-
-export function createProvide (client:HTTPRPCClient): ProvideAPI {
+export function createProvide (client: HTTPRPCClient): ProvideAPI {
   return {
     stat: createProvideStat(client)
   }
