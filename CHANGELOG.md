@@ -1,3 +1,13 @@
+## [6.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.0.2...v6.1.0) (2026-01-23)
+
+### Features
+
+* add `provide.stat` command ([#359](https://github.com/ipfs/js-kubo-rpc-client/issues/359)) ([072dc44](https://github.com/ipfs/js-kubo-rpc-client/commit/072dc44d1a10a85ff5f681e64947cd5a21548d0b))
+
+### Trivial Changes
+
+* add or force update .github/workflows/stale.yml ([#351](https://github.com/ipfs/js-kubo-rpc-client/issues/351)) ([d4100db](https://github.com/ipfs/js-kubo-rpc-client/commit/d4100db0e79b6171775146d9fa89354220f2b868))
+
 ## [6.0.2](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.0.1...v6.0.2) (2025-10-14)
 
 ### Dependencies
