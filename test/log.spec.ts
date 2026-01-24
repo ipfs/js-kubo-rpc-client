@@ -50,4 +50,43 @@ describe('.log', function () {
     expect(res).to.not.have.property('error')
     expect(res).to.have.property('message')
   })
+
+  it('.log.getLevel for all subsystems', async function () {
+    const res = await ipfs.log.getLevel()
+
+    expect(res).to.exist()
+    expect(res).to.be.an('object')
+    // Should have subsystem names as keys with log levels as values
+    const keys = Object.keys(res)
+    expect(keys.length).to.be.greaterThan(0)
+    // All values should be strings (log level names)
+    for (const value of Object.values(res)) {
+      expect(value).to.be.a('string')
+    }
+  })
+
+  it('.log.getLevel for specific subsystem', async function () {
+    const res = await ipfs.log.getLevel('all')
+
+    expect(res).to.exist()
+    expect(res).to.be.an('object')
+    // Should have subsystem names as keys with log levels as values
+    for (const value of Object.values(res)) {
+      expect(value).to.be.a('string')
+    }
+  })
+
+  it('.log.getLevel reflects changes made by .log.level', async function () {
+    // Set level to debug
+    await ipfs.log.level('all', 'debug')
+
+    // Get all levels and verify they are set to debug
+    const levels = await ipfs.log.getLevel()
+
+    expect(levels).to.exist()
+    expect(levels).to.be.an('object')
+    // At least some subsystems should be set to debug
+    const values = Object.values(levels)
+    expect(values).to.include('debug')
+  })
 })
