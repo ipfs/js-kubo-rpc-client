@@ -27,7 +27,7 @@ describe('.provide', function () {
       expect(res.FullRT).to.be.a('boolean')
     }
 
-    // Sweep provider 
+    // Sweep provider
     if (res.Sweep) {
       expect(res.Legacy).to.be.oneOf([null, undefined])
       expect(res.Sweep).to.have.property('workers')
