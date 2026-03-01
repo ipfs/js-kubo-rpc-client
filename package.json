@@ -186,7 +186,7 @@
     "@types/readable-stream": "^4.0.11",
     "@types/sinon": "^17.0.3",
     "@web-std/file": "^3.0.3",
-    "aegir": "^47.0.22",
+    "aegir": "^47.0.26",
     "blockstore-core": "^6.1.1",
     "buffer": "^6.0.3",
     "delay": "^6.0.0",
