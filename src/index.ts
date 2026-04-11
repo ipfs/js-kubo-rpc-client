@@ -20,6 +20,7 @@ import type { LogAPI } from './log/index.js'
 import type { NameAPI } from './name/index.js'
 import type { ObjectAPI } from './object/index.js'
 import type { PinAPI } from './pin/index.js'
+import type { ProvideAPI } from './provide/index.js'
 import type { PubSubAPI } from './pubsub/index.js'
 import type { RefsAPI } from './refs/index.js'
 import type { RepoAPI } from './repo/index.js'
@@ -337,6 +338,7 @@ export interface KuboRPCClient {
   routing: RoutingAPI
   stats: StatsAPI
   swarm: SwarmAPI
+  provide: ProvideAPI
 
   /**
    * Import a file or data into IPFS
@@ -537,3 +539,4 @@ export * from './repo/index.js'
 export * from './routing/index.js'
 export * from './stats/index.js'
 export * from './swarm/index.js'
+export * from './provide/index.js'

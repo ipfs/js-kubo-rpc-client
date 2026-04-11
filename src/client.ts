@@ -32,6 +32,7 @@ import { createName } from './name/index.js'
 import { createObject } from './object/index.js'
 import { createPin } from './pin/index.js'
 import { createPing } from './ping.js'
+import { createProvide } from './provide/index.js'
 import { createPubsub } from './pubsub/index.js'
 import { createRefs } from './refs/index.js'
 import { createRepo } from './repo/index.js'
@@ -70,6 +71,7 @@ class KuboRPCClient implements KuboRPCClientInterface {
   public routing: KuboRPCClientInterface['routing']
   public stats: KuboRPCClientInterface['stats']
   public swarm: KuboRPCClientInterface['swarm']
+  public provide: KuboRPCClientInterface['provide']
 
   public add: KuboRPCClientInterface['add']
   public addAll: KuboRPCClientInterface['addAll']
@@ -141,6 +143,7 @@ class KuboRPCClient implements KuboRPCClientInterface {
     this.routing = createRouting(client)
     this.stats = createStats(client)
     this.swarm = createSwarm(client)
+    this.provide = createProvide(client)
 
     this.add = createAdd(client)
     this.addAll = createAddAll(client)
