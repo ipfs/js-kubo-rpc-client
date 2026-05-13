@@ -24,7 +24,7 @@ const log = logger('ipfs:core-utils:multipart-request')
  * @param {string} [boundary]
  */
 export async function multipartRequest (source: ImportCandidateStream, abortController: AbortController, headers: Headers | Record<string, string> = {}, boundary: string = `-----------------------------${nanoid()}`): Promise<MultipartRequest> {
-  async function * streamFiles (source: ImportCandidateStream): AsyncGenerator<Uint8Array | string> {
+  async function * streamFiles (source: ImportCandidateStream, headers: Headers | Record<string, string> = {}): AsyncGenerator<Uint8Array | string> {
     try {
       let index = 0
 
@@ -63,6 +63,11 @@ export async function multipartRequest (source: ImportCandidateStream, abortCont
         yield `--${boundary}\r\n`
         yield `Content-Disposition: form-data; name="${fieldName}"; filename="${encodeURIComponent(path ?? '')}"\r\n`
         yield `Content-Type: ${content != null ? 'application/octet-stream' : 'application/x-directory'}\r\n`
+
+        if ('Abspath' in headers) {
+          yield `Abspath: ${headers['Abspath']}\r\n`;
+        }
+        
         yield '\r\n'
 
         if (content != null) {
@@ -98,6 +103,6 @@ export async function multipartRequest (source: ImportCandidateStream, abortCont
     headers: merge(headers, {
       'Content-Type': `multipart/form-data; boundary=${boundary}`
     }),
-    body: toStream(streamFiles(peekable))
+    body: toStream(streamFiles(peekable, headers))
   }
 }
