@@ -1,7 +1,7 @@
-import { objectToCamel } from '../../lib/object-to-camel.js'
-import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
-import type { NamePubSubAPI } from './index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { objectToCamel } from '../../lib/object-to-camel.ts'
+import { toUrlSearchParams } from '../../lib/to-url-search-params.ts'
+import type { NamePubSubAPI } from './index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 
 export function createState (client: HTTPRPCClient): NamePubSubAPI['state'] {
   return async function state (options = {}) {

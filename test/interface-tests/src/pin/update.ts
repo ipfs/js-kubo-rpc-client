@@ -1,13 +1,11 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import drain from 'it-drain'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { fixtures, clearPins, expectPinned, expectNotPinned, pinTypes } from './utils.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { fixtures, clearPins, expectPinned, expectNotPinned, pinTypes } from './utils.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testUpdate (factory: Factory<KuboNode>, options: MochaConfig): void {

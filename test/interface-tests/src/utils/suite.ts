@@ -1,5 +1,5 @@
-import { isSkip } from './mocha.js'
-import type { Skip } from './mocha.js'
+import { isSkip } from './mocha.ts'
+import type { Skip } from './mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export interface CreateSuiteOptions {

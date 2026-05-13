@@ -1,5 +1,3 @@
-/* eslint-env mocha, browser */
-
 import { expect } from 'aegir/chai'
 import last from 'it-last'
 import * as raw from 'multiformats/codecs/raw'
@@ -7,13 +5,13 @@ import { sha256, sha512 } from 'multiformats/hashes/sha2'
 import { Readable } from 'readable-stream'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { isNode } from 'wherearewe'
-import { urlSource } from '../../../src/index.js'
-import { isFirefox } from '../../constants.js'
-import { supportsFileReader } from '../fixtures/supports.js'
-import { fixtures } from './utils/index.js'
-import { getDescribe, getIt } from './utils/mocha.js'
-import type { MochaConfig } from './utils/mocha.js'
-import type { AddProgressFn, KuboRPCClient } from '../../../src/index.js'
+import { urlSource } from '../../../src/index.ts'
+import { isFirefox } from '../../constants.ts'
+import { supportsFileReader } from '../fixtures/supports.ts'
+import { fixtures } from './utils/index.ts'
+import { getDescribe, getIt } from './utils/mocha.ts'
+import type { MochaConfig } from './utils/mocha.ts'
+import type { AddProgressFn, KuboRPCClient } from '../../../src/index.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 const echoUrl = (text: string): string => `${process.env.ECHO_SERVER}/download?data=${encodeURIComponent(text)}`

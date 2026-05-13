@@ -1,7 +1,7 @@
-import { createPatch } from './patch/index.js'
-import type { Codecs } from '../index.js'
-import type { ObjectPatchAPI } from './patch/index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createPatch } from './patch/index.ts'
+import type { Codecs } from '../index.ts'
+import type { ObjectPatchAPI } from './patch/index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { CID } from 'multiformats/cid'
 
 export interface StatResult {

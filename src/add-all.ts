@@ -1,10 +1,10 @@
 import { anySignal } from 'any-signal'
 import { CID } from 'multiformats/cid'
-import { multipartRequest } from './lib/multipart-request.js'
-import { objectToCamel } from './lib/object-to-camel.js'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { AddProgressFn, AddResult, KuboRPCClient, UploadProgressFn } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { multipartRequest } from './lib/multipart-request.ts'
+import { objectToCamel } from './lib/object-to-camel.ts'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { AddProgressFn, AddResult, KuboRPCClient, UploadProgressFn } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createAddAll (client: HTTPRPCClient): KuboRPCClient['addAll'] {
   return async function * addAll (source, options = {}) {

@@ -1,16 +1,14 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import { importer } from 'ipfs-unixfs-importer'
 import all from 'it-all'
 import drain from 'it-drain'
 import { CID } from 'multiformats/cid'
 import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
-import blockstore from './utils/blockstore-adapter.js'
-import { fixtures } from './utils/index.js'
-import { getDescribe, getIt } from './utils/mocha.js'
-import type { MochaConfig } from './utils/mocha.js'
-import type { KuboRPCClient } from '../../../src/index.js'
+import blockstore from './utils/blockstore-adapter.ts'
+import { fixtures } from './utils/index.ts'
+import { getDescribe, getIt } from './utils/mocha.ts'
+import type { MochaConfig } from './utils/mocha.ts'
+import type { KuboRPCClient } from '../../../src/index.ts'
 import type { ImportCandidate } from 'ipfs-unixfs-importer'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 

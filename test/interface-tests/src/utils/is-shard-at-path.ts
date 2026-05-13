@@ -1,5 +1,5 @@
 import { UnixFS } from 'ipfs-unixfs'
-import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 
 export default async function isShardAtPath (path: string, ipfs: KuboRPCClient): Promise<boolean> {
   const stats = await ipfs.files.stat(path)

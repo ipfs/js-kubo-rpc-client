@@ -1,8 +1,8 @@
-import { createStat } from './stat.js'
-import { createWantlistForPeer } from './wantlist-for-peer.js'
-import { createWantlist } from './wantlist.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createStat } from './stat.ts'
+import { createWantlistForPeer } from './wantlist-for-peer.ts'
+import { createWantlist } from './wantlist.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { PeerId } from '@libp2p/interface'
 import type { CID } from 'multiformats/cid'
 

@@ -1,11 +1,11 @@
 import errCode from 'err-code'
 import first from 'it-first'
 import last from 'it-last'
-import { createGet as createBlockGet } from '../block/get.js'
-import { resolve } from '../lib/resolve.js'
-import type { DAGAPI } from './index.js'
-import type { Codecs } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createGet as createBlockGet } from '../block/get.ts'
+import { resolve } from '../lib/resolve.ts'
+import type { DAGAPI } from './index.ts'
+import type { Codecs } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createGet (client: HTTPRPCClient, codecs: Codecs): DAGAPI['get'] {
   const getBlock = createBlockGet(client)

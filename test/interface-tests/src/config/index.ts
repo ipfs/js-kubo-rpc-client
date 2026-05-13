@@ -1,8 +1,8 @@
-import { createSuite } from '../utils/suite.js'
-import { testGet } from './get.js'
-import profiles from './profiles/index.js'
-import { testReplace } from './replace.js'
-import { testSet } from './set.js'
+import { createSuite } from '../utils/suite.ts'
+import { testGet } from './get.ts'
+import profiles from './profiles/index.ts'
+import { testReplace } from './replace.ts'
+import { testSet } from './set.ts'
 
 const tests = {
   get: testGet,

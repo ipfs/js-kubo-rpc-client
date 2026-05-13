@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { urlSource } from '../../src/index.js'
+import { urlSource } from '../../src/index.ts'
 
 describe('url-source', function () {
   it('can get url content', async function () {

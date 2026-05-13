@@ -1,7 +1,7 @@
 import last from 'it-last'
-import { createRmAll } from './rm-all.js'
-import type { PinAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createRmAll } from './rm-all.ts'
+import type { PinAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createRm (client: HTTPRPCClient): PinAPI['rm'] {
   const all = createRmAll(client)

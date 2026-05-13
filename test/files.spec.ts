@@ -1,11 +1,9 @@
-/* eslint-env mocha */
-
 import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
 import { UnixFS } from 'ipfs-unixfs'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { factory } from './utils/factory.js'
-import type { KuboRPCClient } from '../src/index.js'
+import { factory } from './utils/factory.ts'
+import type { KuboRPCClient } from '../src/index.ts'
 
 const f = factory()
 

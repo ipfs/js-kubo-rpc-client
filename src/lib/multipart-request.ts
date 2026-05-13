@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid'
 import { isElectronRenderer } from 'wherearewe'
-import { multipartRequest as multipartRequestBrowser } from './multipart-request.browser.js'
-import { multipartRequest as multipartRequestNode } from './multipart-request.node.js'
-import type { ImportCandidateStream } from '../index.js'
+import { multipartRequest as multipartRequestBrowser } from './multipart-request.browser.ts'
+import { multipartRequest as multipartRequestNode } from './multipart-request.node.ts'
+import type { ImportCandidateStream } from '../index.ts'
 
 export interface MultipartRequest {
   total: number

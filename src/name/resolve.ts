@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { NameAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { NameAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createResolve (client: HTTPRPCClient): NameAPI['resolve'] {
   return async function * resolve (path, options = {}) {

@@ -1,7 +1,7 @@
 import { expect } from 'aegir/chai'
 import last from 'it-last'
-import isShardAtPath from './is-shard-at-path.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
+import isShardAtPath from './is-shard-at-path.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 
 export async function createShardedDirectory (ipfs: KuboRPCClient, files: number = 1001): Promise<string> {
   const dirPath = `/sharded-dir-${Math.random()}`

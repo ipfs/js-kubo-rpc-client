@@ -1,7 +1,7 @@
 import { expect } from 'aegir/chai'
 import last from 'it-last'
-import isShardAtPath from './is-shard-at-path.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
+import isShardAtPath from './is-shard-at-path.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 import type { CID } from 'multiformats/cid'
 
 export interface TwoShardsResult {

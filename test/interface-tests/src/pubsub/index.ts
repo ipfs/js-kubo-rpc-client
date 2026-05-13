@@ -1,9 +1,9 @@
-import { createSuite } from '../utils/suite.js'
-import { testLs } from './ls.js'
-import { testPeers } from './peers.js'
-import { testPublish } from './publish.js'
-import { testSubscribe } from './subscribe.js'
-import { testUnsubscribe } from './unsubscribe.js'
+import { createSuite } from '../utils/suite.ts'
+import { testLs } from './ls.ts'
+import { testPeers } from './peers.ts'
+import { testPublish } from './publish.ts'
+import { testSubscribe } from './subscribe.ts'
+import { testUnsubscribe } from './unsubscribe.ts'
 
 const tests = {
   publish: testPublish,

@@ -9,8 +9,8 @@ import {
   isFileObject,
   parseMtime,
   parseMode
-} from './utils.js'
-import type { ImportCandidate, ImportCandidateStream, ToContent } from '../../index.js'
+} from './utils.ts'
+import type { ImportCandidate, ImportCandidateStream, ToContent } from '../../index.ts'
 
 /**
  * @typedef {import('ipfs-core-types/src/utils').ImportCandidate} ImportCandidate

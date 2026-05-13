@@ -1,5 +1,5 @@
-import { createSuite } from '../../utils/suite.js'
-import { testApply } from './apply.js'
+import { createSuite } from '../../utils/suite.ts'
+import { testApply } from './apply.ts'
 
 const tests = {
   apply: testApply

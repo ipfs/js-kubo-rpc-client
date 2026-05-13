@@ -1,6 +1,6 @@
-import { normaliseCandidateMultiple } from './normalise-candidate-multiple.js'
-import { normaliseContent } from './normalise-content.browser.js'
-import type { ImportCandidateStream } from '../../index.js'
+import { normaliseCandidateMultiple } from './normalise-candidate-multiple.ts'
+import { normaliseContent } from './normalise-content.browser.ts'
+import type { ImportCandidateStream } from '../../index.ts'
 import type { Mtime } from 'ipfs-unixfs'
 
 export interface BrowserImportCandidate {

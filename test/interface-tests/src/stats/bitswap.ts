@@ -1,9 +1,7 @@
-/* eslint-env mocha */
-
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { expectIsBitswap } from './utils.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { expectIsBitswap } from './utils.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testBitswap (factory: Factory<KuboNode>, options: MochaConfig): void {

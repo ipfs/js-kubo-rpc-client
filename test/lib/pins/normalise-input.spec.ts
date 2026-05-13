@@ -1,11 +1,9 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
-import { normaliseInput } from '../../../src/lib/pins/normalise-input.js'
-import { asyncIterableOf, iterableOf } from '../../utils/iterables.js'
-import type { Source } from '../../../src/lib/pins/normalise-input.js'
+import { normaliseInput } from '../../../src/lib/pins/normalise-input.ts'
+import { asyncIterableOf, iterableOf } from '../../utils/iterables.ts'
+import type { Source } from '../../../src/lib/pins/normalise-input.ts'
 
 const STRING = (): any => '/ipfs/QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn/path/to/file.txt'
 const PLAIN_CID = (): any => CID.parse('QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn')

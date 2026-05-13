@@ -1,5 +1,5 @@
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createGetEndpointConfig (client: HTTPRPCClient): KuboRPCClient['getEndpointConfig'] {
   return function getEndpointConfig () {

@@ -1,6 +1,6 @@
-import { createSuite } from '../../utils/suite.js'
-import { testAddLink } from './add-link.js'
-import { testRmLink } from './rm-link.js'
+import { createSuite } from '../../utils/suite.ts'
+import { testAddLink } from './add-link.ts'
+import { testRmLink } from './rm-link.ts'
 
 const tests = {
   addLink: testAddLink,

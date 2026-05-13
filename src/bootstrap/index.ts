@@ -1,8 +1,8 @@
-import { createAdd } from './add.js'
-import { createList } from './list.js'
-import { createRm } from './rm.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createAdd } from './add.ts'
+import { createList } from './list.ts'
+import { createRm } from './rm.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { Multiaddr } from '@multiformats/multiaddr'
 
 export interface BootstrapAPI {

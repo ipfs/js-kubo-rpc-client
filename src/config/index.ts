@@ -1,11 +1,11 @@
-import { createGetAll } from './get-all.js'
-import { createGet } from './get.js'
-import { createProfiles } from './profiles/index.js'
-import { createReplace } from './replace.js'
-import { createSet } from './set.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { ConfigProfilesAPI } from './profiles/index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createGetAll } from './get-all.ts'
+import { createGet } from './get.ts'
+import { createProfiles } from './profiles/index.ts'
+import { createReplace } from './replace.ts'
+import { createSet } from './set.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { ConfigProfilesAPI } from './profiles/index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export interface Config {
   Addresses?: AddressConfig

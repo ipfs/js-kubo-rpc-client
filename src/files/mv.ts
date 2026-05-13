@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { FilesAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { FilesAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createMv (client: HTTPRPCClient): FilesAPI['mv'] {
   return async function mv (sources, destination, options = {}) {

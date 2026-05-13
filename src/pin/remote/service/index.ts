@@ -1,8 +1,8 @@
-import { createAdd } from './add.js'
-import { createLs } from './ls.js'
-import { createRm } from './rm.js'
-import type { HTTPRPCOptions } from '../../../index.js'
-import type { HTTPRPCClient } from '../../../lib/core.js'
+import { createAdd } from './add.ts'
+import { createLs } from './ls.ts'
+import { createRm } from './rm.ts'
+import type { HTTPRPCOptions } from '../../../index.ts'
+import type { HTTPRPCClient } from '../../../lib/core.ts'
 
 export interface PinRemoteServiceAPI {
   /**

@@ -1,7 +1,7 @@
-import { objectToCamel } from '../lib/object-to-camel.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { NameAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { objectToCamel } from '../lib/object-to-camel.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { NameAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createPublish (client: HTTPRPCClient): NameAPI['publish'] {
   return async function publish (path, options = {}) {

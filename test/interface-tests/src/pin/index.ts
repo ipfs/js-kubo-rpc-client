@@ -1,11 +1,11 @@
-import { createSuite } from '../utils/suite.js'
-import { testAddAll } from './add-all.js'
-import { testAdd } from './add.js'
-import { testLs } from './ls.js'
-import testRemote from './remote/index.js'
-import { testRmAll } from './rm-all.js'
-import { testRm } from './rm.js'
-import { testUpdate } from './update.js'
+import { createSuite } from '../utils/suite.ts'
+import { testAddAll } from './add-all.ts'
+import { testAdd } from './add.ts'
+import { testLs } from './ls.ts'
+import testRemote from './remote/index.ts'
+import { testRmAll } from './rm-all.ts'
+import { testRm } from './rm.ts'
+import { testUpdate } from './update.ts'
 
 const tests = {
   add: testAdd,

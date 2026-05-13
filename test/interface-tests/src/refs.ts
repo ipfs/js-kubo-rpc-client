@@ -1,14 +1,12 @@
-/* eslint-env mocha */
-
 import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
 import loadFixture from 'aegir/fixtures'
 import { UnixFS } from 'ipfs-unixfs'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
-import { getDescribe, getIt } from './utils/mocha.js'
-import type { MochaConfig } from './utils/mocha.js'
-import type { KuboRPCClient } from '../../../src/index.js'
+import { getDescribe, getIt } from './utils/mocha.ts'
+import type { MochaConfig } from './utils/mocha.ts'
+import type { KuboRPCClient } from '../../../src/index.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testRefs (factory: Factory<KuboNode>, options: MochaConfig): void {

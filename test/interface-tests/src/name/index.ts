@@ -1,6 +1,6 @@
-import { createSuite } from '../utils/suite.js'
-import { testPublish } from './publish.js'
-import { testResolve } from './resolve.js'
+import { createSuite } from '../utils/suite.ts'
+import { testPublish } from './publish.ts'
+import { testResolve } from './resolve.ts'
 
 const tests = {
   publish: testPublish,

@@ -1,14 +1,12 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import { randomBytes } from 'iso-random-stream'
 import all from 'it-all'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import isShardAtPath from '../utils/is-shard-at-path.js'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { createShardedDirectory } from '../utils/create-sharded-directory.ts'
+import isShardAtPath from '../utils/is-shard-at-path.ts'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testCp (factory: Factory<KuboNode>, options: MochaConfig): void {

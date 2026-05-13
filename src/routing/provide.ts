@@ -1,7 +1,7 @@
-import { mapEvent } from '../dht/map-event.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { RoutingAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { mapEvent } from '../dht/map-event.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { RoutingAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createProvide (client: HTTPRPCClient): RoutingAPI['provide'] {
   return async function * provide (cids, options = { recursive: false }) {

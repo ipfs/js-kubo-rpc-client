@@ -1,5 +1,5 @@
-import { parseMtime } from '../lib/files/utils.js'
-import { modeToString } from './mode-to-string.js'
+import { parseMtime } from '../lib/files/utils.ts'
+import { modeToString } from './mode-to-string.ts'
 
 export function toUrlSearchParams ({ arg, searchParams, hashAlg, mtime, mode, ...options }: any = {}): URLSearchParams {
   if (searchParams != null) {

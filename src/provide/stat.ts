@@ -1,7 +1,7 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { ProvideAPI } from './index.js'
-import type { ProvideStatOptions, ProvideStats } from './types.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { ProvideAPI } from './index.ts'
+import type { ProvideStatOptions, ProvideStats } from './types.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createProvideStat (client: HTTPRPCClient): ProvideAPI['stat'] {
   return async function stat (

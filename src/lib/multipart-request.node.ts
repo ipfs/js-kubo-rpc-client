@@ -5,10 +5,10 @@ import toStream from 'it-to-stream'
 // @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOpts from 'merge-options'
 import { nanoid } from 'nanoid'
-import { normaliseInput } from './files/normalise-input-multiple.js'
-import { modeToString } from './mode-to-string.js'
-import type { MultipartRequest } from './multipart-request.js'
-import type { ImportCandidateStream } from '../index.js'
+import { normaliseInput } from './files/normalise-input-multiple.ts'
+import { modeToString } from './mode-to-string.ts'
+import type { MultipartRequest } from './multipart-request.ts'
+import type { ImportCandidateStream } from '../index.ts'
 
 const merge = mergeOpts.bind({ ignoreUndefined: true })
 const log = logger('ipfs:core-utils:multipart-request')

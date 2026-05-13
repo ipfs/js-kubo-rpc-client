@@ -1,8 +1,8 @@
-import { createCancel } from './cancel.js'
-import { createState } from './state.js'
-import { createSubs } from './subs.js'
-import type { HTTPRPCOptions } from '../../index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { createCancel } from './cancel.ts'
+import { createState } from './state.ts'
+import { createSubs } from './subs.ts'
+import type { HTTPRPCOptions } from '../../index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 
 export interface NamePubsubCancelResult {
   canceled: boolean

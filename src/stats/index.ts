@@ -1,10 +1,10 @@
-import { createStat as createBitswap } from '../bitswap/stat.js'
-import { createStat as createRepo } from '../repo/stat.js'
-import { createBw } from './bw.js'
-import type { BitswapAPI } from '../bitswap/index.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
-import type { RepoAPI } from '../repo/index.js'
+import { createStat as createBitswap } from '../bitswap/stat.ts'
+import { createStat as createRepo } from '../repo/stat.ts'
+import { createBw } from './bw.ts'
+import type { BitswapAPI } from '../bitswap/index.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
+import type { RepoAPI } from '../repo/index.ts'
 import type { PeerId } from '@libp2p/interface'
 
 export interface StatsAPI {

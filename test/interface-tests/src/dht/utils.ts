@@ -2,7 +2,7 @@ import delay from 'delay'
 import { CID } from 'multiformats/cid'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 
 export async function fakeCid (data?: Uint8Array): Promise<CID> {
   const bytes = data ?? uint8ArrayFromString(`TEST${Math.random()}`)

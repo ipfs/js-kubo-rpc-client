@@ -1,13 +1,13 @@
-import { createSuite } from '../utils/suite.js'
-import { testCp } from './cp.js'
-import { testFlush } from './flush.js'
-import { testLs } from './ls.js'
-import { testMkdir } from './mkdir.js'
-import { testMv } from './mv.js'
-import { testRead } from './read.js'
-import { testRm } from './rm.js'
-import { testStat } from './stat.js'
-import { testWrite } from './write.js'
+import { createSuite } from '../utils/suite.ts'
+import { testCp } from './cp.ts'
+import { testFlush } from './flush.ts'
+import { testLs } from './ls.ts'
+import { testMkdir } from './mkdir.ts'
+import { testMv } from './mv.ts'
+import { testRead } from './read.ts'
+import { testRm } from './rm.ts'
+import { testStat } from './stat.ts'
+import { testWrite } from './write.ts'
 
 const tests = {
   cp: testCp,

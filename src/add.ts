@@ -1,8 +1,8 @@
 import last from 'it-last'
-import { createAddAll } from './add-all.js'
-import { normaliseInput } from './lib/files/normalise-input-single.js'
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { createAddAll } from './add-all.ts'
+import { normaliseInput } from './lib/files/normalise-input-single.ts'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createAdd (client: HTTPRPCClient): KuboRPCClient['add'] {
   const all = createAddAll(client)

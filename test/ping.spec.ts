@@ -1,10 +1,8 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { isPong } from './interface-tests/src/ping/utils.js'
-import { factory } from './utils/factory.js'
-import type { KuboRPCClient } from '../src/index.js'
+import { isPong } from './interface-tests/src/ping/utils.ts'
+import { factory } from './utils/factory.ts'
+import type { KuboRPCClient } from '../src/index.ts'
 import type { PeerId } from '@libp2p/interface'
 
 const f = factory()

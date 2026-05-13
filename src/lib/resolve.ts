@@ -1,7 +1,7 @@
 import errCode from 'err-code'
 import { CID } from 'multiformats/cid'
-import type { BlockAPI } from '../block/index.js'
-import type { Codecs } from '../index.js'
+import type { BlockAPI } from '../block/index.ts'
+import type { Codecs } from '../index.ts'
 import type { AbortOptions } from '@libp2p/interface'
 
 export interface ResolveResult {

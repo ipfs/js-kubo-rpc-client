@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { StatsAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { StatsAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createBw (client: HTTPRPCClient): StatsAPI['bw'] {
   return async function * bw (options = {}) {

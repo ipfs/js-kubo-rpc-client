@@ -1,7 +1,7 @@
-import { createAddLink } from './add-link.js'
-import { createRmLink } from './rm-link.js'
-import type { HTTPRPCOptions } from '../../index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { createAddLink } from './add-link.ts'
+import { createRmLink } from './rm-link.ts'
+import type { HTTPRPCOptions } from '../../index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 import type { PBLink as DAGLink } from '@ipld/dag-pb'
 import type { CID } from 'multiformats/cid'
 

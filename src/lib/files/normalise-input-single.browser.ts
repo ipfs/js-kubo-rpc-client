@@ -1,7 +1,7 @@
-import { normaliseCandidateSingle } from './normalise-candidate-single.js'
-import { normaliseContent } from './normalise-content.browser.js'
-import type { BrowserImportCandidate } from './normalise-input-multiple.browser.js'
-import type { ImportCandidate } from '../../index.js'
+import { normaliseCandidateSingle } from './normalise-candidate-single.ts'
+import { normaliseContent } from './normalise-content.browser.ts'
+import type { BrowserImportCandidate } from './normalise-input-multiple.browser.ts'
+import type { ImportCandidate } from '../../index.ts'
 
 /**
  * Transforms any of the `ipfs.add` input types into
