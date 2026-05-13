@@ -9,7 +9,7 @@ import type { KuboRPCClient } from '../../../../src/index.ts'
 import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
-const ONE_MEG = 1024 * 1024
+const TWO_MEGS = (1024 * 1024) * 2
 
 export function testPut (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
@@ -67,17 +67,17 @@ export function testPut (factory: Factory<KuboNode>, options: MochaConfig): void
     })
 
     it('should fail to put a big block', async () => {
-      await expect(ipfs.block.put(new Uint8Array(ONE_MEG + 1)))
+      await expect(ipfs.block.put(new Uint8Array(TWO_MEGS + 1)))
         .to.eventually.be.rejected()
         .with.property('message')
-        .that.include('produced block is over 1MiB')
+        .that.include('produced block is over 2MiB')
     })
 
     it('should put a big block with `allowBigBlock`', async () => {
-      const expectedHash = 'bafkreibmw5hnxj2uvaorehe5w2btobfi47kbpznrhunbt5fff4ah2zccmq'
+      const expectedHash = 'bafkreihjucm4oxxyg7bixsiwqo7ocj7emp5a5yimch6yc34nfvbiydlbby'
       const expectedCID = CID.parse(expectedHash)
 
-      const cid = await ipfs.block.put(new Uint8Array(ONE_MEG + 1), {
+      const cid = await ipfs.block.put(new Uint8Array(TWO_MEGS + 1), {
         allowBigBlock: true
       })
 
