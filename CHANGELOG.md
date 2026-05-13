@@ -1,3 +1,13 @@
+## [7.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.1.0...v7.0.0) (2026-05-13)
+
+### ⚠ BREAKING CHANGES
+
+* CID instances are now from the `multiformats@14.x.x` module
+
+### Bug Fixes
+
+* update to multiformats 14 ([#364](https://github.com/ipfs/js-kubo-rpc-client/issues/364)) ([a7e837d](https://github.com/ipfs/js-kubo-rpc-client/commit/a7e837d16259ae2de3ef16d42a9ef68284c0e3e4))
+
 ## [6.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.0.2...v6.1.0) (2026-01-23)
 
 ### Features
