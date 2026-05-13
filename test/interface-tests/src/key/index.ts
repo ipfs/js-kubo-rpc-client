@@ -1,9 +1,9 @@
-import { createSuite } from '../utils/suite.js'
-import { testGen } from './gen.js'
-import { testImport } from './import.js'
-import { testList } from './list.js'
-import { testRename } from './rename.js'
-import { testRm } from './rm.js'
+import { createSuite } from '../utils/suite.ts'
+import { testGen } from './gen.ts'
+import { testImport } from './import.ts'
+import { testList } from './list.ts'
+import { testRename } from './rename.ts'
+import { testRm } from './rm.ts'
 
 const tests = {
   gen: testGen,

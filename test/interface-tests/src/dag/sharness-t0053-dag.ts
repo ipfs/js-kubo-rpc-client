@@ -1,12 +1,10 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import { CID } from 'multiformats'
 import { base58btc } from 'multiformats/bases/base58'
 import { base64pad } from 'multiformats/bases/base64'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testDagSharnessT0053 (factory: Factory<KuboNode>, options: MochaConfig): void {

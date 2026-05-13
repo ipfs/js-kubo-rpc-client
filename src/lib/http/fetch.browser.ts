@@ -1,5 +1,5 @@
-import { TimeoutError, AbortError } from './error.js'
-import type { FetchOptions } from '../http.js'
+import { TimeoutError, AbortError } from './error.ts'
+import type { FetchOptions } from '../http.ts'
 
 /**
  * Fetch with progress

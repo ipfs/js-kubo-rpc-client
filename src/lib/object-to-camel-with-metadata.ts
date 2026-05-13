@@ -1,4 +1,4 @@
-import { objectToCamel } from './object-to-camel.js'
+import { objectToCamel } from './object-to-camel.ts'
 
 export function objectToCamelWithMetadata (entry: Record<string, any>): Record<string, any> {
   const file = objectToCamel<any>(entry)

@@ -1,7 +1,7 @@
-import { HTTPError } from '../lib/errors.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { FilesAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { HTTPError } from '../lib/errors.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { FilesAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createRm (client: HTTPRPCClient): FilesAPI['rm'] {
   return async function rm (path, options = {}) {

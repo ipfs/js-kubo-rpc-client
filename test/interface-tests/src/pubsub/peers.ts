@@ -1,12 +1,10 @@
-/* eslint-env mocha */
-
 import { getNetConfig } from '@libp2p/utils'
 import { expect } from 'aegir/chai'
 import delay from 'delay'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { getTopic, waitForTopicPeer } from './utils.js'
-import type { IDResult, KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { getTopic, waitForTopicPeer } from './utils.ts'
+import type { IDResult, KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testPeers (factory: Factory<KuboNode>, options: MochaConfig): void {

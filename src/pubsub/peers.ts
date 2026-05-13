@@ -1,7 +1,7 @@
-import { textToUrlSafeRpc } from '../lib/http-rpc-wire-format.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { PubSubAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { textToUrlSafeRpc } from '../lib/http-rpc-wire-format.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { PubSubAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createPeers (client: HTTPRPCClient): PubSubAPI['peers'] {
   return async function peers (topic, options = {}) {

@@ -1,13 +1,11 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { CID } from 'multiformats/cid'
-import { byCID } from '../../utils/index.js'
-import { getDescribe, getIt } from '../../utils/mocha.js'
-import { clearRemotePins, addRemotePins, clearServices } from '../utils.js'
-import type { KuboRPCClient } from '../../../../../src/index.js'
-import type { MochaConfig } from '../../utils/mocha.js'
+import { byCID } from '../../utils/index.ts'
+import { getDescribe, getIt } from '../../utils/mocha.ts'
+import { clearRemotePins, addRemotePins, clearServices } from '../utils.ts'
+import type { KuboRPCClient } from '../../../../../src/index.ts'
+import type { MochaConfig } from '../../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testRmAll (factory: Factory<KuboNode>, options: MochaConfig): void {

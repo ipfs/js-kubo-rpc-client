@@ -1,11 +1,10 @@
-/* eslint-env mocha */
 import { generateKeyPair } from '@libp2p/crypto/keys'
 import { peerIdFromPrivateKey } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { PeerId } from '@libp2p/interface'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 

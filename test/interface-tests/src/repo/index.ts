@@ -1,7 +1,7 @@
-import { createSuite } from '../utils/suite.js'
-import { testGc } from './gc.js'
-import { testStat } from './stat.js'
-import { testVersion } from './version.js'
+import { createSuite } from '../utils/suite.ts'
+import { testGc } from './gc.ts'
+import { testStat } from './stat.ts'
+import { testVersion } from './version.ts'
 
 const tests = {
   version: testVersion,

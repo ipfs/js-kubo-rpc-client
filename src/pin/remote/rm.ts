@@ -1,6 +1,6 @@
-import { encodeQuery } from './utils.js'
-import type { PinRemoteAPI } from './index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { encodeQuery } from './utils.ts'
+import type { PinRemoteAPI } from './index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 
 export function createRm (client: HTTPRPCClient): PinRemoteAPI['rm'] {
   return async function rm ({ timeout, signal, headers, ...query }) {

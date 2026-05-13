@@ -1,8 +1,8 @@
-import { createProvideStat } from './stat.js'
-import type { ProvideStatOptions, ProvideStats } from './types.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createProvideStat } from './stat.ts'
+import type { ProvideStatOptions, ProvideStats } from './types.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
-export type { ProvideStatOptions, ProvideStats } from './types.js'
+export type { ProvideStatOptions, ProvideStats } from './types.ts'
 
 export interface ProvideAPI {
   /**

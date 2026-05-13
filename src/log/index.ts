@@ -1,8 +1,8 @@
-import { createLevel } from './level.js'
-import { createLs } from './ls.js'
-import { createTail } from './tail.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createLevel } from './level.ts'
+import { createLs } from './ls.ts'
+import { createTail } from './tail.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export interface LogAPI {
   level(subsystem: string, level: string, options?: HTTPRPCOptions): Promise<any>

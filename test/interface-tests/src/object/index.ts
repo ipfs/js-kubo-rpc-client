@@ -1,5 +1,5 @@
-import { createSuite } from '../utils/suite.js'
-import testPatch from './patch/index.js'
+import { createSuite } from '../utils/suite.ts'
+import testPatch from './patch/index.ts'
 
 const tests = {
   patch: testPatch

@@ -1,7 +1,7 @@
 import { CID } from 'multiformats/cid'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { RepoAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { RepoAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createGc (client: HTTPRPCClient): RepoAPI['gc'] {
   return async function * gc (options = {}) {

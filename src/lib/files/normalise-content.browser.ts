@@ -6,8 +6,8 @@ import {
   isBytes,
   isBlob,
   isReadableStream
-} from './utils.js'
-import type { ToContent } from '../../index.js'
+} from './utils.ts'
+import type { ToContent } from '../../index.ts'
 
 export async function normaliseContent (input: ToContent): Promise<Blob> {
   // Bytes
@@ -33,7 +33,7 @@ export async function normaliseContent (input: ToContent): Promise<Blob> {
   // (Async)Iterator<?>
   if (Symbol.iterator in input || Symbol.asyncIterator in input) {
     // @ts-expect-error cannot detect iterability
-    const peekable = itPeekable(input)
+    const peekable = itPeekable<Uint8Array<ArrayBuffer>>(input)
     // eslint-disable-next-line @typescript-eslint/await-thenable
     const { value, done } = await peekable.peek()
 

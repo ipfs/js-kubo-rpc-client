@@ -1,8 +1,8 @@
 import { CID } from 'multiformats/cid'
-import { normaliseInput } from '../lib/pins/normalise-input.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { PinAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { normaliseInput } from '../lib/pins/normalise-input.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { PinAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createRmAll (client: HTTPRPCClient): PinAPI['rmAll'] {
   return async function * rmAll (source, options = {}) {

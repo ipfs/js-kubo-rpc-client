@@ -1,10 +1,10 @@
 import { anySignal } from 'any-signal'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import { mapEvent } from '../dht/map-event.js'
-import { multipartRequest } from '../lib/multipart-request.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { RoutingAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { mapEvent } from '../dht/map-event.ts'
+import { multipartRequest } from '../lib/multipart-request.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { RoutingAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createPut (client: HTTPRPCClient): RoutingAPI['put'] {
   return async function * put (key, value, options = {}) {

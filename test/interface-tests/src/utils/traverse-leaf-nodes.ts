@@ -1,4 +1,4 @@
-import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 import type { PBNode } from '@ipld/dag-pb'
 import type { CID } from 'multiformats/cid'
 

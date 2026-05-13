@@ -1,9 +1,9 @@
 import { anySignal } from 'any-signal'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { multipartRequest } from '../lib/multipart-request.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { ConfigAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { multipartRequest } from '../lib/multipart-request.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { ConfigAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createReplace (client: HTTPRPCClient): ConfigAPI['replace'] {
   return async function replace (config, options = {}) {

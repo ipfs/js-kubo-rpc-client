@@ -4,7 +4,7 @@ import { BaseBlockstore } from 'blockstore-core/base'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
-import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 import type { Blockstore } from 'interface-blockstore'
 import type { CID } from 'multiformats/cid'
 

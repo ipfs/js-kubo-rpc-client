@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer'
 // @ts-expect-error no types
 import toStream from 'it-to-stream'
-import type { UploadProgressFn } from '../../index.js'
-import type { FetchOptions } from '../http.js'
+import type { UploadProgressFn } from '../../index.ts'
+import type { FetchOptions } from '../http.ts'
 import type { Readable } from 'node:stream'
 
 const fetchWithProgress = async (url: string | Request, options: FetchOptions = {}): Promise<Response> =>

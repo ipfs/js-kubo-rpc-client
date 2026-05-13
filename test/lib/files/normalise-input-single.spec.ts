@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import { File } from '@web-std/file'
 import { expect } from 'aegir/chai'
 import resolve from 'aegir/resolve'
@@ -7,8 +5,8 @@ import blobToIt from 'blob-to-it'
 import all from 'it-all'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { isNode } from 'wherearewe'
-import { normaliseInput } from '../../../src/lib/files/normalise-input-single.js'
-import { asyncIterableOf, browserReadableStreamOf, iterableOf } from '../../utils/iterables.js'
+import { normaliseInput } from '../../../src/lib/files/normalise-input-single.ts'
+import { asyncIterableOf, browserReadableStreamOf, iterableOf } from '../../utils/iterables.ts'
 
 const STRING = (): any => 'hello world'
 const NEWSTRING = (): any => new String('hello world') // eslint-disable-line no-new-wrappers

@@ -1,8 +1,7 @@
-/* eslint-env mocha */
 /* eslint max-nested-callbacks: ["error", 8] */
 
 import { expect } from 'aegir/chai'
-import { create as httpClient } from '../src/index.js'
+import { create as httpClient } from '../src/index.ts'
 
 describe('.getEndpointConfig', function () {
   it('should return the endpoint configuration', function () {

@@ -1,6 +1,6 @@
-import { createQuery } from './query.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createQuery } from './query.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { PeerId, PeerInfo } from '@libp2p/interface'
 import type { CID } from 'multiformats/cid'
 

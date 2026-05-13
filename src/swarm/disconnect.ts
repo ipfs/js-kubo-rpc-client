@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { SwarmAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { SwarmAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createDisconnect (client: HTTPRPCClient): SwarmAPI['disconnect'] {
   return async function disconnect (addr, options = {}) {

@@ -7,9 +7,9 @@ import { CID } from 'multiformats/cid'
 import { code, encode } from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { PinType } from '../../../../src/pin/index.js'
-import type { RemotePin, RemotePinStatus } from '../../../../src/pin/remote/index.js'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { PinType } from '../../../../src/pin/index.ts'
+import type { RemotePin, RemotePinStatus } from '../../../../src/pin/remote/index.ts'
 
 const { fromString } = bytes
 

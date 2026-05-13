@@ -1,9 +1,8 @@
-/* eslint-env mocha */
 import http from 'http'
 import { expect } from 'aegir/chai'
 import { pEvent } from 'p-event'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { create as httpClient } from '../../src/index.js'
+import { create as httpClient } from '../../src/index.ts'
 
 describe('\'deal with HTTP weirdness\' tests', function () {
   it('does not crash if no content-type header is provided', async function () {

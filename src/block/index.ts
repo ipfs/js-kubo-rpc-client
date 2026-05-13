@@ -1,9 +1,9 @@
-import { createGet } from './get.js'
-import { createPut } from './put.js'
-import { createRm } from './rm.js'
-import { createStat } from './stat.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createGet } from './get.ts'
+import { createPut } from './put.ts'
+import { createRm } from './rm.ts'
+import { createStat } from './stat.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { CID, Version } from 'multiformats/cid'
 
 export interface BlockPutOptions extends HTTPRPCOptions {

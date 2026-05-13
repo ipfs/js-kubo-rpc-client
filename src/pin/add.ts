@@ -1,7 +1,7 @@
 import last from 'it-last'
-import { createAddAll } from './add-all.js'
-import type { PinAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createAddAll } from './add-all.ts'
+import type { PinAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createAdd (client: HTTPRPCClient): PinAPI['add'] {
   const all = createAddAll(client)

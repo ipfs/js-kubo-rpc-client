@@ -1,11 +1,9 @@
-/* eslint-env mocha, browser */
-
 import { multiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
 import { isBrowser } from 'wherearewe'
-import { create as ipfsClient } from '../src/index.js'
-import { factory } from './utils/factory.js'
-import type { KuboRPCClient } from '../src/index.js'
+import { create as ipfsClient } from '../src/index.ts'
+import { factory } from './utils/factory.ts'
+import type { KuboRPCClient } from '../src/index.ts'
 import type { KuboNode } from 'ipfsd-ctl'
 
 const f = factory()

@@ -1,12 +1,10 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import delay from 'delay'
 import { CID } from 'multiformats/cid'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { waitForWantlistKey, waitForWantlistKeyToBeRemoved } from './utils.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { waitForWantlistKey, waitForWantlistKeyToBeRemoved } from './utils.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testWantlist (factory: Factory<KuboNode>, options: MochaConfig): void {

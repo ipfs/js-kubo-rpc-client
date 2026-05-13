@@ -1,6 +1,6 @@
-import { encodeAddParams, decodePin } from './utils.js'
-import type { PinRemoteAPI } from './index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { encodeAddParams, decodePin } from './utils.ts'
+import type { PinRemoteAPI } from './index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 
 export function createAdd (client: HTTPRPCClient): PinRemoteAPI['add'] {
   return async function add (cid, { timeout, signal, headers, ...query }) {

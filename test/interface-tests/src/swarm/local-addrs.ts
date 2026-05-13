@@ -1,9 +1,7 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testLocalAddrs (factory: Factory<KuboNode>, options: MochaConfig): void {

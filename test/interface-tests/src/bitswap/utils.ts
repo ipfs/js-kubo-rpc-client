@@ -1,5 +1,5 @@
 import delay from 'delay'
-import type { KuboRPCClient } from '../../../../src/index.js'
+import type { KuboRPCClient } from '../../../../src/index.ts'
 import type { PeerId } from '@libp2p/interface'
 
 export interface WaitOptions {

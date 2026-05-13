@@ -1,5 +1,5 @@
-import { createSuite } from '../utils/suite.js'
-import { testPing } from './ping.js'
+import { createSuite } from '../utils/suite.ts'
+import { testPing } from './ping.ts'
 
 const tests = {
   ping: testPing

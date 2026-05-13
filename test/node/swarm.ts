@@ -1,8 +1,6 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import nock from 'nock'
-import { create as httpClient } from '../../src/index.js'
+import { create as httpClient } from '../../src/index.ts'
 
 describe.skip('.swarm.peers', function () {
   this.timeout(50 * 1000) // slow CI

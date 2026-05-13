@@ -1,10 +1,10 @@
 import { anySignal } from 'any-signal'
 import { CID } from 'multiformats/cid'
-import { multipartRequest } from '../lib/multipart-request.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { DAGAPI, DAGPutOptions } from './index.js'
-import type { Codecs } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { multipartRequest } from '../lib/multipart-request.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { DAGAPI, DAGPutOptions } from './index.ts'
+import type { Codecs } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createPut (client: HTTPRPCClient, codecs: Codecs): DAGAPI['put'] {
   return async function put (dagNode, options = {}) {

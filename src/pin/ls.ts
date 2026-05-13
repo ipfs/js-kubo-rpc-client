@@ -1,7 +1,7 @@
 import { CID } from 'multiformats/cid'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { PinAPI, PinLsResult } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { PinAPI, PinLsResult } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 function toPin (type: string, cid: string, metadata: Record<string, string>, name: string): PinLsResult {
   const pin: PinLsResult = {

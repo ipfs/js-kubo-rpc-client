@@ -1,6 +1,6 @@
-import { normaliseCandidateSingle } from './normalise-candidate-single.js'
-import { normaliseContent } from './normalise-content.js'
-import type { ImportCandidate } from '../../index.js'
+import { normaliseCandidateSingle } from './normalise-candidate-single.ts'
+import { normaliseContent } from './normalise-content.ts'
+import type { ImportCandidate } from '../../index.ts'
 
 /**
  * Transforms any of the `ipfs.add` input types into

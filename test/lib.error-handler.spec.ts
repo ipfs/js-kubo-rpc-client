@@ -1,8 +1,6 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
-import { errorHandler, HTTPError } from '../src/lib/core.js'
-import { throwsAsync } from './utils/throws-async.js'
+import { errorHandler, HTTPError } from '../src/lib/core.ts'
+import { throwsAsync } from './utils/throws-async.ts'
 
 describe('lib/error-handler', function () {
   it('should parse json error response', async function () {

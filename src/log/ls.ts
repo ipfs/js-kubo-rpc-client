@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { LogAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { LogAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createLs (client: HTTPRPCClient): LogAPI['ls'] {
   return async function ls (options = {}) {

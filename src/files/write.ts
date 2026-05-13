@@ -1,10 +1,10 @@
 import { anySignal } from 'any-signal'
-import { parseMtime } from '../lib/files/utils.js'
-import { modeToString } from '../lib/mode-to-string.js'
-import { multipartRequest } from '../lib/multipart-request.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { FilesAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { parseMtime } from '../lib/files/utils.ts'
+import { modeToString } from '../lib/mode-to-string.ts'
+import { multipartRequest } from '../lib/multipart-request.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { FilesAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createWrite (client: HTTPRPCClient): FilesAPI['write'] {
   return async function write (path, input, options = {}) {

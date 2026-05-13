@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 export interface Skip {
   name?: string
   reason?: string

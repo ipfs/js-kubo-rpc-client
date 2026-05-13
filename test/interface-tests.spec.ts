@@ -1,9 +1,7 @@
-/* eslint-env mocha */
-
 import kubo from 'kubo'
-import { isWindows, isFirefox, isChrome } from './constants.js'
-import * as tests from './interface-tests/src/index.js'
-import { factory } from './utils/factory.js'
+import { isWindows, isFirefox, isChrome } from './constants.ts'
+import * as tests from './interface-tests/src/index.ts'
+import { factory } from './utils/factory.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 function executeTests (commonFactory: Factory<KuboNode>): void {

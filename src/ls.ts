@@ -1,8 +1,8 @@
 import { CID } from 'multiformats/cid'
-import { createStat } from './files/stat.js'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { IPFSEntry, KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { createStat } from './files/stat.ts'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { IPFSEntry, KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createLs (client: HTTPRPCClient): KuboRPCClient['ls'] {
   return async function * ls (path, options = {}) {

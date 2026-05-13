@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import { randomBytes, randomStream } from 'iso-random-stream'
 import all from 'it-all'
@@ -9,13 +7,13 @@ import { sha512 } from 'multiformats/hashes/sha2'
 import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { isNode } from 'wherearewe'
-import { createShardedDirectory } from '../utils/create-sharded-directory.js'
-import { createTwoShards } from '../utils/create-two-shards.js'
-import isShardAtPath from '../utils/is-shard-at-path.js'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { createShardedDirectory } from '../utils/create-sharded-directory.ts'
+import { createTwoShards } from '../utils/create-two-shards.ts'
+import isShardAtPath from '../utils/is-shard-at-path.ts'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { traverseLeafNodes } from '../utils/traverse-leaf-nodes.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 interface WriteTestArg {
@@ -28,8 +26,8 @@ interface WriteTestArg {
 export function testWrite (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)
   const it = getIt(options)
-  const smallFile: Uint8Array = randomBytes(13)
-  const largeFile: Uint8Array = randomBytes(490668)
+  const smallFile = randomBytes(13)
+  const largeFile = randomBytes(490668)
 
   const runTest = (fn: (arg: WriteTestArg) => void): void => {
     const files: WriteTestArg[] = [{

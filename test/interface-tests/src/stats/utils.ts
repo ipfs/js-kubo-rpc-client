@@ -1,7 +1,7 @@
 import { expect } from 'aegir/chai'
-import type { BitswapStats } from '../../../../src/bitswap/index.js'
-import type { RepoStatResult } from '../../../../src/repo/index.js'
-import type { StatsBWResult } from '../../../../src/stats/index.js'
+import type { BitswapStats } from '../../../../src/bitswap/index.ts'
+import type { RepoStatResult } from '../../../../src/repo/index.ts'
+import type { StatsBWResult } from '../../../../src/stats/index.ts'
 
 const isBigInt = (n: any): n is bigint => {
   return typeof n === 'bigint'

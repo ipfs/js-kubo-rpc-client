@@ -1,7 +1,7 @@
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { mapEvent } from './map-event.js'
-import type { DHTAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import { mapEvent } from './map-event.ts'
+import type { DHTAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createQuery (client: HTTPRPCClient): DHTAPI['query'] {
   return async function * query (peerId, options = {}) {

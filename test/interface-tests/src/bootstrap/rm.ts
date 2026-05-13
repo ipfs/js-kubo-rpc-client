@@ -1,10 +1,8 @@
-/* eslint-env mocha */
-
 import { multiaddr, isMultiaddr } from '@multiformats/multiaddr'
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 export function testRm (factory: Factory<KuboNode>, options: MochaConfig): void {
   const describe = getDescribe(options)

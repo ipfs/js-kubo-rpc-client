@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createCommands (client: HTTPRPCClient): KuboRPCClient['commands'] {
   return async function commands (options = {}) {

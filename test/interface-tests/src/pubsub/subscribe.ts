@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import { isPeerId } from '@libp2p/interface'
 import { logger } from '@libp2p/logger'
 import { expect } from 'aegir/chai'
@@ -9,10 +7,10 @@ import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { isNode } from 'wherearewe'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { getTopic, getSubscriptionTestObject } from './utils.js'
-import type { IDResult, KuboRPCClient, Message } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { getTopic, getSubscriptionTestObject } from './utils.ts'
+import type { IDResult, KuboRPCClient, Message } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { PeerId } from '@libp2p/interface'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 

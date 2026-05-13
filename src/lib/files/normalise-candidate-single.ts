@@ -8,8 +8,8 @@ import {
   isFileObject,
   parseMtime,
   parseMode
-} from './utils.js'
-import type { ImportCandidate, ToContent } from '../../index.js'
+} from './utils.ts'
+import type { ImportCandidate, ToContent } from '../../index.ts'
 
 export async function * normaliseCandidateSingle (input: ImportCandidate, normaliseContent: (content: ToContent) => Promise<AsyncIterable<Uint8Array>>): AsyncGenerator<ImportCandidate, void, undefined> {
   if (input === null || input === undefined) {
@@ -52,7 +52,6 @@ export async function * normaliseCandidateSingle (input: ImportCandidate, normal
     // (Async)Iterable<Number>
     // (Async)Iterable<Bytes>
     // (Async)Iterable<String>
-    // @ts-expect-error value is never when instanceof String tested
     if (Number.isInteger(value) || isBytes(value) || typeof value === 'string' || value instanceof String) {
       yield toFileObject(peekable, normaliseContent)
       return

@@ -20,4 +20,4 @@ export { Headers }
 export { Request }
 export { Response }
 */
-export * from './fetch.node.js'
+export * from './fetch.node.ts'
