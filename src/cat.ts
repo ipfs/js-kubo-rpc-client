@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createCat (client: HTTPRPCClient): KuboRPCClient['cat'] {
   return async function * cat (path, options = {}) {

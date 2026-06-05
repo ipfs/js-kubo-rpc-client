@@ -1,4 +1,4 @@
-import type { RemotePinServiceWithStat, Stat } from './index.js'
+import type { RemotePinServiceWithStat, Stat } from './index.ts'
 
 export function encodeEndpoint (url: URL): string {
   const href = String(url)

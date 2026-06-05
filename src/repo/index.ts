@@ -1,8 +1,8 @@
-import { createGc } from './gc.js'
-import { createStat } from './stat.js'
-import { createVersion } from './version.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createGc } from './gc.ts'
+import { createStat } from './stat.ts'
+import { createVersion } from './version.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { CID } from 'multiformats/cid'
 
 export interface RepoAPI {

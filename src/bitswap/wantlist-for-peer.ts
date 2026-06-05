@@ -1,7 +1,7 @@
 import { CID } from 'multiformats/cid'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { BitswapAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { BitswapAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createWantlistForPeer (client: HTTPRPCClient): BitswapAPI['wantlistForPeer'] {
   return async function wantlistForPeer (peerId, options = {}) {

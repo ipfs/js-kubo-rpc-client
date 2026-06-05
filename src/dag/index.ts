@@ -1,10 +1,10 @@
-import { createExport } from './export.js'
-import { createGet } from './get.js'
-import { createImport } from './import.js'
-import { createPut } from './put.js'
-import { createResolve } from './resolve.js'
-import type { Codecs, HTTPRPCOptions, IPFSPath } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createExport } from './export.ts'
+import { createGet } from './get.ts'
+import { createImport } from './import.ts'
+import { createPut } from './put.ts'
+import { createResolve } from './resolve.ts'
+import type { Codecs, HTTPRPCOptions, IPFSPath } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 import type { CID, Version } from 'multiformats/cid'
 
 export interface DAGGetOptions extends HTTPRPCOptions {

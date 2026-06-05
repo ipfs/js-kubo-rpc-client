@@ -10,8 +10,8 @@ import {
   Value,
   AddingPeer,
   DialingPeer
-} from './response-types.js'
-import type { RoutingQueryEvent } from './index.js'
+} from './response-types.ts'
+import type { RoutingQueryEvent } from './index.ts'
 
 export function mapEvent (event: any): RoutingQueryEvent {
   if (event.Type === SendingQuery) {

@@ -1,10 +1,8 @@
-/* eslint-env mocha */
-
 import http, { Agent } from 'node:http'
 import { expect } from 'aegir/chai'
 import delay from 'delay'
-import { create as httpClient } from '../../src/index.js'
-import type { IDResult } from '../../src/index.js'
+import { create as httpClient } from '../../src/index.ts'
+import type { IDResult } from '../../src/index.ts'
 import type { IncomingMessage } from 'node:http'
 
 export interface TestServer {

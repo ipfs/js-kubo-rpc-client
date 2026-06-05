@@ -1,11 +1,10 @@
-/* eslint-env mocha */
 /* eslint max-nested-callbacks: ["error", 8] */
 
 import { expect } from 'aegir/chai'
 import first from 'it-first'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { factory } from './utils/factory.js'
-import type { KuboRPCClient } from '../src/index.js'
+import { factory } from './utils/factory.ts'
+import type { KuboRPCClient } from '../src/index.ts'
 const f = factory()
 
 describe('.log', function () {

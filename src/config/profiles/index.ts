@@ -1,7 +1,7 @@
-import { createApply } from './apply.js'
-import type { HTTPRPCOptions } from '../../index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
-import type { Config } from '../index.js'
+import { createApply } from './apply.ts'
+import type { HTTPRPCOptions } from '../../index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
+import type { Config } from '../index.ts'
 
 export interface ProfilesApplyOptions extends HTTPRPCOptions {
   dryRun?: boolean

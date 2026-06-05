@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import { CarWriter, CarReader } from '@ipld/car'
 import { expect } from 'aegir/chai'
 import loadFixture from 'aegir/fixtures'
@@ -9,10 +7,10 @@ import { CID } from 'multiformats/cid'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { byCID } from '../utils/index.js'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { byCID } from '../utils/index.ts'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 async function createBlocks (num: number): Promise<Array<{ bytes: Uint8Array, cid: CID }>> {

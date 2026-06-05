@@ -1,8 +1,8 @@
-import { createSuite } from '../utils/suite.js'
-import { testGet } from './get.js'
-import { testPut } from './put.js'
-import { testRm } from './rm.js'
-import { testStat } from './stat.js'
+import { createSuite } from '../utils/suite.ts'
+import { testGet } from './get.ts'
+import { testPut } from './put.ts'
+import { testRm } from './rm.ts'
+import { testStat } from './stat.ts'
 
 const tests = {
   get: testGet,

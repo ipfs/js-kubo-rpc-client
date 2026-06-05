@@ -1,10 +1,10 @@
-import { createGen } from './gen.js'
-import { createImport } from './import.js'
-import { createList } from './list.js'
-import { createRename } from './rename.js'
-import { createRm } from './rm.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createGen } from './gen.ts'
+import { createImport } from './import.ts'
+import { createList } from './list.ts'
+import { createRename } from './rename.ts'
+import { createRm } from './rm.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export type KeyType = 'ed25519' | 'rsa'
 

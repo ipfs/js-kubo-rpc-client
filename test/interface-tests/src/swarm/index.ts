@@ -1,9 +1,9 @@
-import { createSuite } from '../utils/suite.js'
-import { testAddrs } from './addrs.js'
-import { testConnect } from './connect.js'
-import { testDisconnect } from './disconnect.js'
-import { testLocalAddrs } from './local-addrs.js'
-import { testPeers } from './peers.js'
+import { createSuite } from '../utils/suite.ts'
+import { testAddrs } from './addrs.ts'
+import { testConnect } from './connect.ts'
+import { testDisconnect } from './disconnect.ts'
+import { testLocalAddrs } from './local-addrs.ts'
+import { testPeers } from './peers.ts'
 
 const tests = {
   connect: testConnect,

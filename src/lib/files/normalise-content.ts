@@ -9,8 +9,8 @@ import {
   isBytes,
   isReadableStream,
   isBlob
-} from './utils.js'
-import type { ToContent } from '../../index.js'
+} from './utils.ts'
+import type { ToContent } from '../../index.ts'
 
 async function * toAsyncIterable <T> (thing: T): AsyncIterable<T> {
   yield thing
@@ -57,7 +57,6 @@ export async function normaliseContent (input: ToContent): Promise<AsyncIterable
     }
 
     // (Async)Iterable<Bytes|String>
-    // @ts-expect-error value is never when instanceof String tested
     if (isBytes(value) || typeof value === 'string' || value instanceof String) {
       // @ts-expect-error cannot derive type
       return map(peekable, toBytes)

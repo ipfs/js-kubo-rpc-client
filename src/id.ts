@@ -1,9 +1,9 @@
 import { peerIdFromString } from '@libp2p/peer-id'
 import { multiaddr } from '@multiformats/multiaddr'
-import { objectToCamel } from './lib/object-to-camel.js'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { objectToCamel } from './lib/object-to-camel.ts'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createId (client: HTTPRPCClient): KuboRPCClient['id'] {
   return async function id (options = {}) {

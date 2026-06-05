@@ -1,9 +1,9 @@
 // Import browser version otherwise electron-renderer will end up with node
 // version and fail.
-import { normaliseInput } from './files/normalise-input-multiple.browser.js'
-import { modeToString } from './mode-to-string.js'
-import type { MultipartRequest } from './multipart-request.js'
-import type { ImportCandidateStream } from '../index.js'
+import { normaliseInput } from './files/normalise-input-multiple.browser.ts'
+import { modeToString } from './mode-to-string.ts'
+import type { MultipartRequest } from './multipart-request.ts'
+import type { ImportCandidateStream } from '../index.ts'
 
 export async function multipartRequest (source: ImportCandidateStream, abortController: AbortController, headers: Headers | Record<string, string> = {}, boundary?: string): Promise<MultipartRequest> {
   const parts = []

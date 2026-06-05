@@ -1,10 +1,8 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import defer from 'p-defer'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import { factory } from './utils/factory.js'
-import type { KuboRPCClient } from '../src/index.js'
+import { factory } from './utils/factory.ts'
+import type { KuboRPCClient } from '../src/index.ts'
 import type { KuboNode } from 'ipfsd-ctl'
 
 const f = factory()

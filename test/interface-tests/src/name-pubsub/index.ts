@@ -1,8 +1,8 @@
-import { createSuite } from '../utils/suite.js'
-import { testCancel } from './cancel.js'
-import { testPubsub } from './pubsub.js'
-import { testState } from './state.js'
-import { testSubs } from './subs.js'
+import { createSuite } from '../utils/suite.ts'
+import { testCancel } from './cancel.ts'
+import { testPubsub } from './pubsub.ts'
+import { testState } from './state.ts'
+import { testSubs } from './subs.ts'
 
 const tests = {
   cancel: testCancel,

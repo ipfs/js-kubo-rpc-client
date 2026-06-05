@@ -1,8 +1,6 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
-import { factory } from './utils/factory.js'
-import type { KuboRPCClient } from '../src/index.js'
+import { factory } from './utils/factory.ts'
+import type { KuboRPCClient } from '../src/index.ts'
 const f = factory()
 
 describe('.diag', function () {

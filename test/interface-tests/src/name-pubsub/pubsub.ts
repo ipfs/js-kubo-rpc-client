@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import { publicKeyFromProtobuf } from '@libp2p/crypto/keys'
 import { peerIdFromPublicKey, peerIdFromString } from '@libp2p/peer-id'
 import { expect } from 'aegir/chai'
@@ -12,10 +10,10 @@ import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { isNode } from 'wherearewe'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import waitFor from '../utils/wait-for.js'
-import type { IDResult, KuboRPCClient, Message } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import waitFor from '../utils/wait-for.ts'
+import type { IDResult, KuboRPCClient, Message } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode, KuboOptions } from 'ipfsd-ctl'
 
 const namespace = '/record/'
@@ -81,6 +79,7 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         return subscribed
       }
 
+      // @ts-expect-error @libp2p/peer-id needs dep updates
       const routingKey = multihashToIPNSRoutingKey(idA.id.toMultihash())
       const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
@@ -148,6 +147,7 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         'ipns-base': 'b58mh'
       })
 
+      // @ts-expect-error @libp2p/peer-id needs dep updates
       const routingKey = multihashToIPNSRoutingKey(peerIdFromString(testAccount.id).toMultihash())
       const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 

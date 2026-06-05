@@ -1,10 +1,10 @@
-import { createSuite } from '../utils/suite.js'
-import { testExport } from './export.js'
-import { testGet } from './get.js'
-import { testImport } from './import.js'
-import { testPut } from './put.js'
-import { testResolve } from './resolve.js'
-import { testDagSharnessT0053 } from './sharness-t0053-dag.js'
+import { createSuite } from '../utils/suite.ts'
+import { testExport } from './export.ts'
+import { testGet } from './get.ts'
+import { testImport } from './import.ts'
+import { testPut } from './put.ts'
+import { testResolve } from './resolve.ts'
+import { testDagSharnessT0053 } from './sharness-t0053-dag.ts'
 
 const tests = {
   export: testExport,

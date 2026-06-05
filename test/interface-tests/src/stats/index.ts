@@ -1,7 +1,7 @@
-import { createSuite } from '../utils/suite.js'
-import { testBitswap } from './bitswap.js'
-import { testBw } from './bw.js'
-import { testRepo } from './repo.js'
+import { createSuite } from '../utils/suite.ts'
+import { testBitswap } from './bitswap.ts'
+import { testBw } from './bw.ts'
+import { testRepo } from './repo.ts'
 
 const tests = {
   bitswap: testBitswap,

@@ -1,10 +1,8 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
-import { getDescribe, getIt } from '../../utils/mocha.js'
-import { fixtures, clearRemotePins, clearServices } from '../utils.js'
-import type { KuboRPCClient } from '../../../../../src/index.js'
-import type { MochaConfig } from '../../utils/mocha.js'
+import { getDescribe, getIt } from '../../utils/mocha.ts'
+import { fixtures, clearRemotePins, clearServices } from '../utils.ts'
+import type { KuboRPCClient } from '../../../../../src/index.ts'
+import type { MochaConfig } from '../../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testAdd (factory: Factory<KuboNode>, options: MochaConfig): void {

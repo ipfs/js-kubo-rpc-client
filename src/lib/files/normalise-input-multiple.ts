@@ -1,6 +1,6 @@
-import { normaliseCandidateMultiple } from './normalise-candidate-multiple.js'
-import { normaliseContent } from './normalise-content.js'
-import type { ImportCandidate, ImportCandidateStream } from '../../index.js'
+import { normaliseCandidateMultiple } from './normalise-candidate-multiple.ts'
+import { normaliseContent } from './normalise-content.ts'
+import type { ImportCandidate, ImportCandidateStream } from '../../index.ts'
 
 /**
  * Transforms any of the `ipfs.addAll` input types into

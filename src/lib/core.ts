@@ -1,16 +1,14 @@
-/* eslint-env browser */
-
 import { logger } from '@libp2p/logger'
 import { isMultiaddr } from '@multiformats/multiaddr'
 // @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOpts from 'merge-options'
 import parseDuration from 'parse-duration'
 import { isBrowser, isWebWorker, isNode } from 'wherearewe'
-import getAgent from './agent.js'
-import { HTTP } from './http.js'
-import { toUrlString } from './to-url-string.js'
-import type { ExtendedResponse, HTTPOptions } from './http.js'
-import type { Options } from '../index.js'
+import getAgent from './agent.ts'
+import { HTTP } from './http.ts'
+import { toUrlString } from './to-url-string.ts'
+import type { ExtendedResponse, HTTPOptions } from './http.ts'
+import type { Options } from '../index.ts'
 import type { Multiaddr } from '@multiformats/multiaddr'
 
 const log = logger('js-kubo-rpc-client:lib:error-handler')

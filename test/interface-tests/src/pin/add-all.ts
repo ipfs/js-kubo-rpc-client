@@ -1,13 +1,11 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import drain from 'it-drain'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import { fixtures, clearPins } from './utils.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { PinAddInput } from '../../../../src/pin/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import { fixtures, clearPins } from './utils.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { PinAddInput } from '../../../../src/pin/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testAddAll (factory: Factory<KuboNode>, options: MochaConfig): void {

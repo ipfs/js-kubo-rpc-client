@@ -1,7 +1,7 @@
-import { objectToCamel } from '../lib/object-to-camel.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { RefsAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { objectToCamel } from '../lib/object-to-camel.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { RefsAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createLocal (client: HTTPRPCClient): RefsAPI['local'] {
   return async function * refsLocal (options = {}) {

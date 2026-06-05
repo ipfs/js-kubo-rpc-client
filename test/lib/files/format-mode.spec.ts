@@ -1,7 +1,5 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
-import { formatMode } from '../../../src/lib/files/format-mode.js'
+import { formatMode } from '../../../src/lib/files/format-mode.ts'
 
 describe('format-mode', function () {
   it('formats mode for directories', function () {

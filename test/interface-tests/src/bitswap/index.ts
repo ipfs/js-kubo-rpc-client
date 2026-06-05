@@ -1,7 +1,7 @@
-import { createSuite } from '../utils/suite.js'
-import { testStat } from './stat.js'
-import { testWantlistForPeer } from './wantlist-for-peer.js'
-import { testWantlist } from './wantlist.js'
+import { createSuite } from '../utils/suite.ts'
+import { testStat } from './stat.ts'
+import { testWantlistForPeer } from './wantlist-for-peer.ts'
+import { testWantlist } from './wantlist.ts'
 
 const tests = {
   stat: testStat,

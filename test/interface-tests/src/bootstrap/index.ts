@@ -1,7 +1,7 @@
-import { createSuite } from '../utils/suite.js'
-import { testAdd } from './add.js'
-import { testList } from './list.js'
-import { testRm } from './rm.js'
+import { createSuite } from '../utils/suite.ts'
+import { testAdd } from './add.ts'
+import { testList } from './list.ts'
+import { testRm } from './rm.ts'
 
 const tests = {
   add: testAdd,

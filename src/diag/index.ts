@@ -1,8 +1,8 @@
-import { createCmds } from './cmds.js'
-import { createNet } from './net.js'
-import { createSys } from './sys.js'
-import type { HTTPRPCOptions } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { createCmds } from './cmds.ts'
+import { createNet } from './net.ts'
+import { createSys } from './sys.ts'
+import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export interface DiagCmdsResult {
   active: boolean

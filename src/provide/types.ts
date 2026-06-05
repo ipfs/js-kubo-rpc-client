@@ -1,4 +1,4 @@
-import type { HTTPRPCOptions } from '../index.js'
+import type { HTTPRPCOptions } from '../index.ts'
 
 /**
  * Options for `ipfs.provide.stat`.

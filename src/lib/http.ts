@@ -6,9 +6,9 @@ import all from 'it-all'
 // @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOpts from 'merge-options'
 import { isBrowser, isWebWorker } from 'wherearewe'
-import { TimeoutError, HTTPError } from './http/error.js'
-import { fetch } from './http/fetch.js'
-import type { UploadProgressFn } from '../index.js'
+import { TimeoutError, HTTPError } from './http/error.ts'
+import { fetch } from './http/fetch.ts'
+import type { UploadProgressFn } from '../index.ts'
 import type { Readable } from 'node:stream'
 
 const merge = mergeOpts.bind({ ignoreUndefined: true })
@@ -137,7 +137,7 @@ export class HTTP {
     try {
       if (globalThis.ReadableStream != null && opts.body instanceof globalThis.ReadableStream && (isBrowser || isWebWorker)) {
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1387483
-        opts.body = new Blob(await all(browserReableStreamToIt<Uint8Array>(opts.body)))
+        opts.body = new Blob(await all(browserReableStreamToIt<Uint8Array<ArrayBuffer>>(opts.body)))
       }
 
       log.trace('outgoing headers', opts.headers)

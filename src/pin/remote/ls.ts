@@ -1,6 +1,6 @@
-import { encodeQuery, decodePin } from './utils.js'
-import type { PinRemoteAPI } from './index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { encodeQuery, decodePin } from './utils.ts'
+import type { PinRemoteAPI } from './index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 
 export function createLs (client: HTTPRPCClient): PinRemoteAPI['ls'] {
   return async function * ls ({ timeout, signal, headers, ...query }) {

@@ -11,7 +11,7 @@ import { equals as uint8ArrayEquals } from 'uint8arrays/equals'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { toString as uint8ArrayToString } from 'uint8arrays/to-string'
 import { isBrowser, isWebWorker, isReactNative } from 'wherearewe'
-import { HTTP } from '../../src/lib/http.js'
+import { HTTP } from '../../src/lib/http.ts'
 
 const ECHO_SERVER = process.env.ECHO_SERVER ?? ''
 

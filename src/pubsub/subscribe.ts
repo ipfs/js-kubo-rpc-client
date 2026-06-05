@@ -1,13 +1,13 @@
 import { publicKeyFromProtobuf } from '@libp2p/crypto/keys'
 import { logger } from '@libp2p/logger'
 import { peerIdFromString } from '@libp2p/peer-id'
-import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { PubSubAPI, PubsubApiErrorHandlerFn, Message } from './index.js'
-import type { SubscriptionTracker } from './subscription-tracker.js'
-import type { HTTPRPCClient } from '../lib/core.js'
-import type { AbortError } from '../lib/errors.js'
-import type { ExtendedResponse } from '../lib/http.js'
+import { textToUrlSafeRpc, rpcToText, rpcToBytes, rpcToBigInt } from '../lib/http-rpc-wire-format.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { PubSubAPI, PubsubApiErrorHandlerFn, Message } from './index.ts'
+import type { SubscriptionTracker } from './subscription-tracker.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
+import type { AbortError } from '../lib/errors.ts'
+import type { ExtendedResponse } from '../lib/http.ts'
 
 const log = logger('js-kubo-rpc-client:pubsub:subscribe')
 

@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import * as dagCBOR from '@ipld/dag-cbor'
 import * as dagPB from '@ipld/dag-pb'
 import { expect } from 'aegir/chai'
@@ -14,10 +12,10 @@ import { CID } from 'multiformats/cid'
 import { identity } from 'multiformats/hashes/identity'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
-import blockstore from '../utils/blockstore-adapter.js'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import blockstore from '../utils/blockstore-adapter.ts'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testGet (factory: Factory<KuboNode>, options: MochaConfig): void {

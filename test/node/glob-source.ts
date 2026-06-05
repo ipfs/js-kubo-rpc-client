@@ -3,10 +3,10 @@ import path from 'node:path'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
 import { isNode } from 'wherearewe'
-import { globSource } from '../../src/lib/glob-source.js'
+import { globSource } from '../../src/lib/glob-source.ts'
 
 function fixtureDir (): string {
-  return path.resolve(path.join(import.meta.dirname, '..', '..', '..', 'test', 'fixtures'))
+  return path.resolve(path.join(import.meta.dirname, '..', 'fixtures'))
 }
 
 function fixture (file: string): string {

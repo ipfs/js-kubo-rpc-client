@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
-import type { ConfigProfilesAPI } from './index.js'
-import type { HTTPRPCClient } from '../../lib/core.js'
+import { toUrlSearchParams } from '../../lib/to-url-search-params.ts'
+import type { ConfigProfilesAPI } from './index.ts'
+import type { HTTPRPCClient } from '../../lib/core.ts'
 
 export function createApply (client: HTTPRPCClient): ConfigProfilesAPI['apply'] {
   return async function apply (profile, options = {}) {

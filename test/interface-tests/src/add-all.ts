@@ -1,5 +1,3 @@
-/* eslint-env mocha, browser */
-
 import { expect } from 'aegir/chai'
 import resolve from 'aegir/resolve'
 import all from 'it-all'
@@ -11,13 +9,13 @@ import { sha256, sha512 } from 'multiformats/hashes/sha2'
 import { Readable } from 'readable-stream'
 import { fromString as uint8ArrayFromString } from 'uint8arrays/from-string'
 import { isNode } from 'wherearewe'
-import { globSource } from '../../../src/lib/glob-source.js'
-import { isFirefox } from '../../constants.js'
-import { supportsFileReader } from '../fixtures/supports.js'
-import { fixtures } from './utils/index.js'
-import { getDescribe, getIt } from './utils/mocha.js'
-import type { MochaConfig } from './utils/mocha.js'
-import type { AddProgressFn, ImportCandidate, KuboRPCClient } from '../../../src/index.js'
+import { globSource } from '../../../src/lib/glob-source.ts'
+import { isFirefox } from '../../constants.ts'
+import { supportsFileReader } from '../fixtures/supports.ts'
+import { fixtures } from './utils/index.ts'
+import { getDescribe, getIt } from './utils/mocha.ts'
+import type { MochaConfig } from './utils/mocha.ts'
+import type { AddProgressFn, ImportCandidate, KuboRPCClient } from '../../../src/index.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testAddAll (factory: Factory<KuboNode>, options: MochaConfig): void {

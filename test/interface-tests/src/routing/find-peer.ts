@@ -1,14 +1,12 @@
-/* eslint-env mocha */
-
 import { peerIdFromString } from '@libp2p/peer-id'
 import { getNetConfig } from '@libp2p/utils'
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { ensureReachable } from '../dht/utils.js'
-import { getDescribe, getIt } from '../utils/mocha.js'
-import type { RoutingQueryEvent } from '../../../../src/dht/index.js'
-import type { KuboRPCClient } from '../../../../src/index.js'
-import type { MochaConfig } from '../utils/mocha.js'
+import { ensureReachable } from '../dht/utils.ts'
+import { getDescribe, getIt } from '../utils/mocha.ts'
+import type { RoutingQueryEvent } from '../../../../src/dht/index.ts'
+import type { KuboRPCClient } from '../../../../src/index.ts'
+import type { MochaConfig } from '../utils/mocha.ts'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 
 export function testFindPeer (factory: Factory<KuboNode>, options: MochaConfig): void {

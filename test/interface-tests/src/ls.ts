@@ -1,11 +1,9 @@
-/* eslint-env mocha */
-
 import { expect } from 'aegir/chai'
 import all from 'it-all'
-import { fixtures } from './utils/index.js'
-import { getDescribe, getIt } from './utils/mocha.js'
-import type { MochaConfig } from './utils/mocha.js'
-import type { KuboRPCClient } from '../../../src/index.js'
+import { fixtures } from './utils/index.ts'
+import { getDescribe, getIt } from './utils/mocha.ts'
+import type { MochaConfig } from './utils/mocha.ts'
+import type { KuboRPCClient } from '../../../src/index.ts'
 import type { ImportCandidate } from 'ipfs-unixfs-importer'
 import type { Factory, KuboNode } from 'ipfsd-ctl'
 

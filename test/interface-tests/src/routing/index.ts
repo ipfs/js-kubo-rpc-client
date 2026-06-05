@@ -1,9 +1,9 @@
-import { createSuite } from '../utils/suite.js'
-import { testFindPeer } from './find-peer.js'
-import { testFindProvs } from './find-provs.js'
-import { testGet } from './get.js'
-import { testProvide } from './provide.js'
-import { testPut } from './put.js'
+import { createSuite } from '../utils/suite.ts'
+import { testFindPeer } from './find-peer.ts'
+import { testFindProvs } from './find-provs.ts'
+import { testGet } from './get.ts'
+import { testProvide } from './provide.ts'
+import { testPut } from './put.ts'
 
 const tests = {
   put: testPut,

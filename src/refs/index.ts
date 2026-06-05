@@ -1,9 +1,9 @@
 import { CID } from 'multiformats/cid'
-import { objectToCamel } from '../lib/object-to-camel.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import { createLocal } from './local.js'
-import type { HTTPRPCOptions, IPFSPath } from '../index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { objectToCamel } from '../lib/object-to-camel.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import { createLocal } from './local.ts'
+import type { HTTPRPCOptions, IPFSPath } from '../index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export interface RefsAPI {
   /**

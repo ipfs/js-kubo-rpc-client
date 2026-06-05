@@ -1,8 +1,8 @@
 import { CID } from 'multiformats/cid'
-import { objectToCamelWithMetadata } from '../lib/object-to-camel-with-metadata.js'
-import { toUrlSearchParams } from '../lib/to-url-search-params.js'
-import type { FilesAPI } from './index.js'
-import type { HTTPRPCClient } from '../lib/core.js'
+import { objectToCamelWithMetadata } from '../lib/object-to-camel-with-metadata.ts'
+import { toUrlSearchParams } from '../lib/to-url-search-params.ts'
+import type { FilesAPI } from './index.ts'
+import type { HTTPRPCClient } from '../lib/core.ts'
 
 export function createLs (client: HTTPRPCClient): FilesAPI['ls'] {
   return async function * ls (path, options = {}) {

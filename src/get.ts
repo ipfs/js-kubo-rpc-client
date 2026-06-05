@@ -1,7 +1,7 @@
 import { CID } from 'multiformats/cid'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createGet (client: HTTPRPCClient): KuboRPCClient['get'] {
   return async function * get (path, options = {}) {

@@ -1,6 +1,6 @@
-import { toUrlSearchParams } from '../../../lib/to-url-search-params.js'
-import type { PinRemoteServiceAPI } from './index.js'
-import type { HTTPRPCClient } from '../../../lib/core.js'
+import { toUrlSearchParams } from '../../../lib/to-url-search-params.ts'
+import type { PinRemoteServiceAPI } from './index.ts'
+import type { HTTPRPCClient } from '../../../lib/core.ts'
 
 export function createRm (client: HTTPRPCClient): PinRemoteServiceAPI['rm'] {
   return async function rm (name, options = {}) {

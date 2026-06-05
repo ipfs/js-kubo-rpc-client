@@ -1,7 +1,7 @@
-import { objectToCamel } from './lib/object-to-camel.js'
-import { toUrlSearchParams } from './lib/to-url-search-params.js'
-import type { KuboRPCClient } from './index.js'
-import type { HTTPRPCClient } from './lib/core.js'
+import { objectToCamel } from './lib/object-to-camel.ts'
+import { toUrlSearchParams } from './lib/to-url-search-params.ts'
+import type { KuboRPCClient } from './index.ts'
+import type { HTTPRPCClient } from './lib/core.ts'
 
 export function createVersion (client: HTTPRPCClient): KuboRPCClient['version'] {
   return async function version (options = {}) {

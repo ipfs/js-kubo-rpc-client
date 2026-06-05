@@ -1,8 +1,8 @@
-import { InvalidMtimeError } from '../errors.js'
-import type { ImportCandidate } from '../../index.js'
+import { InvalidMtimeError } from '../errors.ts'
+import type { ImportCandidate } from '../../index.ts'
 import type { Mtime, MtimeLike } from 'ipfs-unixfs'
 
-export function isBytes (obj: any): obj is ArrayBufferView | ArrayBuffer {
+export function isBytes (obj: any): obj is ArrayBufferView<ArrayBuffer> | ArrayBuffer {
   return ArrayBuffer.isView(obj) || obj instanceof ArrayBuffer
 }
 

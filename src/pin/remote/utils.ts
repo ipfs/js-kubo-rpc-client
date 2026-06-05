@@ -1,6 +1,6 @@
 import { CID } from 'multiformats/cid'
-import { toUrlSearchParams } from '../../lib/to-url-search-params.js'
-import type { PinRemoteAddOptions, RemotePin, RemotePinQuery } from './index.js'
+import { toUrlSearchParams } from '../../lib/to-url-search-params.ts'
+import type { PinRemoteAddOptions, RemotePin, RemotePinQuery } from './index.ts'
 
 export const decodePin = ({ Name: name, Status: status, Cid: cid }: any): RemotePin => {
   return {
