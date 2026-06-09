@@ -1,3 +1,13 @@
+## [7.1.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v7.0.0...v7.1.0) (2026-06-09)
+
+### Features
+
+* support ReadableStream argument to dag.import ([#290](https://github.com/ipfs/js-kubo-rpc-client/issues/290)) ([8871405](https://github.com/ipfs/js-kubo-rpc-client/commit/8871405ebd0f355c54478bdeaa10fd976be8a2d3)), closes [#278](https://github.com/ipfs/js-kubo-rpc-client/issues/278)
+
+### Trivial Changes
+
+* remove `@ts-expect-error` comments ([#366](https://github.com/ipfs/js-kubo-rpc-client/issues/366)) ([2758b84](https://github.com/ipfs/js-kubo-rpc-client/commit/2758b84a4407e7b58fa0156a3c3cf385402c5e87))
+
 ## [7.0.0](https://github.com/ipfs/js-kubo-rpc-client/compare/v6.1.0...v7.0.0) (2026-05-13)
 
 ### ⚠ BREAKING CHANGES
