@@ -79,7 +79,6 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         return subscribed
       }
 
-      // @ts-expect-error @libp2p/peer-id needs dep updates
       const routingKey = multihashToIPNSRoutingKey(idA.id.toMultihash())
       const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
@@ -147,7 +146,6 @@ export function testPubsub (factory: Factory<KuboNode>, options: MochaConfig): v
         'ipns-base': 'b58mh'
       })
 
-      // @ts-expect-error @libp2p/peer-id needs dep updates
       const routingKey = multihashToIPNSRoutingKey(peerIdFromString(testAccount.id).toMultihash())
       const topic = `${namespace}${uint8ArrayToString(routingKey, 'base64url')}`
 
