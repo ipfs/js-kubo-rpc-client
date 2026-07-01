@@ -185,7 +185,7 @@
     "@libp2p/utils": "^7.0.5",
     "@types/pako": "^2.0.3",
     "@types/readable-stream": "^4.0.11",
-    "@types/sinon": "^21.0.1",
+    "@types/sinon": "^22.0.0",
     "@web-std/file": "^3.0.3",
     "aegir": "^48.0.4",
     "blockstore-core": "^7.0.1",
