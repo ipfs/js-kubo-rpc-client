@@ -174,7 +174,7 @@
     "it-to-stream": "^1.0.0",
     "merge-options": "^3.0.4",
     "multiformats": "^14.0.0",
-    "nanoid": "^5.0.7",
+    "nanoid": "^6.0.0",
     "parse-duration": "^2.1.2",
     "stream-to-it": "^1.0.1",
     "uint8arrays": "^6.1.1",
