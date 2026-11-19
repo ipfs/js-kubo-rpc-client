@@ -326,7 +326,9 @@ export interface FilesWriteOptions extends MFSOptions {
 
 export interface FilesMvOptions extends MFSOptions {
   /**
-   * Create intermediate MFS paths if they do not exist
+   * @deprecated Kubo's `files/mv` endpoint does not support this option and
+   * does not create missing parent directories. Call `files.mkdir` with
+   * `{ parents: true }` on the destination's parent directory before moving.
    */
   parents?: boolean
 
@@ -433,6 +435,10 @@ export interface FilesAPI {
   /**
    * Move files from one location to another
    *
+   * The destination's parent directory must already exist. Kubo does not
+   * support `{ parents: true }` for this operation; create the parent with
+   * `files.mkdir` first if needed.
+   *
    * - If from has multiple values then to must be a directory.
    * - If from has a single value and to exists and is a directory, from will be moved into to.
    * - If from has a single value and to exists and is a file, from must be a file and the contents of to will be replaced with the contents of from otherwise an error will be returned.
@@ -443,6 +449,10 @@ export interface FilesAPI {
    * @example
    * ```js
    * await ipfs.files.mv('/src-file', '/dst-file')
+   *
+   * // Create missing destination directories explicitly
+   * await ipfs.files.mkdir('/archive/nested', { parents: true })
+   * await ipfs.files.mv('/other-file', '/archive/nested/other-file')
    *
    * await ipfs.files.mv('/src-dir', '/dst-dir')
    *
