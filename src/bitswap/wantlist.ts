@@ -7,7 +7,7 @@ export function createWantlist (client: HTTPRPCClient): BitswapAPI['wantlist'] {
   return async function wantlist (options = {}) {
     const res = await (await client.post('bitswap/wantlist', {
       signal: options.signal,
-      searchParams: toUrlSearchParams(options),
+      searchParams: toUrlSearchParams({ ...options, peer: options.peer?.toString() }),
       headers: options.headers
     })).json()
 
