@@ -17,6 +17,7 @@ export function createSubscribe (client: HTTPRPCClient, subsTracker: Subscriptio
 
     let done: (value?: any) => void
     let fail: (error: Error) => void
+    let subscribed = false
 
     const result = new Promise<void>((resolve, reject) => {
       done = resolve
@@ -26,6 +27,7 @@ export function createSubscribe (client: HTTPRPCClient, subsTracker: Subscriptio
     // In Firefox, the initial call to fetch does not resolve until some data
     // is received. If this doesn't happen within 1 second assume success
     const ffWorkaround = setTimeout(() => {
+      subscribed = true
       done()
     }, 1000)
 
@@ -39,10 +41,19 @@ export function createSubscribe (client: HTTPRPCClient, subsTracker: Subscriptio
       headers: options.headers
     })
       .catch((err) => {
+        const aborted = options.signal?.aborted === true
+
         // Initial subscribe fail, ensure we clean up
         subsTracker.unsubscribe(topic, handler)
 
-        fail(err)
+        if (subscribed) {
+          // Firefox's workaround may have already resolved the promise.
+          if (!aborted && !isAbortError(err)) {
+            (options.onError ?? log)(err, true)
+          }
+        } else {
+          fail(err)
+        }
       })
       .then((response) => {
         clearTimeout(ffWorkaround)
@@ -70,9 +81,11 @@ export function createSubscribe (client: HTTPRPCClient, subsTracker: Subscriptio
           onEnd: () => {
             subsTracker.unsubscribe(topic, handler)
           },
+          signal: options.signal,
           onError: options.onError
         })
 
+        subscribed = true
         done()
       })
 
@@ -83,10 +96,11 @@ export function createSubscribe (client: HTTPRPCClient, subsTracker: Subscriptio
 interface ReadMessagesOptions {
   onMessage(message: Message): void
   onEnd(): void
+  signal?: AbortSignal
   onError?: PubsubApiErrorHandlerFn
 }
 
-async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onError }: ReadMessagesOptions): Promise<void> {
+async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onError, signal }: ReadMessagesOptions): Promise<void> {
   onError = onError ?? log
 
   try {
@@ -118,6 +132,10 @@ async function readMessages (response: ExtendedResponse, { onMessage, onEnd, onE
         err.message = `Failed to parse pubsub message: ${err.message}`
         onError(err, false, msg) // Not fatal
       }
+    }
+
+    if (signal?.aborted !== true) {
+      throw new Error('Pubsub subscription stream ended')
     }
   } catch (err: any) {
     if (!isAbortError(err)) {
