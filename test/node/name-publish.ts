@@ -1,7 +1,7 @@
 import { createServer } from 'node:http'
 import { expect } from 'aegir/chai'
-import { create } from '../src/index.ts'
-import type { NamePublishOptions } from '../src/name/index.ts'
+import { create } from '../../src/index.ts'
+import type { NamePublishOptions } from '../../src/name/index.ts'
 import type { AddressInfo } from 'node:net'
 
 describe('name.publish sequence option', () => {
