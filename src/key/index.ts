@@ -3,7 +3,7 @@ import { createImport } from './import.ts'
 import { createList } from './list.ts'
 import { createRename } from './rename.ts'
 import { createRm } from './rm.ts'
-import type { HTTPRPCOptions } from '../index.ts'
+import type { HTTPRPCOptions, ToContent } from '../index.ts'
 import type { HTTPRPCClient } from '../lib/core.ts'
 
 export type KeyType = 'ed25519' | 'rsa'
@@ -12,6 +12,12 @@ export interface KeyGenOptions extends HTTPRPCOptions {
   type?: KeyType
   size?: number
   'ipns-base'?: string
+}
+
+export interface KeyImportOptions extends HTTPRPCOptions {
+  ipnsBase?: string
+  format?: 'libp2p-protobuf-cleartext' | 'pem-pkcs8-cleartext'
+  allowAnyKeyType?: boolean
 }
 
 export interface Key {
@@ -93,16 +99,22 @@ export interface KeyAPI {
   rename(oldName: string, newName: string, options?: HTTPRPCOptions): Promise<KeyRenameResult>
 
   /**
-   * Remove a key
+   * Import a cleartext private key into Kubo from bytes, a Blob/File, or a stream.
    *
    * @example
    * ```js
-   * const key = await ipfs.key.import('clone', pem, 'password')
+   * const key = await ipfs.key.import('clone', keyBytes)
    *
    * console.log(key)
    * // { id: 'QmQRiays958UM7norGRQUG3tmrLq8pJdmJarwYSk2eLthQ',
    * //   name: 'clone' }
    * ```
+   */
+  import(name: string, data: ToContent, options?: KeyImportOptions): Promise<Key>
+
+  /**
+   * @deprecated Password-based import is a legacy js-ipfs API. Use the
+   * multipart cleartext import overload with Kubo instead.
    */
   import(name: string, pem: string, password: string, options?: HTTPRPCOptions): Promise<Key>
 }
