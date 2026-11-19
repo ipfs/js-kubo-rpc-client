@@ -333,7 +333,9 @@ async function loadPbContent (ipfs: KuboRPCClient, node: any): Promise<CID> {
         dagPB.encode({
           Data: data,
           Links: []
-        })
+        }),
+        // Kubo defaults to raw CIDv1 blocks. These fixtures use dag-pb CIDv0 links.
+        { format: 'v0' }
       )
     },
     putLinks: async (links) => {
@@ -345,7 +347,7 @@ async function loadPbContent (ipfs: KuboRPCClient, node: any): Promise<CID> {
             Hash: CID.parse(cid)
           }
         })
-      }))
+      }), { format: 'v0' })
     }
   }
   return loadContent(ipfs, store, node)
@@ -359,7 +361,7 @@ async function loadDagContent (ipfs: KuboRPCClient, node: any): Promise<CID> {
         Data: inner.marshal(),
         Links: []
       })
-      return ipfs.block.put(serialized)
+      return ipfs.block.put(serialized, { format: 'v0' })
     },
     putLinks: async (links) => {
       const obj: Record<string, CID> = {}

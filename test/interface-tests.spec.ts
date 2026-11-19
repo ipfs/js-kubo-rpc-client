@@ -14,10 +14,6 @@ function executeTests (commonFactory: Factory<KuboNode>): void {
       {
         name: 'should error during add-all stream',
         reason: 'Not supported by http'
-      },
-      {
-        name: '.refs',
-        reason: 'FIXME: https://github.com/ipfs/js-kubo-rpc-client/issues/77'
       }
     ].concat(isFirefox
       ? [{
