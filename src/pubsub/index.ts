@@ -128,10 +128,11 @@ export interface PubSubAPI {
 
 export interface PubSubSubscribeOptions extends HTTPRPCOptions {
   /**
-   * A callback to receive an error if one occurs during processing
-   * subscription messages. Only supported by ipfs-http-client.
+   * Receive subscription errors, including initial request failures after
+   * subscribe has resolved and unexpected stream closure. The fatal flag is
+   * true when the subscription has ended. Explicit cancellation is not an error.
    */
-  onError?(err: Error): void
+  onError?: PubsubApiErrorHandlerFn
 
   discover?: boolean
 }
