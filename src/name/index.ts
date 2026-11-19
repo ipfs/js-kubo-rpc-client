@@ -33,6 +33,12 @@ export interface NamePublishOptions extends HTTPRPCOptions {
    * (https://github.com/ipfs/js-ipfs/issues/1997).
    */
   allowOffline?: boolean
+  /**
+   * Set a custom IPNS record sequence number (Kubo 0.37+). It must be higher
+   * than the current record's sequence. If omitted, Kubo increments it
+   * automatically. Use a bigint for values above Number.MAX_SAFE_INTEGER.
+   */
+  sequence?: number | bigint
 }
 
 export interface NamePublishResult {

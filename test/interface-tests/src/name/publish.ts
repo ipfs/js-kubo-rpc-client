@@ -64,6 +64,31 @@ export function testPublish (factory: Factory<KuboNode>, options: MochaConfig): 
       expect(await last(ipfs.name.resolve(`/ipns/${nodeId}`))).to.eq(`/ipfs/${path}`)
     })
 
+    const customSequences = [42, 9007199254740993n]
+    customSequences.forEach(sequence => {
+      it(`should publish with custom sequence ${sequence}`, async function () {
+        this.timeout(50 * 1000)
+
+        const key = nanoid()
+        await ipfs.key.gen(key, { type: 'ed25519' })
+        const res = await ipfs.name.publish(fixture.cid, {
+          key,
+          sequence,
+          allowOffline: true
+        })
+
+        expect(res.value).to.equal(`/ipfs/${fixture.cid}`)
+        // A different value requires a newer record, so a lower sequence
+        // must be rejected by Kubo rather than silently incremented.
+        await expect(ipfs.name.publish('QmPFVLPmp9zv5Z5KUqLhe2EivAGccQW2r7M7jhVJGLZoZU', {
+          key,
+          sequence: typeof sequence === 'bigint' ? sequence - 1n : sequence - 1,
+          resolve: false,
+          allowOffline: true
+        })).to.be.rejected()
+      })
+    })
+
     it('should publish correctly when the file was not added but resolve is disabled', async function () {
       this.timeout(50 * 1000)
 
